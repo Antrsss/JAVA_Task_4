@@ -1,5 +1,7 @@
 package by.zgirskaya.course.task_4_web.connection;
 
+import by.zgirskaya.course.task_4_web.exception.ConnectionException;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
@@ -15,7 +17,7 @@ public class DatabaseConnection {
       Context envContext = (Context) initContext.lookup("java:/comp/env");
       dataSource = (DataSource) envContext.lookup("jdbc/postgres");
     } catch (Exception e) {
-      throw new RuntimeException("Error initializing database connection", e);
+      throw new ConnectionException("Error initializing database connection", e);
     }
   }
 
