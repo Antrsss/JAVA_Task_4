@@ -13,6 +13,7 @@ public class BaseServlet extends HttpServlet {
   protected void renderPage(HttpServletRequest request, HttpServletResponse response,
                             String contentPage, String pageTitle)
           throws ServletException, IOException {
+
     request.setAttribute("contentPage", contentPage);
     request.setAttribute("pageTitle", pageTitle);
     request.getRequestDispatcher(TEMPLATE_JSP).forward(request, response);
