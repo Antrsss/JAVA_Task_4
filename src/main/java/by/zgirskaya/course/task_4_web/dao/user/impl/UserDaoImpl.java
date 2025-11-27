@@ -6,6 +6,7 @@ import by.zgirskaya.course.task_4_web.exception.DaoException;
 import by.zgirskaya.course.task_4_web.model.user.AbstractUserModel;
 import by.zgirskaya.course.task_4_web.model.user.Customer;
 import by.zgirskaya.course.task_4_web.model.user.Employee;
+import by.zgirskaya.course.task_4_web.model.user.Role;
 
 import java.sql.*;
 import java.util.List;
@@ -43,6 +44,8 @@ public class UserDaoImpl implements UserDao {
         LEFT JOIN roles r ON u.role_id = r.id 
         WHERE u.email = ?
         """;
+
+  private static final String SELECT_ROLE_ID_BY_NAME = "SELECT id FROM roles WHERE role_name = ?";
 
 
   private static final String EXISTS_BY_EMAIL = "SELECT 1 FROM users WHERE email = ?";
@@ -150,6 +153,33 @@ public class UserDaoImpl implements UserDao {
       }
     } catch (SQLException e) {
       throw new DaoException("Error checking if user exists by email: " + email, e);
+    }
+  }
+
+  @Override
+  public UUID getCustomerRoleId() throws DaoException {
+    return getRoleIdByName("customer");
+  }
+
+  @Override
+  public UUID getEmployeeRoleId() throws DaoException {
+    return getRoleIdByName("employee");
+  }
+
+  private UUID getRoleIdByName(String roleName) throws DaoException {
+    try (Connection connection = DatabaseConnection.getConnection();
+         PreparedStatement statement = connection.prepareStatement(
+                 SELECT_ROLE_ID_BY_NAME)) {
+
+      statement.setString(1, roleName);
+      try (ResultSet resultSet = statement.executeQuery()) {
+        if (resultSet.next()) {
+          return (UUID) resultSet.getObject("id");
+        }
+        throw new DaoException("Role not found: " + roleName);
+      }
+    } catch (SQLException e) {
+      throw new DaoException("Error getting role id for: " + roleName, e);
     }
   }
 
