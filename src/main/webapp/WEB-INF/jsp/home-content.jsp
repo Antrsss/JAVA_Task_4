@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="row">
   <div class="col-12">
     <div class="jumbotron bg-light p-5 rounded mb-4">
@@ -19,7 +20,7 @@
         <div class="d-flex justify-content-between">
           <div>
             <h4 class="card-title">Users</h4>
-            <p class="card-text">Manage customers and employees</p>
+            <p class="card-text">Manage customers</p>
           </div>
           <div class="align-self-center">
             <i class="fas fa-users fa-2x"></i>
@@ -60,23 +61,6 @@
           </div>
         </div>
         <a href="${pageContext.request.contextPath}/supplies" class="btn btn-light btn-sm mt-2">Manage Supplies</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-3 mb-4">
-    <div class="card text-white bg-info">
-      <div class="card-body">
-        <div class="d-flex justify-content-between">
-          <div>
-            <h4 class="card-title">Profile</h4>
-            <p class="card-text">Your account info</p>
-          </div>
-          <div class="align-self-center">
-            <i class="fas fa-user fa-2x"></i>
-          </div>
-        </div>
-        <a href="${pageContext.request.contextPath}/profile" class="btn btn-light btn-sm mt-2">View Profile</a>
       </div>
     </div>
   </div>
