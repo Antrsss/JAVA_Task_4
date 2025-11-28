@@ -50,39 +50,6 @@ class OrderDaoImpl implements BaseDao<Order> {
     }
   }
 
-  @Override
-  public Order getById(UUID id) throws DaoException {
-    try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID)) {
-
-      statement.setObject(1, id);
-      try (ResultSet resultSet = statement.executeQuery()) {
-        if (resultSet.next()) {
-          return mapResultSetToOrder(resultSet);
-        } else {
-          throw new DaoException("Order not found with id: " + id);
-        }
-      }
-    } catch (SQLException e) {
-      throw new DaoException("Error getting order by id: " + id, e);
-    }
-  }
-
-  @Override
-  public void update(Order order) throws DaoException {
-
-  }
-
-  @Override
-  public void delete(UUID id) throws DaoException {
-
-  }
-
-  @Override
-  public List<Order> getAll() throws DaoException {
-    return List.of();
-  }
-
   private Order mapResultSetToOrder(ResultSet resultSet) throws SQLException {
     UUID id = (UUID) resultSet.getObject("id");
     UUID customerId = (UUID) resultSet.getObject("customer_id");

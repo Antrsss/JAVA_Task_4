@@ -46,35 +46,4 @@ public class ItemDaoImpl implements BaseDao<Item> {
       throw new DaoException("Error creating item", e);
     }
   }
-
-  @Override
-  public Item getById(UUID id) throws DaoException {
-    return null;
-  }
-
-  @Override
-  public void update(Item item) throws DaoException {
-
-  }
-
-  @Override
-  public void delete(UUID id) throws DaoException {
-    try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement statement = connection.prepareStatement(DELETE_ITEM)) {
-
-      statement.setObject(1, id);
-      int affectedRows = statement.executeUpdate();
-
-      if (affectedRows == 0) {
-        throw new DaoException("Deleting item failed, no rows affected: " + id);
-      }
-    } catch (SQLException e) {
-      throw new DaoException("Error deleting item: " + id, e);
-    }
-  }
-
-  @Override
-  public List<Item> getAll() throws DaoException {
-    return List.of();
-  }
 }

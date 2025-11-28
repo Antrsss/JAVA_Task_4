@@ -33,9 +33,20 @@ public class UserDaoImpl implements UserDao {
     WHERE u.phone_number = ?
     """;
 
+  private static final String SELECT_BY_EMAIL = """
+      SELECT u.*, c.username, e.passport_id, r.role_name
+      FROM users u
+      LEFT JOIN customers c ON u.id = c.user_id
+      LEFT JOIN employees e ON u.id = e.user_id
+      LEFT JOIN roles r ON u.role_id = r.id
+      WHERE u.email = ?
+      """;
+
   private static final String SELECT_ROLE_ID_BY_NAME = "SELECT id FROM roles WHERE role_name = ?";
 
   private static final String EXISTS_BY_PHONE_NUMBER = "SELECT 1 FROM users WHERE phone_number = ?";
+
+  private static final String EXISTS_BY_EMAIL = "SELECT 1 FROM users WHERE email = ?";
 
   @Override
   public void create(AbstractUserModel user) throws DaoException {
@@ -80,6 +91,25 @@ public class UserDaoImpl implements UserDao {
       }
     } catch (SQLException e) {
       throw new DaoException("Error checking if user exists by phone number: " + phoneNumber, e);
+    }
+  }
+
+  @Override
+  public Optional<AbstractUserModel> findByEmail(String email) throws DaoException {
+    return findUserByParameter(SELECT_BY_EMAIL, email);
+  }
+
+  @Override
+  public boolean existsByEmail(String email) throws DaoException {
+    try (Connection connection = DatabaseConnection.getConnection();
+    PreparedStatement statement = connection.prepareStatement(EXISTS_BY_EMAIL)) {
+
+      statement.setString(1, email);
+      try (ResultSet resultSet = statement.executeQuery()) {
+        return resultSet.next();
+      }
+    } catch (SQLException e) {
+      throw new DaoException("Error checking if user exists by email: " + email, e);
     }
   }
 
@@ -149,7 +179,6 @@ public class UserDaoImpl implements UserDao {
     } else if (passportId != null) {
       user = new Employee(name, phoneNumber, email, password, roleId, passportId);
     } else {
-      // Базовый пользователь без специфичных полей
       user = new AbstractUserModel(name, phoneNumber, email, password, roleId) {};
     }
 

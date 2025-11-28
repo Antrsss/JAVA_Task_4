@@ -51,39 +51,6 @@ class SupplyDaoImpl implements BaseDao<Supply> {
     }
   }
 
-  @Override
-  public Supply getById(UUID id) throws DaoException {
-    return null;
-  }
-
-  @Override
-  public void update(Supply supply) throws DaoException {
-
-  }
-
-  @Override
-  public void delete(UUID id) throws DaoException {
-
-  }
-
-  @Override
-  public List<Supply> getAll() throws DaoException {
-    List<Supply> supplies = new ArrayList<>();
-
-    try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement statement = connection.prepareStatement(SELECT_ALL);
-         ResultSet resultSet = statement.executeQuery()) {
-
-      while (resultSet.next()) {
-        supplies.add(mapResultSetToSupply(resultSet));
-      }
-
-      return supplies;
-    } catch (SQLException e) {
-      throw new DaoException("Error getting all supplies", e);
-    }
-  }
-
   private Supply mapResultSetToSupply(ResultSet resultSet) throws SQLException {
     UUID id = (UUID) resultSet.getObject("id");
     UUID employeeId = (UUID) resultSet.getObject("employee_id");

@@ -48,7 +48,16 @@ public final class AuthParameters {
     public static final String USERNAME = "username";
     public static final String PASSPORT_ID = "passportId";
 
+    public static final String IDENTIFIER = "identifier";
+
     private Parameters() {}
+  }
+
+  public static final class Validation {
+    public static final String PHONE_OR_EMAIL_REQUIRED = "Phone number or email is required";
+    public static final String PHONE_OR_EMAIL_EXISTS = "User with this phone number or email already exists";
+
+    private Validation() {}
   }
 
   private AuthParameters() {}
