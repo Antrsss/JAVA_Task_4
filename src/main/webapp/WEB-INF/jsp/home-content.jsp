@@ -1,4 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<link href="${pageContext.request.contextPath}/static/css/home.css" rel="stylesheet">
+
 <div class="row">
   <div class="col-12">
     <div class="jumbotron bg-light p-5 rounded mb-4">
@@ -8,60 +10,6 @@
       </p>
       <hr class="my-4">
       <p>Manage your bookstore operations efficiently with our comprehensive management system.</p>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <!-- Quick Stats -->
-  <div class="col-md-3 mb-4">
-    <div class="card text-white bg-primary">
-      <div class="card-body">
-        <div class="d-flex justify-content-between">
-          <div>
-            <h4 class="card-title">Users</h4>
-            <p class="card-text">Manage customers</p>
-          </div>
-          <div class="align-self-center">
-            <i class="fas fa-users fa-2x"></i>
-          </div>
-        </div>
-        <a href="${pageContext.request.contextPath}/users" class="btn btn-light btn-sm mt-2">Manage Users</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-3 mb-4">
-    <div class="card text-white bg-success">
-      <div class="card-body">
-        <div class="d-flex justify-content-between">
-          <div>
-            <h4 class="card-title">Orders</h4>
-            <p class="card-text">View customer orders</p>
-          </div>
-          <div class="align-self-center">
-            <i class="fas fa-shopping-cart fa-2x"></i>
-          </div>
-        </div>
-        <a href="${pageContext.request.contextPath}/orders" class="btn btn-light btn-sm mt-2">View Orders</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-3 mb-4">
-    <div class="card text-white bg-warning">
-      <div class="card-body">
-        <div class="d-flex justify-content-between">
-          <div>
-            <h4 class="card-title">Supplies</h4>
-            <p class="card-text">Manage book supplies</p>
-          </div>
-          <div class="align-self-center">
-            <i class="fas fa-truck fa-2x"></i>
-          </div>
-        </div>
-        <a href="${pageContext.request.contextPath}/supplies" class="btn btn-light btn-sm mt-2">Manage Supplies</a>
-      </div>
     </div>
   </div>
 </div>
@@ -79,34 +27,51 @@
           <div class="card-body">
             <div class="row">
               <div class="col-md-6">
-                <h6>Quick Actions:</h6>
+                <h6>Shopping Management:</h6>
                 <ul class="list-group">
                   <li class="list-group-item">
                     <a href="${pageContext.request.contextPath}/books" class="text-decoration-none">
-                      <i class="fas fa-book me-2"></i>Browse Books
+                      <i class="fas fa-book me-2"></i>Browse Books Catalog
                     </a>
                   </li>
                   <li class="list-group-item">
                     <a href="${pageContext.request.contextPath}/cart" class="text-decoration-none">
-                      <i class="fas fa-shopping-cart me-2"></i>View Cart
+                      <i class="fas fa-shopping-cart me-2"></i>View Shopping Cart
+                      <span class="badge bg-primary float-end">0 items</span>
                     </a>
                   </li>
                   <li class="list-group-item">
                     <a href="${pageContext.request.contextPath}/my-orders" class="text-decoration-none">
-                      <i class="fas fa-list-alt me-2"></i>My Orders
+                      <i class="fas fa-list-alt me-2"></i>My Orders History
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a href="${pageContext.request.contextPath}/reviews" class="text-decoration-none">
+                      <i class="fas fa-star me-2"></i>My Reviews & Ratings
                     </a>
                   </li>
                 </ul>
               </div>
               <div class="col-md-6">
                 <h6>Customer Features:</h6>
-                <ul>
-                  <li>Browse and search books</li>
-                  <li>Add books to cart</li>
-                  <li>Place orders</li>
-                  <li>View order history</li>
-                  <li>Leave reviews and ratings</li>
-                </ul>
+                <div class="list-group">
+                  <div class="list-group-item">
+                    <strong>Shopping Cart</strong>
+                    <small class="d-block text-muted">Add books to cart with desired quantities</small>
+                  </div>
+                  <div class="list-group-item">
+                    <strong>Order Management</strong>
+                    <small class="d-block text-muted">Place orders and track delivery dates</small>
+                  </div>
+                  <div class="list-group-item">
+                    <strong>Reviews & Ratings</strong>
+                    <small class="d-block text-muted">Leave feedback and rate books you've purchased</small>
+                  </div>
+                  <div class="list-group-item">
+                    <strong>Activity Log</strong>
+                    <small class="d-block text-muted">All your actions are tracked in activity log</small>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -129,13 +94,18 @@
                 <h6>Management Tools:</h6>
                 <ul class="list-group">
                   <li class="list-group-item">
-                    <a href="${pageContext.request.contextPath}/users" class="text-decoration-none">
-                      <i class="fas fa-user-cog me-2"></i>Manage Users
+                    <a href="${pageContext.request.contextPath}/customers" class="text-decoration-none">
+                      <i class="fas fa-user-cog me-2"></i>Manage Customers
+                    </a>
+                  </li>
+                  <li class="list-group-item">
+                    <a href="${pageContext.request.contextPath}/supplies/new" class="text-decoration-none">
+                      <i class="fas fa-boxes me-2"></i>Create New Supply Order
                     </a>
                   </li>
                   <li class="list-group-item">
                     <a href="${pageContext.request.contextPath}/supplies" class="text-decoration-none">
-                      <i class="fas fa-boxes me-2"></i>Manage Supplies
+                      <i class="fas fa-clipboard-list me-2"></i>View Supply Orders
                     </a>
                   </li>
                   <li class="list-group-item">
@@ -143,17 +113,55 @@
                       <i class="fas fa-tag me-2"></i>Manage Discounts
                     </a>
                   </li>
+                  <li class="list-group-item">
+                    <a href="${pageContext.request.contextPath}/activity-log" class="text-decoration-none">
+                      <i class="fas fa-history me-2"></i>View Activity Log
+                    </a>
+                  </li>
                 </ul>
               </div>
               <div class="col-md-6">
                 <h6>Employee Features:</h6>
-                <ul>
-                  <li>Manage customer accounts</li>
-                  <li>Process book supplies</li>
-                  <li>Create and manage discounts</li>
-                  <li>View all orders</li>
-                  <li>Generate reports</li>
-                </ul>
+                <div class="list-group">
+                  <div class="list-group-item">
+                    <strong>Customer Management</strong>
+                    <small class="d-block text-muted">Full CRUD operations on customer accounts</small>
+                  </div>
+                  <div class="list-group-item">
+                    <strong>Supply Orders</strong>
+                    <small class="d-block text-muted">Record book orders from publishers with quantities and costs</small>
+                  </div>
+                  <div class="list-group-item">
+                    <strong>Discount Management</strong>
+                    <small class="d-block text-muted">Create/modify/delete discounts for specific books or publishers</small>
+                  </div>
+                  <div class="list-group-item">
+                    <strong>Supply Items</strong>
+                    <small class="d-block text-muted">Track book ID, quantity, and total cost per supply item</small>
+                  </div>
+                  <div class="list-group-item">
+                    <strong>Activity Tracking</strong>
+                    <small class="d-block text-muted">All employee actions are logged for accountability</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions for Employee -->
+            <div class="row mt-4">
+              <div class="col-12">
+                <h6>Quick Actions:</h6>
+                <div class="d-grid gap-2 d-md-flex">
+                  <a href="${pageContext.request.contextPath}/customers/create" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-user-plus me-1"></i>Add New Customer
+                  </a>
+                  <a href="${pageContext.request.contextPath}/supplies/create" class="btn btn-outline-success btn-sm">
+                    <i class="fas fa-truck-loading me-1"></i>Create Supply Order
+                  </a>
+                  <a href="${pageContext.request.contextPath}/discounts/create" class="btn btn-outline-warning btn-sm">
+                    <i class="fas fa-percentage me-1"></i>Create Discount
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -214,30 +222,24 @@
         <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Activity</h5>
       </div>
       <div class="card-body">
-        <p class="text-muted">Recent activity features will be displayed here once implemented.</p>
+        <p class="text-muted">Your recent activities will be displayed here.</p>
         <ul class="list-group">
           <li class="list-group-item">
-            <small class="text-muted">System ready for use</small>
+            <small class="text-muted">
+              <i class="fas fa-sign-in-alt me-1"></i>
+              You logged in successfully
+            </small>
+            <small class="text-muted float-end">Just now</small>
           </li>
           <li class="list-group-item">
-            <small class="text-muted">Welcome to Bookstore Management System</small>
+            <small class="text-muted">
+              <i class="fas fa-home me-1"></i>
+              Welcome to Bookstore Management System
+            </small>
+            <small class="text-muted float-end">Today</small>
           </li>
         </ul>
       </div>
     </div>
   </div>
 </div>
-
-<!-- Add Font Awesome for icons (if not already included) -->
-<style>
-    .jumbotron {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-    }
-    .card {
-        transition: transform 0.2s;
-    }
-    .card:hover {
-        transform: translateY(-5px);
-    }
-</style>

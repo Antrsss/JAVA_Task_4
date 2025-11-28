@@ -1,0 +1,17 @@
+.jumbotron {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+.card {
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-2px);
+}
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid #eee;
+}
+.list-group-item:last-child {
+    border-bottom: none;
+}
