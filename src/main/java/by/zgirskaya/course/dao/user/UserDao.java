@@ -14,8 +14,8 @@ public interface UserDao extends BaseDao<AbstractUserModel> {
   Optional<AbstractUserModel> findByEmail(String email) throws DaoException;
   boolean existsByEmail(String email) throws DaoException;
 
-  UUID getCustomerRoleId() throws DaoException;
-  UUID getEmployeeRoleId() throws DaoException;
+  UUID findCustomerRoleId() throws DaoException;
+  UUID findEmployeeRoleId() throws DaoException;
 
   default Optional<AbstractUserModel> findByIdentifier(String identifier) throws DaoException {
     Optional<AbstractUserModel> user = findByPhoneNumber(identifier);

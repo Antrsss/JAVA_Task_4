@@ -115,16 +115,16 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public UUID getCustomerRoleId() throws DaoException {
-    return getRoleIdByName(AuthParameters.Roles.CUSTOMER);
+  public UUID findCustomerRoleId() throws DaoException {
+    return findRoleIdByName(AuthParameters.Roles.CUSTOMER);
   }
 
   @Override
-  public UUID getEmployeeRoleId() throws DaoException {
-    return getRoleIdByName(AuthParameters.Roles.EMPLOYEE);
+  public UUID findEmployeeRoleId() throws DaoException {
+    return findRoleIdByName(AuthParameters.Roles.EMPLOYEE);
   }
 
-  private UUID getRoleIdByName(String roleName) throws DaoException {
+  private UUID findRoleIdByName(String roleName) throws DaoException {
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(
                  SELECT_ROLE_ID_BY_NAME)) {

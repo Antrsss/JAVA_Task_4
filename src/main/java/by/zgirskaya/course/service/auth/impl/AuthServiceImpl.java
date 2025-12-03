@@ -78,11 +78,11 @@ public class AuthServiceImpl implements AuthService {
 
       if (AuthParameters.Roles.EMPLOYEE.equals(role)) {
         logger.debug("Creating employee user");
-        roleId = userDao.getEmployeeRoleId();
+        roleId = userDao.findEmployeeRoleId();
         user = new Employee(name, phoneNumber, email, password, roleId, passportId);
       } else {
         logger.debug("Creating customer user");
-        roleId = userDao.getCustomerRoleId();
+        roleId = userDao.findCustomerRoleId();
         user = new Customer(name, phoneNumber, email, password, roleId, username);
       }
 
