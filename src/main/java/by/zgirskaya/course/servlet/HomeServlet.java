@@ -1,8 +1,7 @@
 package by.zgirskaya.course.servlet;
 
 import by.zgirskaya.course.model.user.AbstractUserModel;
-import by.zgirskaya.course.util.HomeParameters;
-import by.zgirskaya.course.util.WebServletParameters;
+import by.zgirskaya.course.util.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,13 +18,13 @@ public class HomeServlet extends BaseServlet {
 
     HttpSession session = request.getSession(false);
 
-    if (session == null || session.getAttribute(HomeParameters.USER_ATTRIBUTE) == null) {
-      response.sendRedirect(request.getContextPath() + HomeParameters.AUTH_LOGIN_REDIRECT);
+    if (session == null || session.getAttribute(AttributeParameters.USER) == null) {
+      response.sendRedirect(request.getContextPath() + PathParameters.AUTH_LOGIN_REDIRECT);
       return;
     }
 
-    AbstractUserModel user = (AbstractUserModel) session.getAttribute(HomeParameters.USER_ATTRIBUTE);
-    request.setAttribute(HomeParameters.USER_ATTRIBUTE, user);
-    renderPage(request, response, HomeParameters.HOME_JSP, HomeParameters.HOME_PAGE_TITLE);
+    AbstractUserModel user = (AbstractUserModel) session.getAttribute(AttributeParameters.USER);
+    request.setAttribute(AttributeParameters.USER, user);
+    renderPage(request, response, JspParameters.HOME, PageTitleParameters.HOME);
   }
 }
