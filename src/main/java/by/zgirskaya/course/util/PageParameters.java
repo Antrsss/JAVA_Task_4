@@ -11,6 +11,8 @@ public final class PageParameters {
   }
 
   public static final class Jsp {
+    public static final String TEMPLATE = "/WEB-INF/jsp/common/template.jsp";
+
     public static final String HOME = "/WEB-INF/jsp/home-content.jsp";
     public static final String LOGIN = "/WEB-INF/jsp/auth/login-content.jsp";
     public static final String REGISTER = "/WEB-INF/jsp/auth/register-content.jsp";

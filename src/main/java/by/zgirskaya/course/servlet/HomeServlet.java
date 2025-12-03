@@ -9,11 +9,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebServlet(WebServletParameters.HOME_PATH)
-public class HomeServlet extends BaseServlet {
 
-  @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response)
+@WebServlet(WebServletParameters.HOME_PATH)
+public class HomeServlet {
+
+  void doGet(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
 
     HttpSession session = request.getSession(false);
@@ -25,6 +25,8 @@ public class HomeServlet extends BaseServlet {
 
     AbstractUserModel user = (AbstractUserModel) session.getAttribute(AttributeParameters.USER);
     request.setAttribute(AttributeParameters.USER, user);
-    renderPage(request, response, PageParameters.Jsp.HOME, PageParameters.Title.HOME);
+    request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.HOME);
+    request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.HOME);
+    request.getRequestDispatcher(PageParameters.Jsp.TEMPLATE).forward(request, response);
   }
 }

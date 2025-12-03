@@ -17,12 +17,11 @@ import java.io.IOException;
 import java.util.Optional;
 
 @WebServlet(WebServletParameters.AUTH_PATH)
-public class AuthServlet extends BaseServlet {
+public class AuthServlet {
   private static final Logger logger = LogManager.getLogger();
   private final AuthService authService = new AuthServiceImpl();
 
-  @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+  void doGet(HttpServletRequest request, HttpServletResponse response) {
     String path = request.getPathInfo();
     logger.debug("Processing GET request for path: {}", path);
 
@@ -40,8 +39,7 @@ public class AuthServlet extends BaseServlet {
     }
   }
 
-  @Override
-  protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+  void doPost(HttpServletRequest request, HttpServletResponse response) {
     String path = request.getPathInfo();
     logger.debug("Processing POST request for path: {}", path);
 
@@ -62,13 +60,17 @@ public class AuthServlet extends BaseServlet {
   private void showLoginPage(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     logger.debug("Displaying login page");
-    renderPage(request, response, PageParameters.Jsp.LOGIN, PageParameters.Title.LOGIN);
+    request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.LOGIN);
+    request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.LOGIN);
+    request.getRequestDispatcher(PageParameters.Jsp.LOGIN).forward(request, response);
   }
 
   private void showRegisterPage(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     logger.debug("Displaying registration page");
-    renderPage(request, response, PageParameters.Jsp.REGISTER, PageParameters.Title.REGISTER);
+    request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.REGISTER);
+    request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.REGISTER);
+    request.getRequestDispatcher(PageParameters.Jsp.REGISTER).forward(request, response);
   }
 
   private void processLogin(HttpServletRequest request, HttpServletResponse response)
