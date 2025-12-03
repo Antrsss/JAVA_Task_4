@@ -27,9 +27,9 @@ public class AuthServlet extends BaseServlet {
     logger.debug("Processing GET request for path: {}", path);
 
     try {
-      if (path == null || path.equals(PathParameters.ROOT) || path.equals(PathParameters.LOGIN)) {
+      if (path == null || path.equals(PageParameters.Path.ROOT) || path.equals(PageParameters.Path.LOGIN)) {
         showLoginPage(request, response);
-      } else if (path.equals(PathParameters.REGISTER)) {
+      } else if (path.equals(PageParameters.Path.REGISTER)) {
         showRegisterPage(request, response);
       } else {
         logger.warn("Requested path not found: {}", path);
@@ -46,9 +46,9 @@ public class AuthServlet extends BaseServlet {
     logger.debug("Processing POST request for path: {}", path);
 
     try {
-      if (path == null || path.equals(PathParameters.ROOT) || path.equals(PathParameters.LOGIN)) {
+      if (path == null || path.equals(PageParameters.Path.ROOT) || path.equals(PageParameters.Path.LOGIN)) {
         processLogin(request, response);
-      } else if (path.equals(PathParameters.REGISTER)) {
+      } else if (path.equals(PageParameters.Path.REGISTER)) {
         processRegistration(request, response);
       } else {
         logger.warn("Requested path not found: {}", path);
@@ -62,13 +62,13 @@ public class AuthServlet extends BaseServlet {
   private void showLoginPage(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     logger.debug("Displaying login page");
-    renderPage(request, response, JspParameters.LOGIN, PageTitleParameters.LOGIN);
+    renderPage(request, response, PageParameters.Jsp.LOGIN, PageParameters.Title.LOGIN);
   }
 
   private void showRegisterPage(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     logger.debug("Displaying registration page");
-    renderPage(request, response, JspParameters.REGISTER, PageTitleParameters.REGISTER);
+    renderPage(request, response, PageParameters.Jsp.REGISTER, PageParameters.Title.REGISTER);
   }
 
   private void processLogin(HttpServletRequest request, HttpServletResponse response)
@@ -104,7 +104,7 @@ public class AuthServlet extends BaseServlet {
         session.setAttribute(AttributeParameters.USER, user);
         session.setAttribute(AttributeParameters.USER_ROLE, user.getRoleId().toString());
 
-        response.sendRedirect(request.getContextPath() + PathParameters.ROOT);
+        response.sendRedirect(request.getContextPath() + PageParameters.Path.ROOT);
       } else {
         logger.warn("Failed login attempt for identifier: {}", identifier);
         request.setAttribute(AttributeParameters.ERROR, "Invalid credentials");
@@ -139,7 +139,7 @@ public class AuthServlet extends BaseServlet {
       session.setAttribute(AttributeParameters.USER, user);
       session.setAttribute(AttributeParameters.USER_ROLE, user.getRoleId().toString());
 
-      response.sendRedirect(request.getContextPath() + PathParameters.ROOT);
+      response.sendRedirect(request.getContextPath() + PageParameters.Path.ROOT);
 
     } catch (ServiceException e) {
       logger.error("Registration failed for identifier: {}", identifier, e);

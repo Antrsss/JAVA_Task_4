@@ -19,12 +19,12 @@ public class HomeServlet extends BaseServlet {
     HttpSession session = request.getSession(false);
 
     if (session == null || session.getAttribute(AttributeParameters.USER) == null) {
-      response.sendRedirect(request.getContextPath() + PathParameters.AUTH_LOGIN_REDIRECT);
+      response.sendRedirect(request.getContextPath() + PageParameters.Path.AUTH_LOGIN_REDIRECT);
       return;
     }
 
     AbstractUserModel user = (AbstractUserModel) session.getAttribute(AttributeParameters.USER);
     request.setAttribute(AttributeParameters.USER, user);
-    renderPage(request, response, JspParameters.HOME, PageTitleParameters.HOME);
+    renderPage(request, response, PageParameters.Jsp.HOME, PageParameters.Title.HOME);
   }
 }
