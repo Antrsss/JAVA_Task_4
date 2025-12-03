@@ -1,6 +1,6 @@
 package by.zgirskaya.course.connection;
 
-import by.zgirskaya.course.exception.ConnectionException;
+import by.zgirskaya.course.exception.ServiceException;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -17,7 +17,7 @@ public class DatabaseConnection {
       Context envContext = (Context) initContext.lookup("java:/comp/env");
       dataSource = (DataSource) envContext.lookup("jdbc/postgres");
     } catch (Exception e) {
-      throw new ConnectionException("Error initializing database connection", e);
+      throw new ServiceException("Error initializing database connection", e);
     }
   }
 

@@ -1,6 +1,6 @@
 package by.zgirskaya.course.dao.user.impl;
 
-import by.zgirskaya.course.connection.connection.DatabaseConnection;
+import by.zgirskaya.course.connection.DatabaseConnection;
 import by.zgirskaya.course.dao.user.UserDao;
 import by.zgirskaya.course.exception.DaoException;
 import by.zgirskaya.course.model.user.AbstractUserModel;

@@ -1,11 +1,9 @@
 package by.zgirskaya.course.servlet;
 
-import by.zgirskaya.course.dao.user.UserDao;
-import by.zgirskaya.course.dao.user.impl.UserDaoImpl;
-import by.zgirskaya.course.exception.DaoException;
+import by.zgirskaya.course.exception.ServiceException;
 import by.zgirskaya.course.model.user.AbstractUserModel;
-import by.zgirskaya.course.model.user.Customer;
-import by.zgirskaya.course.model.user.Employee;
+import by.zgirskaya.course.service.auth.AuthService;
+import by.zgirskaya.course.service.auth.impl.AuthServiceImpl;
 import by.zgirskaya.course.util.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,17 +15,19 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.UUID;
 
 @WebServlet(WebServletParameters.AUTH_PATH)
 public class AuthServlet extends BaseServlet {
-  private static final Logger logger = LogManager.getLogger(AuthServlet.class);
+  private static final Logger logger = LogManager.getLogger();
 
-  private static final UserDao userDao = new UserDaoImpl();
+  private final AuthService authService;
+
+  public AuthServlet() {
+    this.authService = new AuthServiceImpl();
+  }
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-
     String path = request.getPathInfo();
     logger.debug("Processing GET request for path: {}", path);
 
@@ -66,14 +66,12 @@ public class AuthServlet extends BaseServlet {
 
   private void showLoginPage(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-
     logger.debug("Displaying login page");
     renderPage(request, response, JspParameters.LOGIN, PageTitleParameters.LOGIN);
   }
 
   private void showRegisterPage(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-
     logger.debug("Displaying registration page");
     renderPage(request, response, JspParameters.REGISTER, PageTitleParameters.REGISTER);
   }
@@ -82,6 +80,7 @@ public class AuthServlet extends BaseServlet {
       throws ServletException, IOException {
 
     String identifier = request.getParameter(AuthParameters.Parameters.IDENTIFIER);
+    String password = request.getParameter(AuthParameters.Parameters.PASSWORD);
 
     logger.info("Login attempt - Identifier: {}", identifier);
 
@@ -93,34 +92,33 @@ public class AuthServlet extends BaseServlet {
         return;
       }
 
-      Optional<AbstractUserModel> userOptional = userDao.findByIdentifier(identifier);
+      if (password == null || password.isBlank()) {
+        logger.warn("Login failed - no password provided");
+        request.setAttribute(AttributeParameters.ERROR, "Password is required");
+        showLoginPage(request, response);
+        return;
+      }
+
+      Optional<AbstractUserModel> userOptional = authService.authenticate(identifier, password);
 
       if (userOptional.isPresent()) {
         AbstractUserModel user = userOptional.get();
-        String password = request.getParameter(AuthParameters.Parameters.PASSWORD);
+        logger.info("Successful login for user: {} (ID: {})", identifier, user.getId());
 
-        if (password.equals(user.getPassword())) {
-          logger.info("Successful login for user: {} (ID: {})", identifier, user.getId());
+        HttpSession session = request.getSession();
+        session.setAttribute(AttributeParameters.USER, user);
+        session.setAttribute(AttributeParameters.USER_ROLE, user.getRoleId().toString());
 
-          HttpSession session = request.getSession();
-          session.setAttribute(AttributeParameters.USER, user);
-          session.setAttribute(AttributeParameters.USER_ROLE, user.getRoleId().toString());
-
-          response.sendRedirect(request.getContextPath() + PathParameters.ROOT);
-
-        } else {
-          logger.warn("Failed login attempt - invalid password for user: {}", identifier);
-          request.setAttribute(AttributeParameters.ERROR, "Invalid credentials");
-          showLoginPage(request, response);
-        }
+        response.sendRedirect(request.getContextPath() + PathParameters.ROOT);
       } else {
-        logger.warn("Failed login attempt - user not found: {}", identifier);
+        logger.warn("Failed login attempt for identifier: {}", identifier);
         request.setAttribute(AttributeParameters.ERROR, "Invalid credentials");
         showLoginPage(request, response);
       }
-    } catch (DaoException e) {
-      logger.error("Database error during login for identifier: {}", identifier, e);
-      request.setAttribute(AttributeParameters.ERROR, "Database error: " + e.getMessage());
+
+    } catch (ServiceException e) {
+      logger.error("Service error during login for identifier: {}", identifier, e);
+      request.setAttribute(AttributeParameters.ERROR, "Authentication error. Please try again.");
       showLoginPage(request, response);
     }
   }
@@ -131,76 +129,16 @@ public class AuthServlet extends BaseServlet {
     String name = request.getParameter(AuthParameters.Parameters.NAME);
     String identifier = request.getParameter(AuthParameters.Parameters.IDENTIFIER);
     String role = request.getParameter(AuthParameters.Parameters.ROLE);
+    String password = request.getParameter(AuthParameters.Parameters.PASSWORD);
+    String username = request.getParameter(AuthParameters.Parameters.USERNAME);
+    String passportId = request.getParameter(AuthParameters.Parameters.PASSPORT_ID);
 
-    logger.info("Registration attempt - Name: {}, Identifier: {}, Role: {}",
-        name, identifier, role);
+    logger.info("Registration attempt - Name: {}, Identifier: {}, Role: {}", name, identifier, role);
 
     try {
-      if (identifier == null || identifier.isBlank()) {
-        logger.warn("Registration failed - no identifier provided");
-        request.setAttribute(AttributeParameters.ERROR, "Phone number or email is required");
-        showRegisterPage(request, response);
-        return;
-      }
+      AbstractUserModel user = authService.registerUser(name, identifier, role, password, username, passportId);
 
-      String phoneNumber = null;
-      String email = null;
-      boolean userExists;
-
-      if (identifier.contains("@")) {
-        email = identifier;
-        userExists = userDao.existsByEmail(email);
-      } else {
-        phoneNumber = identifier;
-        userExists = userDao.existsByPhoneNumber(phoneNumber);
-      }
-
-      if (userExists) {
-        logger.warn("Registration failed - user with phone or email already exists");
-        request.setAttribute(AttributeParameters.ERROR,
-            AuthParameters.Validation.PHONE_OR_EMAIL_EXISTS);
-        showRegisterPage(request, response);
-        return;
-      }
-
-      UUID roleId;
-      AbstractUserModel user;
-
-      if (AuthParameters.Roles.EMPLOYEE.equals(role)) {
-        logger.debug("Processing employee registration");
-        roleId = userDao.getEmployeeRoleId();
-
-        String passportId = request.getParameter(AuthParameters.Parameters.PASSPORT_ID);
-        if (passportId == null || passportId.isBlank()) {
-          logger.warn("Registration failed - missing passport ID for employee");
-          request.setAttribute(AttributeParameters.ERROR, "Passport ID is required for employees");
-          showRegisterPage(request, response);
-          return;
-        }
-
-        user = new Employee(name, phoneNumber, email, request.getParameter(AuthParameters.Parameters.PASSWORD),
-            roleId, passportId);
-
-      } else {
-        logger.debug("Processing customer registration");
-        roleId = userDao.getCustomerRoleId();
-
-        String username = request.getParameter(AuthParameters.Parameters.USERNAME);
-        if (username == null || username.isBlank()) {
-          logger.warn("Registration failed - missing username for customer");
-          request.setAttribute(AttributeParameters.ERROR, "Username is required for customers");
-          showRegisterPage(request, response);
-          return;
-        }
-
-        user = new Customer(name, phoneNumber, email, request.getParameter(AuthParameters.Parameters.PASSWORD),
-            roleId, username);
-      }
-
-      userDao.create(user);
-
-      String logIdentifier = phoneNumber != null ? phoneNumber : email;
-      logger.info("User successfully registered: {} (ID: {})", logIdentifier, user.getId());
+      logger.info("User successfully registered: {} (ID: {})", identifier, user.getId());
 
       HttpSession session = request.getSession();
       session.setAttribute(AttributeParameters.USER, user);
@@ -208,9 +146,9 @@ public class AuthServlet extends BaseServlet {
 
       response.sendRedirect(request.getContextPath() + PathParameters.ROOT);
 
-    } catch (DaoException e) {
+    } catch (ServiceException e) {
       logger.error("Registration failed for identifier: {}", identifier, e);
-      request.setAttribute(AttributeParameters.ERROR, "Registration failed: " + e.getMessage());
+      request.setAttribute(AttributeParameters.ERROR, e.getMessage());
       showRegisterPage(request, response);
     }
   }
