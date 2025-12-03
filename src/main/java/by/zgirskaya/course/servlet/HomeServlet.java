@@ -21,7 +21,7 @@ public class HomeServlet extends HttpServlet {
     HttpSession session = request.getSession(false);
 
     if (session == null || session.getAttribute(AttributeParameters.USER) == null) {
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.AUTH_LOGIN_REDIRECT);
+      response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
       return;
     }
 

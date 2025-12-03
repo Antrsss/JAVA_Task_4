@@ -22,10 +22,7 @@ public final class PageParameters {
 
   public static final class Path {
     public static final String ROOT = "/";
-    public static final String LOGIN = "/login";
-    public static final String REGISTER = "/register";
-
-    public static final String AUTH_LOGIN_REDIRECT = "/auth/login";
+    public static final String LOGIN_REDIRECT = "/auth/login";
 
     private Path() {}
   }
