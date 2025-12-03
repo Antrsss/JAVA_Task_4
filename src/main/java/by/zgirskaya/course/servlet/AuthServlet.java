@@ -19,12 +19,7 @@ import java.util.Optional;
 @WebServlet(WebServletParameters.AUTH_PATH)
 public class AuthServlet extends BaseServlet {
   private static final Logger logger = LogManager.getLogger();
-
-  private final AuthService authService;
-
-  public AuthServlet() {
-    this.authService = new AuthServiceImpl();
-  }
+  private final AuthService authService = new AuthServiceImpl();
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) {

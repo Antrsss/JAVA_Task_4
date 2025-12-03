@@ -6,6 +6,7 @@ import by.zgirskaya.course.exception.DaoException;
 import by.zgirskaya.course.model.user.AbstractUserModel;
 import by.zgirskaya.course.model.user.Customer;
 import by.zgirskaya.course.model.user.Employee;
+import by.zgirskaya.course.util.AuthParameters;
 
 import java.sql.*;
 import java.util.Optional;
@@ -115,12 +116,12 @@ public class UserDaoImpl implements UserDao {
 
   @Override
   public UUID getCustomerRoleId() throws DaoException {
-    return getRoleIdByName("customer");
+    return getRoleIdByName(AuthParameters.Roles.CUSTOMER);
   }
 
   @Override
   public UUID getEmployeeRoleId() throws DaoException {
-    return getRoleIdByName("employee");
+    return getRoleIdByName(AuthParameters.Roles.EMPLOYEE);
   }
 
   private UUID getRoleIdByName(String roleName) throws DaoException {

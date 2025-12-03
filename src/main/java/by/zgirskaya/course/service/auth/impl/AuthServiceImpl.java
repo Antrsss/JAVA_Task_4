@@ -17,7 +17,6 @@ import java.util.UUID;
 
 public class AuthServiceImpl implements AuthService {
   private static final Logger logger = LogManager.getLogger();
-
   private static final UserDao userDao = new UserDaoImpl();
 
   public Optional<AbstractUserModel> authenticate(String identifier, String password) throws ServiceException {
