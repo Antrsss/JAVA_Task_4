@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 
-@WebServlet(WebServletParameters.HOME_PATH)
+@WebServlet(PageParameters.Path.HOME)
 public class HomeServlet extends HttpServlet {
 
   @Override

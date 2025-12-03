@@ -7,7 +7,6 @@ import by.zgirskaya.course.service.auth.impl.AuthServiceImpl;
 import by.zgirskaya.course.util.AttributeParameters;
 import by.zgirskaya.course.util.AuthParameters;
 import by.zgirskaya.course.util.PageParameters;
-import by.zgirskaya.course.util.WebServletParameters;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,25 +19,25 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.Optional;
 
-@WebServlet(WebServletParameters.LOGIN_PATH)
+@WebServlet(PageParameters.Path.LOGIN)
 public class LoginServlet extends HttpServlet {
   private static final Logger logger = LogManager.getLogger();
   private final AuthService authService = new AuthServiceImpl();
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-    logger.debug("Processing GET request for path: {}", WebServletParameters.LOGIN_PATH);
+    logger.debug("Processing GET request for path: {}", PageParameters.Path.LOGIN);
 
     try {
       showLoginPage(request, response);
     } catch (ServletException | IOException e) {
-      logger.error("Error processing GET request for path: {}", WebServletParameters.LOGIN_PATH, e);
+      logger.error("Error processing GET request for path: {}", PageParameters.Path.LOGIN, e);
     }
   }
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-    logger.debug("Processing POST request for path: {}", WebServletParameters.LOGIN_PATH);
+    logger.debug("Processing POST request for path: {}", PageParameters.Path.LOGIN);
 
     try {
       String identifier = request.getParameter(AuthParameters.Parameters.IDENTIFIER);
@@ -83,7 +82,7 @@ public class LoginServlet extends HttpServlet {
         showLoginPage(request, response);
       }
     } catch (ServletException | IOException e) {
-      logger.error("Error processing POST request for path: {}", WebServletParameters.LOGIN_PATH, e);
+      logger.error("Error processing POST request for path: {}", PageParameters.Path.LOGIN, e);
     }
   }
 
