@@ -7,6 +7,7 @@ import by.zgirskaya.course.service.auth.impl.AuthServiceImpl;
 import by.zgirskaya.course.util.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -17,11 +18,12 @@ import java.io.IOException;
 import java.util.Optional;
 
 @WebServlet(WebServletParameters.AUTH_PATH)
-public class AuthServlet {
+public class AuthServlet extends HttpServlet {
   private static final Logger logger = LogManager.getLogger();
   private final AuthService authService = new AuthServiceImpl();
 
-  void doGet(HttpServletRequest request, HttpServletResponse response) {
+  @Override
+  protected void doGet(HttpServletRequest request, HttpServletResponse response) {
     String path = request.getPathInfo();
     logger.debug("Processing GET request for path: {}", path);
 
@@ -39,7 +41,8 @@ public class AuthServlet {
     }
   }
 
-  void doPost(HttpServletRequest request, HttpServletResponse response) {
+  @Override
+  protected void doPost(HttpServletRequest request, HttpServletResponse response) {
     String path = request.getPathInfo();
     logger.debug("Processing POST request for path: {}", path);
 
