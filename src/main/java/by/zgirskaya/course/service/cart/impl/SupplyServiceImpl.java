@@ -5,7 +5,7 @@ import by.zgirskaya.course.dao.cart.impl.SupplyDaoImpl;
 import by.zgirskaya.course.exception.DaoException;
 import by.zgirskaya.course.exception.ServiceException;
 import by.zgirskaya.course.model.cart.Supply;
-import by.zgirskaya.course.service.BaseService;
+import by.zgirskaya.course.service.cart.SupplyService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SupplyServiceImpl implements BaseService<Supply> {
+public class SupplyServiceImpl implements SupplyService {
   private static final Logger logger = LogManager.getLogger();
   private static final SupplyDao supplyDao = new SupplyDaoImpl();
 
   @Override
-  public boolean exists(UUID id) throws ServiceException {
+  public boolean isSupplyExists(UUID id) throws ServiceException {
     if (id == null) {
       return false;
     }
@@ -34,7 +34,7 @@ public class SupplyServiceImpl implements BaseService<Supply> {
   }
 
   @Override
-  public Supply create(Supply supply) throws ServiceException {
+  public Supply createSupply(Supply supply) throws ServiceException {
     logger.info("Creating new supply (Employee: {}, Publisher: {})",
         supply.getEmployeeId(), supply.getPublisherId());
 
@@ -52,7 +52,7 @@ public class SupplyServiceImpl implements BaseService<Supply> {
   }
 
   @Override
-  public Supply update(Supply supply) throws ServiceException {
+  public Supply updateSupply(Supply supply) throws ServiceException {
     logger.info("Updating supply: {}", supply.getId());
 
     if (supply.getId() == null) {
@@ -60,7 +60,7 @@ public class SupplyServiceImpl implements BaseService<Supply> {
     }
 
     try {
-      if (!exists(supply.getId())) {
+      if (!isSupplyExists(supply.getId())) {
         throw new ServiceException("Supply with ID " + supply.getId() + " not found");
       }
 
@@ -76,7 +76,7 @@ public class SupplyServiceImpl implements BaseService<Supply> {
   }
 
   @Override
-  public void delete(UUID id) throws ServiceException {
+  public void deleteSupply(UUID id) throws ServiceException {
     logger.info("Deleting supply: {}", id);
 
     if (id == null) {
@@ -84,7 +84,7 @@ public class SupplyServiceImpl implements BaseService<Supply> {
     }
 
     try {
-      if (!exists(id)) {
+      if (!isSupplyExists(id)) {
         throw new ServiceException("Supply with ID " + id + " not found");
       }
 
@@ -98,7 +98,7 @@ public class SupplyServiceImpl implements BaseService<Supply> {
   }
 
   @Override
-  public List<Supply> getAll() throws ServiceException {
+  public List<Supply> getAllSupplies() throws ServiceException {
     logger.debug("Getting all supplies");
 
     try {
