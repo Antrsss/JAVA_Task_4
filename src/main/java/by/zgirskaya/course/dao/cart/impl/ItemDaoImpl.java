@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ItemDaoImpl implements ItemDao {
@@ -24,6 +25,12 @@ public class ItemDaoImpl implements ItemDao {
   private static final String SELECT_ITEMS_BY_ORDER_ID = """
         SELECT id, order_id, book_id, quantity, total_price
         FROM items WHERE order_id = ? ORDER BY book_id
+        """;
+
+ private static final String SELECT_ITEM_BY_ID = """
+        SELECT id, order_id, book_id, quantity, total_price
+        FROM items
+        WHERE id = ?
         """;
 
   private static final String DELETE_ITEM_BY_ID = "DELETE FROM items WHERE id = ?";
@@ -80,7 +87,7 @@ public class ItemDaoImpl implements ItemDao {
   }
 
   @Override
-  public List<Item> getItemsByOrderId(UUID orderId) throws DaoException {
+  public List<Item> findItemsByOrderId(UUID orderId) throws DaoException {
     logger.debug("Getting items for order: {}", orderId);
 
     List<Item> items = new ArrayList<>();
@@ -106,6 +113,38 @@ public class ItemDaoImpl implements ItemDao {
     }
 
     return items;
+  }
+
+  @Override
+  public Optional<Item> findItemById(UUID id) throws DaoException {
+    logger.debug("Finding item by ID: {}", id);
+
+    if (id == null) {
+      logger.warn("Attempted to find item with null ID");
+      return Optional.empty();
+    }
+
+    try (Connection connection = DatabaseConnection.getConnection();
+         PreparedStatement statement = connection.prepareStatement(SELECT_ITEM_BY_ID)) {
+
+      statement.setObject(1, id);
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        if (resultSet.next()) {
+          Item item = extractItemFromResultSet(resultSet);
+          logger.debug("Found item: {} (Order: {}, Book: {}, Quantity: {})",
+              id, item.getOrderId(), item.getBookId(), item.getQuantity());
+          return Optional.of(item);
+        } else {
+          logger.debug("Item not found: {}", id);
+          return Optional.empty();
+        }
+      }
+
+    } catch (SQLException e) {
+      logger.error("Error finding item by ID: {}", id, e);
+      throw new DaoException("Error finding item with id: " + id, e);
+    }
   }
 
   @Override

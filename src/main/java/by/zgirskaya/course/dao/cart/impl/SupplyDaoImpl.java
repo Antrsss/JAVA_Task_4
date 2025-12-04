@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.sql.Date;
 
@@ -20,6 +21,14 @@ public class SupplyDaoImpl implements SupplyDao {
   private static final String INSERT_SUPPLY = """
         INSERT INTO supplies (id, employee_id, publisher_id, date, supply_price)
         VALUES (?, ?, ?, ?, ?)
+        """;
+
+
+
+  private static final String FIND_SUPPLY_BY_ID = """
+        SELECT id, employee_id, publisher_id, date, supply_price
+        FROM supplies
+        WHERE id = ?
         """;
 
   private static final String UPDATE_SUPPLY = """
@@ -67,6 +76,32 @@ public class SupplyDaoImpl implements SupplyDao {
       logger.error("Error creating supply for employee: {}, publisher: {}",
           supply.getEmployeeId(), supply.getPublisherId(), e);
       throw new DaoException("Error creating supply", e);
+    }
+  }
+
+  @Override
+  public Optional<Supply> findSupplyById(UUID id) throws DaoException {
+    logger.debug("Finding supply by ID: {}", id);
+
+    try (Connection connection = DatabaseConnection.getConnection();
+         PreparedStatement statement = connection.prepareStatement(FIND_SUPPLY_BY_ID)) {
+
+      statement.setObject(1, id);
+
+      try (ResultSet resultSet = statement.executeQuery()) {
+        if (resultSet.next()) {
+          Supply supply = extractSupplyFromResultSet(resultSet);
+          logger.debug("Found supply: {} (Employee: {}, Publisher: {})",
+              id, supply.getEmployeeId(), supply.getPublisherId());
+          return Optional.of(supply);
+        } else {
+          logger.debug("Supply not found: {}", id);
+          return Optional.empty();
+        }
+      }
+    } catch (SQLException e) {
+      logger.error("Error finding supply by ID: {}", id, e);
+      throw new DaoException("Error finding supply with id: " + id, e);
     }
   }
 
