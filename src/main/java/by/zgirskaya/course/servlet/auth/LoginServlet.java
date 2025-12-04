@@ -60,7 +60,7 @@ public class LoginServlet extends HttpServlet {
       }
 
       try {
-        Optional<AbstractUserModel> userOptional = authService.authenticate(identifier, password);
+        Optional<AbstractUserModel> userOptional = authService.authenticateUser(identifier, password);
 
         if (userOptional.isPresent()) {
           AbstractUserModel user = userOptional.get();

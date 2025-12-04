@@ -9,6 +9,7 @@ import by.zgirskaya.course.model.user.Customer;
 import by.zgirskaya.course.model.user.Employee;
 import by.zgirskaya.course.service.auth.AuthService;
 import by.zgirskaya.course.util.AuthParameters;
+import by.zgirskaya.course.util.AuthValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,31 +20,17 @@ public class AuthServiceImpl implements AuthService {
   private static final Logger logger = LogManager.getLogger();
   private static final UserDao userDao = new UserDaoImpl();
 
-  public Optional<AbstractUserModel> authenticate(String identifier, String password) throws ServiceException {
+  public Optional<AbstractUserModel> authenticateUser(String identifier, String password) throws ServiceException {
     logger.info("Authentication attempt for identifier: {}", identifier);
 
-    if (identifier == null || identifier.isBlank()) {
+    if (AuthValidator.validateNotEmpty(identifier)) {
       logger.warn("Authentication failed - empty identifier");
       return Optional.empty();
     }
 
     try {
-      Optional<AbstractUserModel> userOptional = userDao.findByIdentifier(identifier);
-
-      if (userOptional.isEmpty()) {
-        logger.warn("Authentication failed - user not found: {}", identifier);
-        return Optional.empty();
-      }
-
-      AbstractUserModel user = userOptional.get();
-
-      if (!password.equals(user.getPassword())) {
-        logger.warn("Authentication failed - invalid password for user: {}", identifier);
-        return Optional.empty();
-      }
-
-      logger.info("Authentication successful for user: {} (ID: {})", identifier, user.getId());
-      return Optional.of(user);
+      return userDao.findByIdentifier(identifier)
+          .filter(user -> password.equals(user.getPassword()));
 
     } catch (DaoException e) {
       logger.error("Database error during authentication for identifier: {}", identifier, e);
@@ -55,22 +42,26 @@ public class AuthServiceImpl implements AuthService {
                                         String username, String passportId) throws ServiceException {
     logger.info("Registration attempt - Name: {}, Identifier: {}, Role: {}", name, identifier, role);
 
-    validateRegistrationInput(name, identifier, password, role, username, passportId);
+    if (!AuthValidator.validateRegistrationInput(name, identifier, password, role, username, passportId)) {
+      throw new ServiceException("Invalid registration input");
+    }
+
+    String phoneNumber = null;
+    String email = null;
 
     try {
-      String phoneNumber = null;
-      String email = null;
-
-      if (identifier.contains("@")) {
+      if (AuthValidator.isValidEmail(identifier)) {
         email = identifier;
         if (userDao.existsByEmail(email)) {
-          throw new ServiceException(AuthParameters.Validation.PHONE_OR_EMAIL_EXISTS);
+          throw new ServiceException("User with this email already exists");
         }
-      } else {
+      } else if (AuthValidator.isValidPhoneNumber(identifier)) {
         phoneNumber = identifier;
         if (userDao.existsByPhoneNumber(phoneNumber)) {
-          throw new ServiceException(AuthParameters.Validation.PHONE_OR_EMAIL_EXISTS);
+          throw new ServiceException("User with this phone number already exists");
         }
+      } else {
+        throw new ServiceException("Registration attempt - Invalid email or phone number format");
       }
 
       UUID roleId;
@@ -87,44 +78,11 @@ public class AuthServiceImpl implements AuthService {
       }
 
       userDao.create(user);
-
-      String logIdentifier = phoneNumber != null ? phoneNumber : email;
-      logger.info("User successfully registered: {} (ID: {})", logIdentifier, user.getId());
-
       return user;
 
     } catch (DaoException e) {
       logger.error("Registration failed for identifier: {}", identifier, e);
       throw new ServiceException("Registration failed: " + e.getMessage(), e);
-    }
-  }
-
-  private void validateRegistrationInput(String name, String identifier, String password,
-                                         String role, String username, String passportId) throws ServiceException {
-    if (name == null || name.isBlank()) {
-      throw new ServiceException("Name is required");
-    }
-
-    if (identifier == null || identifier.isBlank()) {
-      throw new ServiceException(AuthParameters.Validation.PHONE_OR_EMAIL_REQUIRED);
-    }
-
-    if (password == null || password.isBlank()) {
-      throw new ServiceException("Password is required");
-    }
-
-    if (role == null || role.isBlank()) {
-      throw new ServiceException("Role is required");
-    }
-
-    if (AuthParameters.Roles.EMPLOYEE.equals(role)) {
-      if (passportId == null || passportId.isBlank()) {
-        throw new ServiceException("Passport ID is required for employees");
-      }
-    } else {
-      if (username == null || username.isBlank()) {
-        throw new ServiceException("Username is required for customers");
-      }
     }
   }
 }
