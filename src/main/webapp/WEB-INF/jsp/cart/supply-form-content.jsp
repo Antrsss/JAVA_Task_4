@@ -26,7 +26,8 @@
 
   <div class="card">
     <div class="card-body">
-      <form method="post" action="${pageContext.request.contextPath}/supplies" class="needs-validation" novalidate>
+      <form method="post" action="${pageContext.request.contextPath}/supplies" class="needs-validation" novalidate
+            id="supplyForm">
         <input type="hidden" name="action" value="${action}">
 
         <div class="row">
@@ -34,9 +35,11 @@
             <label for="publisherId" class="form-label">Publisher ID <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="publisherId" name="publisherId"
                    value="${supply != null ? supply.publisherId : ''}"
-                   placeholder="Enter publisher UUID" required>
+                   placeholder="Enter publisher UUID"
+                   pattern="[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+                   required>
             <div class="invalid-feedback">
-              Please provide a valid publisher ID.
+              Please provide a valid publisher UUID (format: 00000000-0000-0000-0000-000000000000).
             </div>
           </div>
 
@@ -57,15 +60,15 @@
             <span class="input-group-text">$</span>
             <input type="number" class="form-control" id="supplyPrice" name="supplyPrice"
                    value="${supply != null ? supply.supplyPrice : ''}"
-                   step="0.01" min="0" placeholder="0.00" required>
+                   step="0.01" min="0.01" placeholder="0.00" required>
             <div class="invalid-feedback">
-              Please provide a valid price (minimum 0).
+              Please provide a valid price (minimum 0.01).
             </div>
           </div>
         </div>
 
         <div class="d-flex justify-content-end mt-4">
-          <button type="submit" class="btn btn-success me-2">
+          <button type="submit" class="btn btn-success me-2" id="submitBtn">
             <i class="bi bi-check-circle"></i>
             ${action == 'create' ? 'Create Supply' : 'Update Supply'}
           </button>
@@ -78,22 +81,4 @@
   </div>
 </div>
 
-<script>
-    (function () {
-        'use strict'
-
-        var forms = document.querySelectorAll('.needs-validation')
-
-        Array.prototype.slice.call(forms)
-            .forEach(function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
-
-                    form.classList.add('was-validated')
-                }, false)
-            })
-    })()
-</script>
+<script src="${pageContext.request.contextPath}/js/supply-form-validation.js"></script>
