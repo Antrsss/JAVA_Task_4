@@ -4,6 +4,9 @@ import by.zgirskaya.course.connection.DatabaseConnection;
 import by.zgirskaya.course.dao.cart.SupplyDao;
 import by.zgirskaya.course.exception.DaoException;
 import by.zgirskaya.course.model.cart.Supply;
+import by.zgirskaya.course.util.TableColumns;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,7 +14,8 @@ import java.util.List;
 import java.util.UUID;
 import java.sql.Date;
 
-class SupplyDaoImpl implements SupplyDao {
+public class SupplyDaoImpl implements SupplyDao {
+  private static final Logger logger = LogManager.getLogger();
 
   private static final String INSERT_SUPPLY = """
         INSERT INTO supplies (id, employee_id, publisher_id, date, supply_price)
@@ -33,6 +37,9 @@ class SupplyDaoImpl implements SupplyDao {
 
   @Override
   public void create(Supply supply) throws DaoException {
+    logger.debug("Creating supply for employee: {}, publisher: {}",
+        supply.getEmployeeId(), supply.getPublisherId());
+
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(INSERT_SUPPLY)) {
 
@@ -44,20 +51,30 @@ class SupplyDaoImpl implements SupplyDao {
       statement.setDouble(5, supply.getSupplyPrice());
 
       int affectedRows = statement.executeUpdate();
+      logger.debug("Supply creation executed, affected rows: {}", affectedRows);
 
       if (affectedRows == 0) {
+        logger.error("Creating supply failed - no rows affected for employee: {}, publisher: {}",
+            supply.getEmployeeId(), supply.getPublisherId());
         throw new DaoException("Creating supply failed, no rows affected.");
       }
 
       supply.setId(supplyId);
+      logger.info("Supply created successfully: {} (Employee: {}, Publisher: {}, Price: {})",
+          supplyId, supply.getEmployeeId(), supply.getPublisherId(), supply.getSupplyPrice());
 
     } catch (SQLException e) {
+      logger.error("Error creating supply for employee: {}, publisher: {}",
+          supply.getEmployeeId(), supply.getPublisherId(), e);
       throw new DaoException("Error creating supply", e);
     }
   }
 
   @Override
   public void updateSupply(Supply supply) throws DaoException {
+    logger.debug("Updating supply: {} (Employee: {}, Publisher: {})",
+        supply.getId(), supply.getEmployeeId(), supply.getPublisherId());
+
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(UPDATE_SUPPLY)) {
 
@@ -68,48 +85,67 @@ class SupplyDaoImpl implements SupplyDao {
       statement.setObject(5, supply.getId());
 
       int affectedRows = statement.executeUpdate();
+      logger.debug("Supply update executed, affected rows: {}", affectedRows);
 
       if (affectedRows == 0) {
+        logger.error("Updating supply failed - no rows affected for supply: {}", supply.getId());
         throw new DaoException("Updating supply failed, no rows affected.");
       }
 
+      logger.info("Supply updated successfully: {} (Employee: {}, Publisher: {}, Price: {})",
+          supply.getId(), supply.getEmployeeId(), supply.getPublisherId(), supply.getSupplyPrice());
+
     } catch (SQLException e) {
+      logger.error("Error updating supply: {}", supply.getId(), e);
       throw new DaoException("Error updating supply with id: " + supply.getId(), e);
     }
   }
 
   @Override
   public void deleteSupply(UUID id) throws DaoException {
+    logger.debug("Deleting supply: {}", id);
+
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(DELETE_SUPPLY)) {
 
       statement.setObject(1, id);
 
       int affectedRows = statement.executeUpdate();
+      logger.debug("Supply deletion executed, affected rows: {}", affectedRows);
 
       if (affectedRows == 0) {
+        logger.error("Deleting supply failed - no rows affected for supply: {}", id);
         throw new DaoException("Deleting supply failed, no rows affected.");
       }
 
+      logger.info("Supply deleted successfully: {}", id);
+
     } catch (SQLException e) {
+      logger.error("Error deleting supply: {}", id, e);
       throw new DaoException("Error deleting supply with id: " + id, e);
     }
   }
 
   @Override
   public List<Supply> getAllSupplies() throws DaoException {
+    logger.debug("Getting all supplies");
+
     List<Supply> supplies = new ArrayList<>();
 
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(SELECT_ALL_SUPPLIES);
          ResultSet resultSet = statement.executeQuery()) {
 
+      int count = 0;
       while (resultSet.next()) {
         Supply supply = extractSupplyFromResultSet(resultSet);
         supplies.add(supply);
+        count++;
       }
+      logger.debug("Found {} supplies total", count);
 
     } catch (SQLException e) {
+      logger.error("Error getting all supplies", e);
       throw new DaoException("Error getting all supplies", e);
     }
 
@@ -117,14 +153,19 @@ class SupplyDaoImpl implements SupplyDao {
   }
 
   private Supply extractSupplyFromResultSet(ResultSet resultSet) throws SQLException {
-    UUID id = (UUID) resultSet.getObject("id");
-    UUID employeeId = (UUID) resultSet.getObject("employee_id");
-    UUID publisherId = (UUID) resultSet.getObject("publisher_id");
-    Date date = resultSet.getDate("date");
-    Double supplyPrice = resultSet.getDouble("supply_price");
+    logger.debug("Extracting supply from ResultSet");
+
+    UUID id = (UUID) resultSet.getObject(TableColumns.Supply.ID);
+    UUID employeeId = (UUID) resultSet.getObject(TableColumns.Supply.EMPLOYEE_ID);
+    UUID publisherId = (UUID) resultSet.getObject(TableColumns.Supply.PUBLISHER_ID);
+    Date date = resultSet.getDate(TableColumns.Supply.DATE);
+    Double supplyPrice = resultSet.getDouble(TableColumns.Supply.SUPPLY_PRICE);
 
     Supply supply = new Supply(employeeId, publisherId, date, supplyPrice);
     supply.setId(id);
+
+    logger.debug("Extracted supply: {} (Employee: {}, Publisher: {}, Date: {}, Price: {})",
+        id, employeeId, publisherId, date, supplyPrice);
 
     return supply;
   }

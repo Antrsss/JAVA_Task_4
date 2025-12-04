@@ -22,5 +22,35 @@ public final class TableColumns {
     private Role() {}
   }
 
+  public static final class Item {
+    public static final String ID = "id";
+    public static final String ORDER_ID = "order_id";
+    public static final String BOOK_ID = "book_id";
+    public static final String QUANTITY = "quantity";
+    public static final String TOTAL_PRICE = "total_price";
+
+    private Item() {}
+  }
+
+  public static final class Order {
+    public static final String ID = "id";
+    public static final String CUSTOMER_ID = "customer_id";
+    public static final String PURCHASE_DATE = "purchase_date";
+    public static final String DELIVERY_DATE = "delivery_date";
+    public static final String ORDER_PRICE = "order_price";
+
+    private Order() {}
+  }
+
+  public static final class Supply {
+    public static final String ID = "id";
+    public static final String EMPLOYEE_ID = "employee_id";
+    public static final String PUBLISHER_ID = "publisher_id";
+    public static final String DATE = "date";
+    public static final String SUPPLY_PRICE = "supply_price";
+
+    private Supply() {}
+  }
+
   private TableColumns() {}
 }
