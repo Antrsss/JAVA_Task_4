@@ -99,36 +99,6 @@ public class AuthServiceImpl implements AuthService {
     }
   }
 
-  public boolean checkIdentifierExists(String identifier) throws ServiceException {
-    if (identifier == null || identifier.isBlank()) {
-      return false;
-    }
-
-    try {
-      if (identifier.contains("@")) {
-        return userDao.existsByEmail(identifier);
-      } else {
-        return userDao.existsByPhoneNumber(identifier);
-      }
-    } catch (DaoException e) {
-      logger.error("Error checking identifier existence: {}", identifier, e);
-      throw new ServiceException("Error checking identifier availability", e);
-    }
-  }
-
-  public Optional<AbstractUserModel> findUserByIdentifier(String identifier) throws ServiceException {
-    if (identifier == null || identifier.isBlank()) {
-      return Optional.empty();
-    }
-
-    try {
-      return userDao.findByIdentifier(identifier);
-    } catch (DaoException e) {
-      logger.error("Error finding user by identifier: {}", identifier, e);
-      throw new ServiceException("Error finding user", e);
-    }
-  }
-
   private void validateRegistrationInput(String name, String identifier, String password,
                                          String role, String username, String passportId) throws ServiceException {
     if (name == null || name.isBlank()) {

@@ -1,6 +1,6 @@
 package by.zgirskaya.course.util;
 
-public final class MappingParameters {
+public final class TableColumns {
 
   public static final class User {
     public static final String ID = "id";
@@ -16,5 +16,11 @@ public final class MappingParameters {
     private User() {}
   }
 
-  private MappingParameters() {}
+  public static final class Role {
+    public static final String ID = "id";
+
+    private Role() {}
+  }
+
+  private TableColumns() {}
 }

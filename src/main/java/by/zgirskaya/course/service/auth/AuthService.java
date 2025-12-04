@@ -9,6 +9,4 @@ public interface AuthService {
   Optional<AbstractUserModel> authenticate(String identifier, String password) throws ServiceException;
   AbstractUserModel registerUser(String name, String identifier, String role, String password,
                                  String username, String passportId) throws ServiceException;
-  boolean checkIdentifierExists(String identifier) throws ServiceException;
-  Optional<AbstractUserModel> findUserByIdentifier(String identifier) throws ServiceException;
 }
