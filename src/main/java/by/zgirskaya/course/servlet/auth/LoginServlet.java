@@ -45,30 +45,17 @@ public class LoginServlet extends HttpServlet {
 
       logger.info("Login attempt - Identifier: {}", identifier);
 
-      if (identifier == null || identifier.isBlank()) {
-        logger.warn("Login failed - no identifier provided");
-        request.setAttribute(AttributeParameters.ERROR, AuthParameters.Validation.PHONE_OR_EMAIL_REQUIRED);
-        showLoginPage(request, response);
-        return;
-      }
-
-      if (password == null || password.isBlank()) {
-        logger.warn("Login failed - no password provided");
-        request.setAttribute(AttributeParameters.ERROR, AuthParameters.Validation.PASSWORD_REQUIRED);
-        showLoginPage(request, response);
-        return;
-      }
-
       try {
         Optional<AbstractUserModel> userOptional = authService.authenticateUser(identifier, password);
 
         if (userOptional.isPresent()) {
           AbstractUserModel user = userOptional.get();
+          String userRole = authService.findRoleById(user.getRoleId());
           logger.info("Successful login for user: {} (ID: {})", identifier, user.getId());
 
           HttpSession session = request.getSession();
           session.setAttribute(AttributeParameters.USER, user);
-          session.setAttribute(AttributeParameters.USER_ROLE, user.getRoleId().toString());
+          session.setAttribute(AttributeParameters.USER_ROLE, userRole);
 
           response.sendRedirect(request.getContextPath() + PageParameters.Path.ROOT);
         } else {
@@ -90,8 +77,8 @@ public class LoginServlet extends HttpServlet {
       throws ServletException, IOException {
     logger.debug("Displaying login page");
 
-    request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.LOGIN);
+    request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.LOGIN_CONTENT);
     request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.LOGIN);
-    request.getRequestDispatcher(PageParameters.Jsp.LOGIN).forward(request, response);
+    request.getRequestDispatcher(PageParameters.Jsp.LOGIN_CONTENT).forward(request, response);
   }
 }

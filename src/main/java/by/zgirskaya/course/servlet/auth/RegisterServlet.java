@@ -50,11 +50,12 @@ public class RegisterServlet extends HttpServlet {
     try {
       try {
         AbstractUserModel user = authService.registerUser(name, identifier, role, password, username, passportId);
+        String userRole = authService.findRoleById(user.getRoleId());
         logger.info("User successfully registered: {} (ID: {})", identifier, user.getId());
 
         HttpSession session = request.getSession();
         session.setAttribute(AttributeParameters.USER, user);
-        session.setAttribute(AttributeParameters.USER_ROLE, user.getRoleId().toString());
+        session.setAttribute(AttributeParameters.USER_ROLE, userRole);
 
         response.sendRedirect(request.getContextPath() + PageParameters.Path.ROOT);
       } catch (ServiceException e) {
@@ -71,8 +72,8 @@ public class RegisterServlet extends HttpServlet {
       throws ServletException, IOException {
     logger.debug("Displaying registration page");
 
-    request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.REGISTER);
+    request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.REGISTER_CONTENT);
     request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.REGISTER);
-    request.getRequestDispatcher(PageParameters.Jsp.REGISTER).forward(request, response);
+    request.getRequestDispatcher(PageParameters.Jsp.REGISTER_CONTENT).forward(request, response);
   }
 }

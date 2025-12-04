@@ -23,7 +23,7 @@ public class AuthServiceImpl implements AuthService {
   public Optional<AbstractUserModel> authenticateUser(String identifier, String password) throws ServiceException {
     logger.info("Authentication attempt for identifier: {}", identifier);
 
-    if (AuthValidator.validateNotEmpty(identifier)) {
+    if (!AuthValidator.validateNotEmpty(identifier)) {
       logger.warn("Authentication failed - empty identifier");
       return Optional.empty();
     }
@@ -83,6 +83,20 @@ public class AuthServiceImpl implements AuthService {
     } catch (DaoException e) {
       logger.error("Registration failed for identifier: {}", identifier, e);
       throw new ServiceException("Registration failed: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public String findRoleById(UUID roleId) throws ServiceException {
+    logger.debug("Finding role name by ID: {}", roleId);
+
+    try {
+      String roleName = userDao.getRoleNameById(roleId);
+      logger.debug("Found role name: {} for ID: {}", roleName, roleId);
+      return roleName;
+    } catch (DaoException e) {
+      logger.error("Error finding role by ID: {}", roleId, e);
+      throw new ServiceException("Error finding role by ID: " + roleId, e);
     }
   }
 }

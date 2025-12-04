@@ -18,6 +18,7 @@ public final class TableColumns {
 
   public static final class Role {
     public static final String ID = "id";
+    public static final String ROLE_NAME = "role_name";
 
     private Role() {}
   }

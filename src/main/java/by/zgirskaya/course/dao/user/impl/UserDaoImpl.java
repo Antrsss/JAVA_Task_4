@@ -49,6 +49,8 @@ public class UserDaoImpl implements UserDao {
 
   private static final String SELECT_ROLE_ID_BY_NAME = "SELECT id FROM roles WHERE role_name = ?";
 
+  private static final String SELECT_ROLE_NAME_BY_ID = "SELECT role_name FROM roles WHERE id = ?";
+
   private static final String EXISTS_BY_PHONE_NUMBER = "SELECT 1 FROM users WHERE phone_number = ?";
 
   private static final String EXISTS_BY_EMAIL = "SELECT 1 FROM users WHERE email = ?";
@@ -100,6 +102,30 @@ public class UserDaoImpl implements UserDao {
   public UUID findEmployeeRoleId() throws DaoException {
     logger.debug("Finding employee role ID");
     return findRoleIdByName(AuthParameters.Roles.EMPLOYEE);
+  }
+
+  @Override
+  public String getRoleNameById(UUID roleId) throws DaoException {
+    logger.debug("Getting role name by ID: {}", roleId);
+
+    try (Connection connection = DatabaseConnection.getConnection();
+         PreparedStatement statement = connection.prepareStatement(SELECT_ROLE_NAME_BY_ID)) {
+
+      statement.setObject(1, roleId);
+      try (ResultSet resultSet = statement.executeQuery()) {
+        if (resultSet.next()) {
+          String roleName = resultSet.getString(TableColumns.Role.ROLE_NAME);
+          logger.debug("Found role name: {} for ID: {}", roleName, roleId);
+          return roleName;
+        } else {
+          logger.error("Role not found for ID: {}", roleId);
+          throw new DaoException("Role not found for ID: " + roleId);
+        }
+      }
+    } catch (SQLException e) {
+      logger.error("Error getting role name by ID: {}", roleId, e);
+      throw new DaoException("Error getting role name by ID: " + roleId, e);
+    }
   }
 
   @Override

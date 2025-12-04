@@ -27,8 +27,8 @@ public class HomeServlet extends HttpServlet {
 
     AbstractUserModel user = (AbstractUserModel) session.getAttribute(AttributeParameters.USER);
     request.setAttribute(AttributeParameters.USER, user);
-    request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.HOME);
+    request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.HOME_CONTENT);
     request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.HOME);
-    request.getRequestDispatcher(PageParameters.Jsp.TEMPLATE).forward(request, response);
+    request.getRequestDispatcher(PageParameters.Jsp.TEMPLATE_CONTENT).forward(request, response);
   }
 }
