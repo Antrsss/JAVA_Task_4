@@ -62,7 +62,6 @@ public class CreateSupplyCommand implements Command {
       UUID employeeId = currentUser.getId();
       UUID publisherId = UUID.fromString(request.getParameter("publisherId"));
       Date date = dateFormat.parse(request.getParameter("date"));
-      double supplyPrice = Double.parseDouble(request.getParameter("supplyPrice"));
 
       String[] bookIds = request.getParameterValues("bookIds[]");
       String[] quantities = request.getParameterValues("quantities[]");
@@ -73,7 +72,9 @@ public class CreateSupplyCommand implements Command {
         throw new ServiceException("Invalid book data provided");
       }
 
-      Supply supply = new Supply(employeeId, publisherId, date, supplyPrice);
+      double totalSupplyPrice = calculateTotalSupplyPrice(quantities, prices);
+
+      Supply supply = new Supply(employeeId, publisherId, date, totalSupplyPrice);
       Supply createdSupply = supplyService.createSupply(supply);
 
       logger.info("Supply created with ID: {}", createdSupply.getId());
@@ -92,6 +93,16 @@ public class CreateSupplyCommand implements Command {
       request.setAttribute(AttributeParameters.ERROR, "Invalid parameter format: " + e.getMessage());
       request.getRequestDispatcher(PageParameters.Jsp.SUPPLY_FORM_CONTENT).forward(request, response);
     }
+  }
+
+  private double calculateTotalSupplyPrice(String[] quantities, String[] prices) {
+    double total = 0.0;
+    for (int i = 0; i < quantities.length; i++) {
+      int quantity = Integer.parseInt(quantities[i]);
+      double unitPrice = Double.parseDouble(prices[i]);
+      total += quantity * unitPrice;
+    }
+    return total;
   }
 
   private List<Item> createSupplyItems(UUID supplyId, String[] bookIds, String[] quantities, String[] prices)
