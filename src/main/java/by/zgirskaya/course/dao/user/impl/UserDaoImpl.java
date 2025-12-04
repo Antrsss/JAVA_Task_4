@@ -7,6 +7,7 @@ import by.zgirskaya.course.model.user.AbstractUserModel;
 import by.zgirskaya.course.model.user.Customer;
 import by.zgirskaya.course.model.user.Employee;
 import by.zgirskaya.course.util.AuthParameters;
+import by.zgirskaya.course.util.MappingParameters;
 
 import java.sql.*;
 import java.util.Optional;
@@ -77,8 +78,13 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public Optional<AbstractUserModel> findByPhoneNumber(String phoneNumber) throws DaoException {
-    return findUserByParameter(SELECT_BY_PHONE_NUMBER, phoneNumber);
+  public UUID findCustomerRoleId() throws DaoException {
+    return findRoleIdByName(AuthParameters.Roles.CUSTOMER);
+  }
+
+  @Override
+  public UUID findEmployeeRoleId() throws DaoException {
+    return findRoleIdByName(AuthParameters.Roles.EMPLOYEE);
   }
 
   @Override
@@ -96,11 +102,6 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public Optional<AbstractUserModel> findByEmail(String email) throws DaoException {
-    return findUserByParameter(SELECT_BY_EMAIL, email);
-  }
-
-  @Override
   public boolean existsByEmail(String email) throws DaoException {
     try (Connection connection = DatabaseConnection.getConnection();
     PreparedStatement statement = connection.prepareStatement(EXISTS_BY_EMAIL)) {
@@ -115,13 +116,13 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public UUID findCustomerRoleId() throws DaoException {
-    return findRoleIdByName(AuthParameters.Roles.CUSTOMER);
+  public Optional<AbstractUserModel> findByPhoneNumber(String phoneNumber) throws DaoException {
+    return findUserByParameter(SELECT_BY_PHONE_NUMBER, phoneNumber);
   }
 
   @Override
-  public UUID findEmployeeRoleId() throws DaoException {
-    return findRoleIdByName(AuthParameters.Roles.EMPLOYEE);
+  public Optional<AbstractUserModel> findByEmail(String email) throws DaoException {
+    return findUserByParameter(SELECT_BY_EMAIL, email);
   }
 
   private UUID findRoleIdByName(String roleName) throws DaoException {
@@ -163,15 +164,15 @@ public class UserDaoImpl implements UserDao {
   }
 
   private AbstractUserModel mapResultSetToUser(ResultSet resultSet) throws SQLException {
-    UUID id = (UUID) resultSet.getObject("id");
-    String name = resultSet.getString("name");
-    String phoneNumber = resultSet.getString("phone_number");
-    String email = resultSet.getString("email");
-    String password = resultSet.getString("password");
-    UUID roleId = (UUID) resultSet.getObject("role_id");
+    UUID id = (UUID) resultSet.getObject(MappingParameters.User.ID);
+    String name = resultSet.getString(MappingParameters.User.NAME);
+    String phoneNumber = resultSet.getString(MappingParameters.User.PHONE_NUMBER);
+    String email = resultSet.getString(MappingParameters.User.EMAIL);
+    String password = resultSet.getString(MappingParameters.User.PASSWORD);
+    UUID roleId = (UUID) resultSet.getObject(MappingParameters.User.ROLE_ID);
 
-    String username = resultSet.getString("username");
-    String passportId = resultSet.getString("passport_id");
+    String username = resultSet.getString(MappingParameters.User.USERNAME);
+    String passportId = resultSet.getString(MappingParameters.User.PASSPORT_ID);
 
     AbstractUserModel user;
 
