@@ -18,8 +18,8 @@ public class ItemDaoImpl implements ItemDao {
   private static final Logger logger = LogManager.getLogger();
 
   private static final String INSERT_ITEM = """
-        INSERT INTO items (id, order_id, book_id, quantity, total_price)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO items (order_id, book_id, quantity, total_price)
+        VALUES (?, ?, ?, ?)
         """;
 
   private static final String SELECT_ITEMS_BY_ORDER_ID = """
@@ -57,14 +57,13 @@ public class ItemDaoImpl implements ItemDao {
     logger.debug("Creating item for order: {}, book: {}", item.getOrderId(), item.getBookId());
 
     try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement statement = connection.prepareStatement(INSERT_ITEM)) {
+         PreparedStatement statement = connection.prepareStatement(
+             INSERT_ITEM, Statement.RETURN_GENERATED_KEYS)) {
 
-      UUID itemId = UUID.randomUUID();
-      statement.setObject(1, itemId);
-      statement.setObject(2, item.getOrderId());
-      statement.setObject(3, item.getBookId());
-      statement.setInt(4, item.getQuantity());
-      statement.setDouble(5, item.getTotalPrice());
+      statement.setObject(1, item.getOrderId());
+      statement.setObject(2, item.getBookId());
+      statement.setInt(3, item.getQuantity());
+      statement.setDouble(4, item.getTotalPrice());
 
       int affectedRows = statement.executeUpdate();
       logger.debug("Item creation executed, affected rows: {}", affectedRows);
@@ -75,9 +74,20 @@ public class ItemDaoImpl implements ItemDao {
         throw new DaoException("Creating item failed, no rows affected.");
       }
 
-      item.setId(itemId);
+      try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+        if (generatedKeys.next()) {
+          UUID generatedId = (UUID) generatedKeys.getObject(1);
+          item.setId(generatedId);
+          logger.debug("Generated ID obtained for item: {}", generatedId);
+        } else {
+          logger.error("Creating item failed - no ID obtained for order: {}, book: {}",
+              item.getOrderId(), item.getBookId());
+          throw new DaoException("Creating item failed, no ID obtained.");
+        }
+      }
+
       logger.info("Item created successfully: {} (Order: {}, Book: {})",
-          itemId, item.getOrderId(), item.getBookId());
+          item.getId(), item.getOrderId(), item.getBookId());
 
     } catch (SQLException e) {
       logger.error("Error creating item for order: {}, book: {}",
