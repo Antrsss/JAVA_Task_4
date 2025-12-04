@@ -13,14 +13,14 @@ public class DatabaseConnection {
   private static final Logger logger = LogManager.getLogger();
   private static final DataSource dataSource;
 
-  private static final String ENV_CONTEXT_NAME = "java:/comp/env";
-  private static final String JDBC_DRIVER = "jdbc/postgres";
+  private static final String JNDI_ENVIRONMENT_CONTEXT = "java:/comp/env";
+  private static final String JNDI_DATASOURCE_NAME = "jdbc/postgres";
 
   static {
     try {
       Context initContext = new InitialContext();
-      Context envContext = (Context) initContext.lookup(ENV_CONTEXT_NAME);
-      dataSource = (DataSource) envContext.lookup(JDBC_DRIVER);
+      Context envContext = (Context) initContext.lookup(JNDI_ENVIRONMENT_CONTEXT);
+      dataSource = (DataSource) envContext.lookup(JNDI_DATASOURCE_NAME);
     } catch (Exception e) {
       logger.fatal("Error while initializing DataSource", e);
       throw new ExceptionInInitializerError("Failed to initialize DataSource: " + e.getMessage());
