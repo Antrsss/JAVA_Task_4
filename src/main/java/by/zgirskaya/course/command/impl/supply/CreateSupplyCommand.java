@@ -45,7 +45,7 @@ public class CreateSupplyCommand implements Command {
     String userRole = (String) session.getAttribute(AttributeParameters.USER_ROLE);
     if (!AuthParameters.Roles.EMPLOYEE.equals(userRole)) {
       request.setAttribute(AttributeParameters.ERROR, "Only employees can create supplies");
-      request.getRequestDispatcher("/error.jsp").forward(request, response);
+      request.getRequestDispatcher(PageParameters.Jsp.ERROR_CONTENT).forward(request, response);
       return;
     }
 
