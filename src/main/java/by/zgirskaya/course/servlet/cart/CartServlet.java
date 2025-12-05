@@ -4,7 +4,6 @@ import by.zgirskaya.course.command.Command;
 import by.zgirskaya.course.command.CommandFactory;
 import by.zgirskaya.course.exception.DaoException;
 import by.zgirskaya.course.exception.ServiceException;
-import by.zgirskaya.course.util.PageParameters;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,8 +15,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.text.ParseException;
 
-@WebServlet(PageParameters.Path.SUPPLIES)
-public class SupplyServlet extends HttpServlet {
+@WebServlet(name = "CartServlet", urlPatterns = {"/cart", "/cart/*"})
+public class CartServlet extends HttpServlet {
   private static final Logger logger = LogManager.getLogger();
 
   @Override
@@ -25,10 +24,10 @@ public class SupplyServlet extends HttpServlet {
       throws ServletException, IOException {
 
     try {
-      Command command = CommandFactory.createSupplyCommand(request);
+      Command command = CommandFactory.createOrderCommand(request);
       command.execute(request, response);
     } catch (ServiceException | DaoException | ParseException e) {
-      logger.error("Error processing GET supply request", e);
+      logger.error("Error processing GET cart request", e);
     }
   }
 
@@ -37,10 +36,22 @@ public class SupplyServlet extends HttpServlet {
       throws ServletException, IOException {
 
     try {
-      Command command = CommandFactory.createSupplyCommand(request);
+      Command command = CommandFactory.createOrderCommand(request);
       command.execute(request, response);
     } catch (ServiceException | DaoException | ParseException e) {
-      logger.error("Error processing POST supply request", e);
+      logger.error("Error processing POST cart request", e);
+    }
+  }
+
+  @Override
+  protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+
+    try {
+      Command command = CommandFactory.createOrderCommand(request);
+      command.execute(request, response);
+    } catch (ServiceException | DaoException | ParseException e) {
+      logger.error("Error processing DELETE cart request", e);
     }
   }
 }

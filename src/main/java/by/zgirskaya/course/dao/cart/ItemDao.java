@@ -9,10 +9,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ItemDao extends BaseDao<Item> {
-  List<Item> findItemsByOrderId(UUID orderId) throws DaoException;
-  Optional<Item> findItemById(UUID id) throws DaoException;
+  Optional<Item> findById(UUID id) throws DaoException;
+  boolean update(Item item) throws DaoException;
+  boolean delete(UUID id) throws DaoException;
 
-  void increaseItemCount(Item item) throws DaoException;
-  void decreaseItemCount(Item item) throws DaoException;
-  void deleteItemById(UUID itemId) throws DaoException;
+  List<Item> findItemsByOrderId(UUID orderId) throws DaoException;
+  Item findByOrderIdAndBookId(UUID orderId, UUID bookId) throws DaoException;
+  void deleteItemsByOrderId(UUID orderId) throws DaoException;
 }

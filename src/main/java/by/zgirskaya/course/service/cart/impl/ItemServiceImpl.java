@@ -47,18 +47,19 @@ public class ItemServiceImpl implements ItemService {
     }
 
     try {
-      Item item = itemDao.findItemById(itemId)
-          .orElseThrow(() -> new ServiceException("Item with ID " + itemId + " not found"));
+      Optional<Item> itemOpt = itemDao.findById(itemId);
+      if (!itemOpt.isPresent()) {
+        throw new ServiceException("Item with ID " + itemId + " not found");
+      }
 
-      itemDao.increaseItemCount(item);
-
-      Item updatedItem = itemDao.findItemById(itemId)
-          .orElseThrow(() -> new ServiceException("Failed to retrieve updated item"));
+      Item item = itemOpt.get();
+      item.setQuantity(item.getQuantity() + 1);
+      itemDao.update(item);
 
       logger.info("Item count increased: {} (New quantity: {}, Total: {})",
-          itemId, updatedItem.getQuantity(), updatedItem.getTotalPrice());
+          itemId, item.getQuantity(), item.getTotalPrice());
 
-      return updatedItem;
+      return item;
 
     } catch (DaoException e) {
       logger.error("Failed to increase item count: {}", itemId, e);
@@ -75,20 +76,24 @@ public class ItemServiceImpl implements ItemService {
     }
 
     try {
-      Item item = itemDao.findItemById(itemId)
-          .orElseThrow(() -> new ServiceException("Item with ID " + itemId + " not found"));
+      Optional<Item> itemOpt = itemDao.findById(itemId);
+      if (!itemOpt.isPresent()) {
+        throw new ServiceException("Item with ID " + itemId + " not found");
+      }
 
-      itemDao.decreaseItemCount(item);
+      Item item = itemOpt.get();
 
-      Optional<Item> updatedItem = itemDao.findItemById(itemId);
-
-      if (updatedItem.isPresent()) {
-        logger.info("Item count decreased: {} (New quantity: {}, Total: {})",
-            itemId, updatedItem.get().getQuantity(), updatedItem.get().getTotalPrice());
-        return updatedItem.get();
-      } else {
+      if (item.getQuantity() <= 1) {
+        itemDao.delete(itemId);
         logger.info("Item deleted after decreasing count: {}", itemId);
         return null;
+      } else {
+        item.setQuantity(item.getQuantity() - 1);
+        itemDao.update(item);
+
+        logger.info("Item count decreased: {} (New quantity: {}, Total: {})",
+            itemId, item.getQuantity(), item.getTotalPrice());
+        return item;
       }
 
     } catch (DaoException e) {
@@ -106,7 +111,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     try {
-      itemDao.deleteItemById(itemId);
+      itemDao.delete(itemId);
       logger.info("Item deleted successfully: {}", itemId);
 
     } catch (DaoException e) {
@@ -121,23 +126,17 @@ public class ItemServiceImpl implements ItemService {
         orderId, bookId, quantity, price);
 
     try {
-      List<Item> existingItems = findItemsByOrderId(orderId);
-      Optional<Item> existingItem = existingItems.stream()
-          .filter(item -> item.getBookId().equals(bookId))
-          .findFirst();
+      Item existingItem = itemDao.findByOrderIdAndBookId(orderId, bookId);
 
-      if (existingItem.isPresent()) {
-        logger.debug("Item already exists in order, increasing quantity");
-        Item item = existingItem.get();
-        for (int i = 1; i < quantity; i++) {
-          itemDao.increaseItemCount(item);
-        }
-        return itemDao.findItemById(item.getId())
-            .orElseThrow(() -> new ServiceException("Failed to retrieve updated item"));
+      if (existingItem != null) {
+        existingItem.setQuantity(existingItem.getQuantity() + quantity);
+        existingItem.setUnitPrice(price);
+        itemDao.update(existingItem);
+
+        logger.debug("Updated existing item in order: {}", existingItem.getId());
+        return existingItem;
       } else {
-        double totalPrice = price * quantity;
-        Item newItem = new Item(orderId, bookId, quantity, totalPrice);
-
+        Item newItem = new Item(orderId, bookId, quantity, price);
         itemDao.create(newItem);
 
         logger.info("New item added to order: {} (ID: {})", orderId, newItem.getId());
@@ -162,11 +161,10 @@ public class ItemServiceImpl implements ItemService {
       List<Item> items = findItemsByOrderId(orderId);
 
       double totalAmount = items.stream()
-          .mapToDouble(Item::getTotalPrice)
+          .mapToDouble(item -> item.getTotalPrice() != null ? item.getTotalPrice() : 0.0)
           .sum();
 
       logger.debug("Total amount for order {}: {}", orderId, totalAmount);
-
       return totalAmount;
 
     } catch (ServiceException e) {
@@ -191,7 +189,6 @@ public class ItemServiceImpl implements ItemService {
           .sum();
 
       logger.debug("Total quantity for order {}: {}", orderId, totalQuantity);
-
       return totalQuantity;
 
     } catch (ServiceException e) {

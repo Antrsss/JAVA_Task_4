@@ -1,0 +1,58 @@
+package by.zgirskaya.course.command.impl.order;
+
+import by.zgirskaya.course.command.Command;
+import by.zgirskaya.course.exception.ServiceException;
+import by.zgirskaya.course.model.cart.Order;
+import by.zgirskaya.course.model.user.AbstractUserModel;
+import by.zgirskaya.course.service.cart.OrderService;
+import by.zgirskaya.course.service.cart.impl.OrderServiceImpl;
+import by.zgirskaya.course.util.AttributeParameters;
+import by.zgirskaya.course.util.PageParameters;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.util.List;
+
+public class ViewOrdersCommand implements Command {
+  private static final Logger logger = LogManager.getLogger();
+  private final OrderService orderService = new OrderServiceImpl();
+
+  @Override
+  public void execute(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException, ServiceException {
+
+    HttpSession session = request.getSession(false);
+    if (session == null) {
+      response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
+      return;
+    }
+
+    AbstractUserModel currentUser = (AbstractUserModel) session.getAttribute(AttributeParameters.USER);
+    if (currentUser == null) {
+      response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
+      return;
+    }
+
+    try {
+      List<Order> completedOrders = orderService.getCompletedOrders(currentUser.getId());
+      double totalAmount = orderService.getTotalOrdersAmountByCustomerId(currentUser.getId());
+      int orderCount = completedOrders.size();
+
+      request.setAttribute("orders", completedOrders);
+      request.setAttribute("totalAmount", totalAmount);
+      request.setAttribute("orderCount", orderCount);
+
+      request.getRequestDispatcher(PageParameters.Jsp.ORDERS_CONTENT).forward(request, response);
+
+    } catch (ServiceException e) {
+      logger.error("Error loading orders", e);
+      request.setAttribute(AttributeParameters.ERROR, "Failed to load orders: " + e.getMessage());
+      request.getRequestDispatcher(PageParameters.Jsp.ERROR_CONTENT).forward(request, response);
+    }
+  }
+}

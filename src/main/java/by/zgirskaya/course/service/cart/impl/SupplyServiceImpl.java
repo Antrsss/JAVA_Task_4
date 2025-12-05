@@ -52,30 +52,6 @@ public class SupplyServiceImpl implements SupplyService {
   }
 
   @Override
-  public Supply updateSupply(Supply supply) throws ServiceException {
-    logger.info("Updating supply: {}", supply.getId());
-
-    if (supply.getId() == null) {
-      throw new ServiceException("Supply ID is required for update");
-    }
-
-    try {
-      if (!isSupplyExists(supply.getId())) {
-        throw new ServiceException("Supply with ID " + supply.getId() + " not found");
-      }
-
-      supplyDao.updateSupply(supply);
-      logger.info("Supply updated successfully: {}", supply.getId());
-
-      return supply;
-
-    } catch (DaoException e) {
-      logger.error("Failed to update supply: {}", supply.getId(), e);
-      throw new ServiceException("Failed to update supply: " + e.getMessage(), e);
-    }
-  }
-
-  @Override
   public void deleteSupply(UUID id) throws ServiceException {
     logger.info("Deleting supply: {}", id);
 

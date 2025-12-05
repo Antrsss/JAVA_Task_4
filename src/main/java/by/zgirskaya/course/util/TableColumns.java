@@ -29,6 +29,7 @@ public final class TableColumns {
     public static final String BOOK_ID = "book_id";
     public static final String QUANTITY = "quantity";
     public static final String TOTAL_PRICE = "total_price";
+    public static final String UNIT_PRICE = "unit_price";
 
     private Item() {}
   }
@@ -39,6 +40,7 @@ public final class TableColumns {
     public static final String PURCHASE_DATE = "purchase_date";
     public static final String DELIVERY_DATE = "delivery_date";
     public static final String ORDER_PRICE = "order_price";
+    public static final String STATUS = "status";
 
     private Order() {}
   }
