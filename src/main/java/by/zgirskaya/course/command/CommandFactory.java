@@ -1,5 +1,7 @@
 package by.zgirskaya.course.command;
 
+import by.zgirskaya.course.command.impl.book.ListBooksCommand;
+import by.zgirskaya.course.command.impl.book.ViewBookCommand;
 import by.zgirskaya.course.command.impl.order.*;
 import by.zgirskaya.course.command.impl.supply.CreateSupplyCommand;
 import by.zgirskaya.course.command.impl.supply.DeleteSupplyCommand;
@@ -11,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class CommandFactory {
   private static final String CREATE_ACTION = "create";
   private static final String NEW_ACTION = "new";
+  private static final String VIEW_ACTION = "view";
 
   private static final String ADD_TO_CART_ACTION = "addToCart";
   private static final String REMOVE_FROM_CART_ACTION = "removeFromCart";
@@ -23,6 +26,9 @@ public class CommandFactory {
 
   private static final String DELETE_PATH = "/delete/";
   private static final String NEW_PATH = "/new";
+  private static final String VIEW_PATH = "/view/";
+  private static final String CART_PATH = "/cart";
+  private static final String BOOKS_PATH = "/books";
 
   private CommandFactory() {}
 
@@ -94,5 +100,21 @@ public class CommandFactory {
     }
 
     return new ViewCartCommand();
+  }
+
+  public static Command createBookCommand(HttpServletRequest request) {
+    String pathInfo = request.getPathInfo();
+    String action = request.getParameter(AttributeParameters.ACTION);
+    String method = request.getMethod();
+
+    if (pathInfo != null && pathInfo.contains(VIEW_PATH)) {
+      return new ViewBookCommand();
+    }
+
+    if (GET_REQUEST.equalsIgnoreCase(method)) {
+      return new ListBooksCommand();
+    }
+
+    return new ListBooksCommand();
   }
 }
