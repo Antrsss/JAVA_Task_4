@@ -301,11 +301,16 @@
 
               <div class="book-actions">
                 <a href="${pageContext.request.contextPath}/books/view/${book.id}" class="btn btn-view">View Details</a>
-                <button class="btn btn-add"
-                        onclick="addToCart('${book.id}')"
-                        <c:if test="${book.quantity == 0}">disabled</c:if>>
-                  Add to Cart
-                </button>
+
+                <form method="post" action="${pageContext.request.contextPath}/cart" style="display: inline; flex: 1;">
+                  <input type="hidden" name="action" value="addToCart">
+                  <input type="hidden" name="bookId" value="${book.id}">
+                  <input type="hidden" name="quantity" value="1">
+                  <button type="submit" class="btn btn-add"
+                          <c:if test="${book.quantity == 0}">disabled</c:if>>
+                    Add to Cart
+                  </button>
+                </form>
               </div>
             </div>
           </div>
@@ -325,36 +330,6 @@
   </div>
 </div>
 
-<script>
-    function addToCart(bookId) {
-        fetch('${pageContext.request.contextPath}/cart/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                bookId: bookId,
-                quantity: 1
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Book added to cart!');
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while adding to cart');
-            });
-    }
-
-    // Функция для форматирования цены
-    function formatPrice(price) {
-        return '$' + parseFloat(price).toFixed(2);
-    }
-</script>
+<script src="${pageContext.request.contextPath}/static/js/add-to-cart.js"></script>
 </body>
 </html>
