@@ -43,7 +43,6 @@ public final class PageParameters {
     public static final String BOOKS_REDIRECT = "/books";
     public static final String CART_REDIRECT = "/cart";
     public static final String ORDERS_REDIRECT = "/orders";
-    public static final String ORDER_DETAILS_REDIRECT = "/orders/view";
     public static final String ORDER_CONFIRMATION_REDIRECT = "/order/confirmation";
 
     private Path() {}

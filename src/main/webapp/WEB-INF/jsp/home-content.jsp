@@ -81,12 +81,7 @@
                 <h6>Management Tools:</h6>
                 <ul class="list-group">
                   <li class="list-group-item">
-                    <a href="${pageContext.request.contextPath}/customers" class="text-decoration-none">
-                      <i class="fas fa-user-cog me-2"></i>Manage Customers
-                    </a>
-                  </li>
-                  <li class="list-group-item">
-                    <a href="${pageContext.request.contextPath}/supplies/new" class="text-decoration-none">
+                    <a href="${pageContext.request.contextPath}/supplies?action=new" class="text-decoration-none">
                       <i class="fas fa-boxes me-2"></i>Create New Supply Order
                     </a>
                   </li>
@@ -101,16 +96,8 @@
                 <h6>Employee Features:</h6>
                 <div class="list-group">
                   <div class="list-group-item">
-                    <strong>Customer Management</strong>
-                    <small class="d-block text-muted">Full CRUD operations on customer accounts</small>
-                  </div>
-                  <div class="list-group-item">
                     <strong>Supply Orders</strong>
                     <small class="d-block text-muted">Record book orders from publishers with quantities and costs</small>
-                  </div>
-                  <div class="list-group-item">
-                    <strong>Supply Items</strong>
-                    <small class="d-block text-muted">Track book ID, quantity, and total cost per supply item</small>
                   </div>
                 </div>
               </div>
