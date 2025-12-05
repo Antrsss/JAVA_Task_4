@@ -22,7 +22,7 @@ public final class PageParameters {
 
     public static final String CART_CONTENT = "/WEB-INF/jsp/cart/cart-content.jsp";
     public static final String ORDERS_CONTENT = "/WEB-INF/jsp/cart/orders-content.jsp";
-    public static final String ORDER_FORM_CONTENT = "/WEB-INF/jsp/cart/order-form-content.jsp";
+    public static final String ORDER_DETAILS_CONTENT = "/WEB-INF/jsp/cart/order-details.jsp";
 
     public static final String ERROR_CONTENT = "/WEB-INF/jsp/common/error.jsp";
 
@@ -43,6 +43,7 @@ public final class PageParameters {
     public static final String BOOKS_REDIRECT = "/books";
     public static final String CART_REDIRECT = "/cart";
     public static final String ORDERS_REDIRECT = "/orders";
+    public static final String ORDER_DETAILS_REDIRECT = "/orders/view";
     public static final String ORDER_CONFIRMATION_REDIRECT = "/order/confirmation";
 
     private Path() {}

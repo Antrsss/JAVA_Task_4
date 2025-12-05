@@ -6,6 +6,8 @@ import by.zgirskaya.course.command.impl.cart.AddToCartCommand;
 import by.zgirskaya.course.command.impl.cart.CheckoutCommand;
 import by.zgirskaya.course.command.impl.cart.RemoveFromCartCommand;
 import by.zgirskaya.course.command.impl.cart.ViewCartCommand;
+import by.zgirskaya.course.command.impl.order.ViewOrderDetailsCommand;
+import by.zgirskaya.course.command.impl.order.ViewOrdersCommand;
 import by.zgirskaya.course.command.impl.supply.CreateSupplyCommand;
 import by.zgirskaya.course.command.impl.supply.DeleteSupplyCommand;
 import by.zgirskaya.course.command.impl.supply.ListSuppliesCommand;
@@ -17,6 +19,7 @@ public class CommandFactory {
   private static final String CREATE_ACTION = "create";
   private static final String NEW_ACTION = "new";
   private static final String VIEW_ACTION = "view";
+  private static final String DETAILS_ACTION = "details";
 
   private static final String ADD_TO_CART_ACTION = "addToCart";
   private static final String REMOVE_FROM_CART_ACTION = "removeFromCart";
@@ -31,6 +34,7 @@ public class CommandFactory {
   private static final String VIEW_PATH = "/view/";
   private static final String CART_PATH = "/cart";
   private static final String BOOKS_PATH = "/books";
+  private static final String ORDERS_PATH = "/orders";
 
   private CommandFactory() {}
 
@@ -104,5 +108,20 @@ public class CommandFactory {
     }
 
     return new ViewCartCommand();
+  }
+
+  public static Command createOrderCommand(HttpServletRequest request) {
+    String pathInfo = request.getPathInfo();
+    String action = request.getParameter(AttributeParameters.ACTION);
+
+    if (pathInfo != null && pathInfo.startsWith("/view/")) {
+      return new ViewOrderDetailsCommand();
+    }
+
+    if (DETAILS_ACTION.equals(action)) {
+      return new ViewOrderDetailsCommand();
+    }
+
+    return new ViewOrdersCommand();
   }
 }

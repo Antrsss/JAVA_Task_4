@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.text.ParseException;
 
-@WebServlet(name = "OrderServlet", urlPatterns = {"/orders", "/orders/*"})
+@WebServlet(name = "OrderServlet", urlPatterns = {"/orders", "/orders/*", "/order/confirmation"})
 public class OrderServlet extends HttpServlet {
   private static final Logger logger = LogManager.getLogger();
 
@@ -23,35 +23,23 @@ public class OrderServlet extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    /*try {
+    try {
       Command command = CommandFactory.createOrderCommand(request);
       command.execute(request, response);
     } catch (ServiceException | DaoException | ParseException e) {
       logger.error("Error processing GET order request", e);
-    }*/
+    }
   }
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    /*try {
+    try {
       Command command = CommandFactory.createOrderCommand(request);
       command.execute(request, response);
     } catch (ServiceException | DaoException | ParseException e) {
       logger.error("Error processing POST order request", e);
-    }*/
-  }
-
-  @Override
-  protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-
-    /*try {
-      Command command = CommandFactory.createOrderCommand(request);
-      command.execute(request, response);
-    } catch (ServiceException | DaoException | ParseException e) {
-      logger.error("Error processing DELETE order request", e);
-    }*/
+    }
   }
 }

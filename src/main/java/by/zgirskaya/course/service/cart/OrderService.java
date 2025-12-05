@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface OrderService {
-  double getTotalOrdersAmountByCustomerId(UUID customerId) throws ServiceException;
   List<Order> getCompletedOrders(UUID customerId) throws ServiceException;
   List<Item> getOrderItems(UUID orderId) throws ServiceException;
+  Order getOrderById(UUID orderId) throws ServiceException;
   UUID createOrderFromCart(Cart cart, List<Item> items, Date deliveryDate) throws ServiceException;
 }

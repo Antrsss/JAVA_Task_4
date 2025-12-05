@@ -40,11 +40,9 @@ public class ViewOrdersCommand implements Command {
 
     try {
       List<Order> completedOrders = orderService.getCompletedOrders(currentUser.getId());
-      double totalAmount = orderService.getTotalOrdersAmountByCustomerId(currentUser.getId());
       int orderCount = completedOrders.size();
 
       request.setAttribute("orders", completedOrders);
-      request.setAttribute("totalAmount", totalAmount);
       request.setAttribute("orderCount", orderCount);
 
       request.getRequestDispatcher(PageParameters.Jsp.ORDERS_CONTENT).forward(request, response);

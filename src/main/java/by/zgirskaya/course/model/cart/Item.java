@@ -40,5 +40,5 @@ public class Item extends AbstractModel {
     }
   }
 
-  public void setOrderId(UUID cartId) { this.orderId = cartId; }
+  public void setOrderId(UUID orderId) { this.orderId = orderId; }
 }

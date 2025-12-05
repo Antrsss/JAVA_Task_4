@@ -33,7 +33,6 @@ public class ItemDaoImpl implements ItemDao {
         FROM items WHERE order_id = ? ORDER BY book_id
         """;
 
-  // ИЗМЕНЕНО: Добавлено cart_id в UPDATE
   private static final String UPDATE_ITEM = """
         UPDATE items
         SET cart_id = ?, order_id = ?, book_id = ?, quantity = ?, total_price = ?, unit_price = ?
@@ -46,7 +45,6 @@ public class ItemDaoImpl implements ItemDao {
     WHERE id = ?
     """;
 
-  // ИЗМЕНЕНО: Поиск по cart_id вместо order_id
   private static final String FIND_ITEM_BY_CART_AND_BOOK = """
         SELECT id, cart_id, order_id, book_id, quantity, total_price, unit_price
         FROM items
@@ -103,12 +101,12 @@ public class ItemDaoImpl implements ItemDao {
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(UPDATE_ITEM)) {
 
-      statement.setObject(1, item.getCartId());
-      statement.setObject(2, item.getOrderId());
+      statement.setObject(1, item.getCartId());      // cart_id
+      statement.setObject(2, item.getOrderId());     // order_id
       statement.setObject(3, item.getBookId());
       statement.setInt(4, item.getQuantity());
-      statement.setDouble(5, item.getTotalPrice() != null ? item.getTotalPrice() : 0.0);
-      statement.setDouble(6, item.getUnitPrice() != null ? item.getUnitPrice() : 0.0);
+      statement.setDouble(5, item.getUnitPrice());
+      statement.setDouble(6, item.getTotalPrice());
       statement.setObject(7, item.getId());
 
       int affectedRows = statement.executeUpdate();
@@ -166,7 +164,7 @@ public class ItemDaoImpl implements ItemDao {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         if (resultSet.next()) {
-          return extractItemFromResultSet(resultSet);  // ИЗМЕНЕНО: используем новый метод
+          return extractItemFromResultSet(resultSet);
         }
       }
 
@@ -195,7 +193,7 @@ public class ItemDaoImpl implements ItemDao {
 
       try (ResultSet resultSet = statement.executeQuery()) {
         if (resultSet.next()) {
-          return extractItemFromResultSet(resultSet);  // ИЗМЕНЕНО: используем новый метод
+          return extractItemFromResultSet(resultSet);
         }
       }
 
@@ -237,7 +235,6 @@ public class ItemDaoImpl implements ItemDao {
     return items;
   }
 
-  // ИЗМЕНЕНО: Добавлен новый метод для поиска по cart_id
   @Override
   public List<Item> findItemsByCartId(UUID cartId) throws DaoException {
     logger.debug("Getting items for cart: {}", cartId);

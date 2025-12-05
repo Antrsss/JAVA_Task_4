@@ -11,13 +11,6 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
       <a class="navbar-brand" href="${pageContext.request.contextPath}/">Bookstore</a>
-      <div class="navbar-nav me-auto">
-        <c:if test="${not empty sessionScope.user}">
-          <a class="nav-link" href="${pageContext.request.contextPath}/users">Users</a>
-          <a class="nav-link" href="${pageContext.request.contextPath}/orders">Orders</a>
-          <a class="nav-link" href="${pageContext.request.contextPath}/supplies">Supplies</a>
-        </c:if>
-      </div>
       <div class="navbar-nav">
         <c:choose>
           <c:when test="${not empty sessionScope.user}">

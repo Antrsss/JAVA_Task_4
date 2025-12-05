@@ -41,13 +41,8 @@
                     </a>
                   </li>
                   <li class="list-group-item">
-                    <a href="${pageContext.request.contextPath}/my-orders" class="text-decoration-none">
+                    <a href="${pageContext.request.contextPath}/orders" class="text-decoration-none">
                       <i class="fas fa-list-alt me-2"></i>My Orders History
-                    </a>
-                  </li>
-                  <li class="list-group-item">
-                    <a href="${pageContext.request.contextPath}/reviews" class="text-decoration-none">
-                      <i class="fas fa-star me-2"></i>My Reviews & Ratings
                     </a>
                   </li>
                 </ul>
@@ -62,14 +57,6 @@
                   <div class="list-group-item">
                     <strong>Order Management</strong>
                     <small class="d-block text-muted">Place orders and track delivery dates</small>
-                  </div>
-                  <div class="list-group-item">
-                    <strong>Reviews & Ratings</strong>
-                    <small class="d-block text-muted">Leave feedback and rate books you've purchased</small>
-                  </div>
-                  <div class="list-group-item">
-                    <strong>Activity Log</strong>
-                    <small class="d-block text-muted">All your actions are tracked in activity log</small>
                   </div>
                 </div>
               </div>
@@ -108,16 +95,6 @@
                       <i class="fas fa-clipboard-list me-2"></i>View Supply Orders
                     </a>
                   </li>
-                  <li class="list-group-item">
-                    <a href="${pageContext.request.contextPath}/discounts" class="text-decoration-none">
-                      <i class="fas fa-tag me-2"></i>Manage Discounts
-                    </a>
-                  </li>
-                  <li class="list-group-item">
-                    <a href="${pageContext.request.contextPath}/activity-log" class="text-decoration-none">
-                      <i class="fas fa-history me-2"></i>View Activity Log
-                    </a>
-                  </li>
                 </ul>
               </div>
               <div class="col-md-6">
@@ -132,35 +109,9 @@
                     <small class="d-block text-muted">Record book orders from publishers with quantities and costs</small>
                   </div>
                   <div class="list-group-item">
-                    <strong>Discount Management</strong>
-                    <small class="d-block text-muted">Create/modify/delete discounts for specific books or publishers</small>
-                  </div>
-                  <div class="list-group-item">
                     <strong>Supply Items</strong>
                     <small class="d-block text-muted">Track book ID, quantity, and total cost per supply item</small>
                   </div>
-                  <div class="list-group-item">
-                    <strong>Activity Tracking</strong>
-                    <small class="d-block text-muted">All employee actions are logged for accountability</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Quick Actions for Employee -->
-            <div class="row mt-4">
-              <div class="col-12">
-                <h6>Quick Actions:</h6>
-                <div class="d-grid gap-2 d-md-flex">
-                  <a href="${pageContext.request.contextPath}/customers/create" class="btn btn-outline-primary btn-sm">
-                    <i class="fas fa-user-plus me-1"></i>Add New Customer
-                  </a>
-                  <a href="${pageContext.request.contextPath}/supplies/create" class="btn btn-outline-success btn-sm">
-                    <i class="fas fa-truck-loading me-1"></i>Create Supply Order
-                  </a>
-                  <a href="${pageContext.request.contextPath}/discounts/create" class="btn btn-outline-warning btn-sm">
-                    <i class="fas fa-percentage me-1"></i>Create Discount
-                  </a>
                 </div>
               </div>
             </div>

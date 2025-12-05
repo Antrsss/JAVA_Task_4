@@ -42,13 +42,6 @@ public class OrderDaoImpl implements OrderDao {
         LIMIT 1
         """;
 
-  private static final String SELECT_ORDERS_BY_CUSTOMER_ID_AND_STATUS = """
-        SELECT id, customer_id, purchase_date, delivery_date, order_price
-        FROM orders
-        WHERE customer_id = ?
-        ORDER BY purchase_date DESC
-        """;
-
   private static final String UPDATE_ORDER = """
         UPDATE orders
         SET customer_id = ?, purchase_date = ?, delivery_date = ?, order_price = ?
@@ -159,62 +152,6 @@ public class OrderDaoImpl implements OrderDao {
   }
 
   @Override
-  public Order findCurrentOrderByCustomerId(UUID customerId) throws DaoException {
-    logger.debug("Finding current order for customer: {}", customerId);
-
-    try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement statement = connection.prepareStatement(SELECT_CURRENT_ORDER_BY_CUSTOMER_ID)) {
-
-      statement.setObject(1, customerId);
-
-      try (ResultSet resultSet = statement.executeQuery()) {
-        if (resultSet.next()) {
-          Order order = extractOrderFromResultSet(resultSet);
-          logger.debug("Found current order: {} for customer: {}", order.getId(), customerId);
-          return order;
-        }
-      }
-
-      logger.debug("No current order found for customer: {}", customerId);
-      return null;
-
-    } catch (SQLException e) {
-      logger.error("Error finding current order for customer: {}", customerId, e);
-      throw new DaoException("Error finding current order for customer: " + customerId, e);
-    }
-  }
-
-  @Override
-  public List<Order> findOrdersByCustomerIdAndStatus(UUID customerId, String status) throws DaoException {
-    logger.debug("Finding orders for customer: {} with status: {}", customerId, status);
-
-    List<Order> orders = new ArrayList<>();
-
-    try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement statement = connection.prepareStatement(SELECT_ORDERS_BY_CUSTOMER_ID_AND_STATUS)) {
-
-      statement.setObject(1, customerId);
-      statement.setString(2, status);
-
-      try (ResultSet resultSet = statement.executeQuery()) {
-        int count = 0;
-        while (resultSet.next()) {
-          Order order = extractOrderFromResultSet(resultSet);
-          orders.add(order);
-          count++;
-        }
-        logger.debug("Found {} orders for customer: {} with status: {}",
-            count, customerId, status);
-      }
-    } catch (SQLException e) {
-      logger.error("Error getting orders for customer: {} with status: {}", customerId, status, e);
-      throw new DaoException("Error getting orders for customer: " + customerId + " with status: " + status, e);
-    }
-
-    return orders;
-  }
-
-  @Override
   public boolean update(Order order) throws DaoException {
     logger.debug("Updating order: {}", order.getId());
 
@@ -285,13 +222,12 @@ public class OrderDaoImpl implements OrderDao {
     Timestamp purchaseDate = resultSet.getTimestamp(TableColumns.Order.PURCHASE_DATE);
     java.util.Date deliveryDate = resultSet.getDate(TableColumns.Order.DELIVERY_DATE);
     Double orderPrice = resultSet.getDouble(TableColumns.Order.ORDER_PRICE);
-    String status = resultSet.getString(TableColumns.Order.STATUS);
 
     Order order = new Order(id, customerId, purchaseDate, orderPrice);
     order.setDeliveryDate(deliveryDate);
 
-    logger.debug("Extracted order: {} (Customer: {}, Status: {}, Date: {}, Price: {})",
-        id, customerId, status, purchaseDate, orderPrice);
+    logger.debug("Extracted order: {} (Customer: {}, Date: {}, Price: {})",
+        id, customerId, purchaseDate, orderPrice);
 
     return order;
   }

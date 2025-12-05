@@ -12,6 +12,4 @@ public interface OrderDao extends BaseDao<Order> {
   Order findById(UUID id) throws DaoException;
   boolean update(Order order) throws DaoException;
   boolean delete(UUID id) throws DaoException;
-  Order findCurrentOrderByCustomerId(UUID customerId) throws DaoException;
-  List<Order> findOrdersByCustomerIdAndStatus(UUID customerId, String status) throws DaoException;
 }

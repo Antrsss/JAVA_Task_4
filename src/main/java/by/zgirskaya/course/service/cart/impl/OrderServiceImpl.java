@@ -28,30 +28,6 @@ public class OrderServiceImpl implements OrderService {
   private final BookDao bookDao = new BookDaoImpl();
 
   @Override
-  public double getTotalOrdersAmountByCustomerId(UUID customerId) throws ServiceException {
-    logger.debug("Calculating total orders amount for customer: {}", customerId);
-
-    if (customerId == null) {
-      throw new ServiceException("Customer ID is required");
-    }
-
-    try {
-      List<Order> orders = orderDao.findOrdersByCustomerId(customerId);
-
-      double totalAmount = orders.stream()
-          .mapToDouble(order -> order.getOrderPrice() != null ? order.getOrderPrice() : 0.0)
-          .sum();
-
-      logger.debug("Total orders amount for customer {}: {}", customerId, totalAmount);
-      return totalAmount;
-
-    } catch (DaoException e) {
-      logger.error("Failed to calculate total orders amount for customer: {}", customerId, e);
-      throw new ServiceException("Failed to calculate total orders amount", e);
-    }
-  }
-
-  @Override
   public List<Order> getCompletedOrders(UUID customerId) throws ServiceException {
     logger.debug("Getting completed orders for customer: {}", customerId);
 
@@ -60,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     try {
-      List<Order> completedOrders = orderDao.findOrdersByCustomerIdAndStatus(customerId, "COMPLETED");
+      List<Order> completedOrders = orderDao.findOrdersByCustomerId(customerId);
 
       logger.debug("Found {} completed orders for customer: {}", completedOrders.size(), customerId);
       return completedOrders;
@@ -91,6 +67,25 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
+  public Order getOrderById(UUID orderId) throws ServiceException {
+    logger.debug("Getting order by ID: {}", orderId);
+
+    if (orderId == null) {
+      throw new ServiceException("Order ID is required");
+    }
+
+    try {
+      Order order = orderDao.findById(orderId);
+      logger.debug("Found order: {}", orderId);
+      return order;
+
+    } catch (DaoException e) {
+      logger.error("Failed to get order by ID: {}", orderId, e);
+      throw new ServiceException("Failed to get order", e);
+    }
+  }
+
+  @Override
   public UUID createOrderFromCart(Cart cart, List<Item> items, Date deliveryDate) throws ServiceException {
     logger.debug("Creating order from cart: {} with {} items", cart.getId(), items.size());
 
@@ -101,8 +96,11 @@ public class OrderServiceImpl implements OrderService {
 
     double totalAmount = calculateOrderTotal(items);
 
+    // НАЧАЛО ТРАНЗАКЦИИ (важно для целостности данных)
+    UUID orderId = null;
+
     try {
-      UUID orderId = UUID.randomUUID();
+      orderId = UUID.randomUUID();
       Timestamp purchaseDate = new Timestamp(System.currentTimeMillis());
 
       Order order = new Order(orderId, cart.getCustomerId(), purchaseDate, totalAmount);
@@ -111,13 +109,14 @@ public class OrderServiceImpl implements OrderService {
       orderDao.create(order);
       logger.info("Order created: {} for customer {}", order.getId(), order.getCustomerId());
 
-      transferItemsToOrder(items, order.getId());
-      logger.info("Transferred {} items to order {}", items.size(), order.getId());
+      // Используем правильный orderId, а не cart.getId()
+      transferItemsToOrder(items, orderId);
+      logger.info("Transferred {} items to order {}", items.size(), orderId);
 
       checkBookAvailability(items);
 
-      logger.info("Order {} successfully created and processing", order.getId());
-      return order.getId();
+      logger.info("Order {} successfully created and processing", orderId);
+      return orderId;
 
     } catch (DaoException e) {
       logger.error("Failed to create order from cart: {}", cart.getId(), e);
@@ -146,9 +145,16 @@ public class OrderServiceImpl implements OrderService {
   }
 
   private void transferItemsToOrder(List<Item> items, UUID orderId) throws DaoException {
+    logger.debug("Transferring {} items to order: {}", items.size(), orderId);
+
     for (Item item : items) {
-      item.setOrderId(orderId);
-      itemDao.update(item);
+      if (item != null) {
+        item.setOrderId(orderId);
+        itemDao.update(item);
+        logger.debug("Transferred item {} to order {}", item.getId(), orderId);
+      } else {
+        logger.warn("Found null item in list during transfer to order");
+      }
     }
   }
 

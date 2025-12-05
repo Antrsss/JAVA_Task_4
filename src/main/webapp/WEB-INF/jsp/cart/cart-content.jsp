@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="jakarta.tags.core" prefix="c" %>
-<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.util.Date" %>
 
 <style>
@@ -483,6 +483,7 @@
         display: inline;
     }
 </style>
+
 <div class="container">
   <div class="header">
     <h1>🛒 Your Shopping Cart</h1>
@@ -624,33 +625,27 @@
 
           <div class="cart-actions">
             <div class="left-actions">
-              <form method="post" action="${pageContext.request.contextPath}/cart" class="d-inline">
-                <input type="hidden" name="action" value="clearCart">
-                <button type="submit" class="btn btn-warning"
-                        onclick="return confirm('Clear your entire cart?')">
-                  🗑️ Clear Cart
-                </button>
-              </form>
-
+              <!-- УБРАН Clear Cart -->
               <a href="${pageContext.request.contextPath}/books" class="btn btn-outline-secondary">
                 ← Continue Shopping
               </a>
             </div>
 
             <div class="checkout-form">
-              <!-- ЕДИНАЯ форма для оформления заказа -->
-              <form method="post" action="${pageContext.request.contextPath}/cart" class="d-inline" style="width: 100%;">
+              <form id="checkoutForm" method="post" action="${pageContext.request.contextPath}/cart"
+                    style="width: 100%; display: block;">
                 <div class="input-group">
-                  <input type="date" name="deliveryDate" class="form-control"
-                         min="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date(System.currentTimeMillis() + 86400000)) %>"
-                         required
-                         value="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date(System.currentTimeMillis() + 86400000)) %>">
+                  <input type="date"
+                         id="deliveryDateInput"
+                         name="deliveryDate"
+                         class="form-control"
+                         required>
                   <input type="hidden" name="action" value="checkout">
                   <button type="submit" class="btn btn-success">
                     ✅ Checkout
                   </button>
                 </div>
-                <div class="form-note">
+                <div class="form-note" id="dateNote">
                   Minimum delivery date is tomorrow
                 </div>
               </form>
@@ -667,20 +662,62 @@
 </div>
 
 <script>
-    // Устанавливаем минимальную дату доставки на завтра
+    // Устанавливаем минимальную дату доставки на завтра и значение по умолчанию
     document.addEventListener('DOMContentLoaded', function() {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
-        const dateInput = document.querySelector('input[name="deliveryDate"]');
+        const dateInput = document.getElementById('deliveryDateInput');
+
         if (dateInput) {
             const formattedDate = tomorrow.toISOString().split('T')[0];
             dateInput.min = formattedDate;
             dateInput.value = formattedDate;
+
+            // Добавляем обработчик изменения даты
+            dateInput.addEventListener('change', function() {
+                const selectedDate = new Date(this.value);
+                const minDate = new Date(this.min);
+
+                if (selectedDate < minDate) {
+                    alert('Please select a date tomorrow or later');
+                    this.value = formattedDate;
+                }
+            });
+        }
+
+        // Обработчик для формы checkout
+        const checkoutForm = document.getElementById('checkoutForm');
+        if (checkoutForm) {
+            checkoutForm.addEventListener('submit', function(e) {
+                const dateInput = this.querySelector('input[name="deliveryDate"]');
+                if (!dateInput.value) {
+                    e.preventDefault();
+                    alert('Please select a delivery date');
+                    dateInput.focus();
+                    return false;
+                }
+
+                const selectedDate = new Date(dateInput.value);
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setHours(0, 0, 0, 0);
+
+                if (selectedDate < tomorrow) {
+                    e.preventDefault();
+                    alert('Delivery date must be tomorrow or later');
+                    return false;
+                }
+
+                return true;
+            });
         }
 
         // Добавляем обработчики для кнопок изменения количества
         const quantityForms = document.querySelectorAll('form[action*="/cart"]');
         quantityForms.forEach(form => {
+            // Пропускаем форму checkout
+            if (form.id === 'checkoutForm') return;
+
             const buttons = form.querySelectorAll('button[name="quantityChange"]');
             buttons.forEach(button => {
                 button.addEventListener('click', function(e) {
@@ -698,5 +735,3 @@
         });
     });
 </script>
-</body>
-</html>
