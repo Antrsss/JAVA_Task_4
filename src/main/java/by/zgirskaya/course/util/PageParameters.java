@@ -38,12 +38,12 @@ public final class PageParameters {
 
     public static final String SUPPLIES = "/supplies/*";
 
-    public static final String CART = "/cart";
-    public static final String ORDERS = "/orders";
-    public static final String NEW_ORDER = "/orders/new";
-
     public static final String LOGIN_REDIRECT = "/auth/login";
     public static final String SUPPLIES_REDIRECT = "/supplies";
+    public static final String BOOKS_REDIRECT = "/books";
+    public static final String CART_REDIRECT = "/cart";
+    public static final String ORDERS_REDIRECT = "/orders";
+    public static final String ORDER_CONFIRMATION_REDIRECT = "/order/confirmation";
 
     private Path() {}
   }

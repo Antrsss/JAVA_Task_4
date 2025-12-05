@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class ItemServiceImpl implements ItemService {
@@ -29,7 +28,6 @@ public class ItemServiceImpl implements ItemService {
     try {
       List<Item> items = itemDao.findItemsByOrderId(orderId);
       logger.debug("Found {} items for order: {}", items.size(), orderId);
-
       return items;
 
     } catch (DaoException e) {
@@ -39,184 +37,128 @@ public class ItemServiceImpl implements ItemService {
   }
 
   @Override
-  public Item increaseItemCount(UUID itemId) throws ServiceException {
-    logger.debug("Increasing item count: {}", itemId);
+  public List<Item> findItemsByCartId(UUID cartId) throws ServiceException {
+    logger.debug("Getting items for cart: {}", cartId);
 
-    if (itemId == null) {
-      throw new ServiceException("Item ID is required");
+    if (cartId == null) {
+      logger.warn("Attempted to get items with null cart ID");
+      throw new ServiceException("Cart ID is required");
     }
 
     try {
-      Optional<Item> itemOpt = itemDao.findById(itemId);
-      if (!itemOpt.isPresent()) {
-        throw new ServiceException("Item with ID " + itemId + " not found");
-      }
-
-      Item item = itemOpt.get();
-      item.setQuantity(item.getQuantity() + 1);
-      itemDao.update(item);
-
-      logger.info("Item count increased: {} (New quantity: {}, Total: {})",
-          itemId, item.getQuantity(), item.getTotalPrice());
-
-      return item;
+      List<Item> items = itemDao.findItemsByCartId(cartId);
+      logger.debug("Found {} items for cart: {}", items.size(), cartId);
+      return items;
 
     } catch (DaoException e) {
-      logger.error("Failed to increase item count: {}", itemId, e);
-      throw new ServiceException("Failed to increase item count: " + e.getMessage(), e);
+      logger.error("Failed to get items for cart: {}", cartId, e);
+      throw new ServiceException("Failed to get items: " + e.getMessage(), e);
     }
   }
 
   @Override
-  public Item decreaseItemCount(UUID itemId) throws ServiceException {
-    logger.debug("Decreasing item count: {}", itemId);
+  public Item addItemToCart(UUID cartId, UUID bookId, int quantity, double unitPrice) throws ServiceException {
+    logger.debug("Adding item to cart: cartId={}, bookId={}, quantity={}",
+        cartId, bookId, quantity);
 
-    if (itemId == null) {
-      throw new ServiceException("Item ID is required");
+    if (cartId == null) {
+      logger.warn("Attempted to add item to cart with null cart ID");
+      throw new ServiceException("Cart ID is required");
+    }
+
+    if (bookId == null) {
+      logger.warn("Attempted to add item to cart with null book ID");
+      throw new ServiceException("Book ID is required");
+    }
+
+    if (quantity <= 0) {
+      logger.warn("Attempted to add item with invalid quantity: {}", quantity);
+      throw new ServiceException("Quantity must be positive");
+    }
+
+    if (unitPrice <= 0) {
+      logger.warn("Attempted to add item with invalid unitPrice: {}", quantity);
+      throw new ServiceException("UnitPrice must be positive");
     }
 
     try {
-      Optional<Item> itemOpt = itemDao.findById(itemId);
-      if (!itemOpt.isPresent()) {
-        throw new ServiceException("Item with ID " + itemId + " not found");
-      }
-
-      Item item = itemOpt.get();
-
-      if (item.getQuantity() <= 1) {
-        itemDao.delete(itemId);
-        logger.info("Item deleted after decreasing count: {}", itemId);
-        return null;
-      } else {
-        item.setQuantity(item.getQuantity() - 1);
-        itemDao.update(item);
-
-        logger.info("Item count decreased: {} (New quantity: {}, Total: {})",
-            itemId, item.getQuantity(), item.getTotalPrice());
-        return item;
-      }
-
-    } catch (DaoException e) {
-      logger.error("Failed to decrease item count: {}", itemId, e);
-      throw new ServiceException("Failed to decrease item count: " + e.getMessage(), e);
-    }
-  }
-
-  @Override
-  public void deleteItemById(UUID itemId) throws ServiceException {
-    logger.debug("Deleting item by ID: {}", itemId);
-
-    if (itemId == null) {
-      throw new ServiceException("Item ID is required");
-    }
-
-    try {
-      itemDao.delete(itemId);
-      logger.info("Item deleted successfully: {}", itemId);
-
-    } catch (DaoException e) {
-      logger.error("Failed to delete item: {}", itemId, e);
-      throw new ServiceException("Failed to delete item: " + e.getMessage(), e);
-    }
-  }
-
-  @Override
-  public Item addItemToOrder(UUID orderId, UUID bookId, int quantity, double price) throws ServiceException {
-    logger.info("Adding item to order: {} (Book: {}, Quantity: {}, Price: {})",
-        orderId, bookId, quantity, price);
-
-    try {
-      Item existingItem = itemDao.findByOrderIdAndBookId(orderId, bookId);
+      Item existingItem = itemDao.findItemByCartAndBook(cartId, bookId);
 
       if (existingItem != null) {
+        logger.debug("Item already exists in cart, updating quantity");
         existingItem.setQuantity(existingItem.getQuantity() + quantity);
-        existingItem.setUnitPrice(price);
         itemDao.update(existingItem);
-
-        logger.debug("Updated existing item in order: {}", existingItem.getId());
-        return existingItem;
+        logger.info("Updated quantity for item {} in cart {}, new quantity: {}",
+            bookId, cartId, existingItem.getQuantity());
       } else {
-        Item newItem = new Item(orderId, bookId, quantity, price);
-        itemDao.create(newItem);
+        logger.debug("Creating new item in cart");
+        Item newItem = new Item(UUID.randomUUID(), cartId, null, bookId, quantity, unitPrice);
 
-        logger.info("New item added to order: {} (ID: {})", orderId, newItem.getId());
+        itemDao.create(newItem);
+        logger.info("Added new item {} to cart {}, quantity: {}, unitPrice: {}",
+            bookId, cartId, quantity, unitPrice);
+
         return newItem;
       }
+      return existingItem;
 
     } catch (DaoException e) {
-      logger.error("Failed to add item to order: {}", orderId, e);
-      throw new ServiceException("Failed to add item to order: " + e.getMessage(), e);
+      logger.error("Failed to add item to cart: cartId={}, bookId={}", cartId, bookId, e);
+      throw new ServiceException("Failed to add item to cart: " + e.getMessage(), e);
     }
   }
 
   @Override
-  public double getOrderTotalAmount(UUID orderId) throws ServiceException {
-    logger.debug("Calculating total amount for order: {}", orderId);
+  public void removeItemFromCart(UUID itemId) throws ServiceException {
+    logger.debug("Removing item from cart: {}", itemId);
 
-    if (orderId == null) {
-      throw new ServiceException("Order ID is required");
+    if (itemId == null) {
+      logger.warn("Attempted to remove item with null ID");
+      throw new ServiceException("Item ID is required");
     }
 
     try {
-      List<Item> items = findItemsByOrderId(orderId);
+      Item item = itemDao.findById(itemId);
 
-      double totalAmount = items.stream()
-          .mapToDouble(item -> item.getTotalPrice() != null ? item.getTotalPrice() : 0.0)
-          .sum();
-
-      logger.debug("Total amount for order {}: {}", orderId, totalAmount);
-      return totalAmount;
-
-    } catch (ServiceException e) {
-      logger.error("Failed to calculate total amount for order: {}", orderId, e);
-      throw new ServiceException("Failed to calculate total amount", e);
-    }
-  }
-
-  @Override
-  public int getOrderTotalQuantity(UUID orderId) throws ServiceException {
-    logger.debug("Calculating total quantity for order: {}", orderId);
-
-    if (orderId == null) {
-      throw new ServiceException("Order ID is required");
-    }
-
-    try {
-      List<Item> items = findItemsByOrderId(orderId);
-
-      int totalQuantity = items.stream()
-          .mapToInt(Item::getQuantity)
-          .sum();
-
-      logger.debug("Total quantity for order {}: {}", orderId, totalQuantity);
-      return totalQuantity;
-
-    } catch (ServiceException e) {
-      logger.error("Failed to calculate total quantity for order: {}", orderId, e);
-      throw new ServiceException("Failed to calculate total quantity", e);
-    }
-  }
-
-  @Override
-  public void clearOrderItems(UUID orderId) throws ServiceException {
-    logger.info("Clearing all items from order: {}", orderId);
-
-    if (orderId == null) {
-      throw new ServiceException("Order ID is required");
-    }
-
-    try {
-      List<Item> items = findItemsByOrderId(orderId);
-
-      for (Item item : items) {
-        deleteItemById(item.getId());
+      if (item == null) {
+        logger.warn("Item not found with ID: {}", itemId);
+        throw new ServiceException("Item not found with ID: " + itemId);
       }
 
-      logger.info("Cleared {} items from order: {}", items.size(), orderId);
+      itemDao.delete(itemId);
+      logger.info("Item removed successfully from cart: {} (bookId: {})",
+          itemId, item.getBookId());
 
-    } catch (ServiceException e) {
-      logger.error("Failed to clear items from order: {}", orderId, e);
-      throw new ServiceException("Failed to clear order items", e);
+    } catch (DaoException e) {
+      logger.error("Failed to remove item from cart: {}", itemId, e);
+      throw new ServiceException("Failed to remove item from cart: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public void clearCart(UUID cartId) throws ServiceException {
+    logger.debug("Clearing cart: {}", cartId);
+
+    if (cartId == null) {
+      logger.warn("Attempted to clear cart with null ID");
+      throw new ServiceException("Cart ID is required");
+    }
+
+    try {
+      List<Item> items = findItemsByCartId(cartId);
+      logger.debug("Found {} items to remove from cart: {}", items.size(), cartId);
+
+      for (Item item : items) {
+        itemDao.delete(item.getId());
+        logger.debug("Removed item: {} from cart: {}", item.getId(), cartId);
+      }
+
+      logger.info("Cart cleared successfully: {} items removed from cart: {}",
+          items.size(), cartId);
+
+    } catch (DaoException e) {
+      logger.error("Failed to clear cart: {}", cartId, e);
+      throw new ServiceException("Failed to clear cart: " + e.getMessage(), e);
     }
   }
 }

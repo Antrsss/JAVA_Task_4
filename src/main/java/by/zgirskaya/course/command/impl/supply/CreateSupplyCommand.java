@@ -124,7 +124,7 @@ public class CreateSupplyCommand implements Command {
           throw new ServiceException("Price must be positive for book at position " + (i + 1));
         }
 
-        Item item = itemService.addItemToOrder(supplyId, bookId, quantity, unitPrice);
+        Item item = itemService.addItemToCart(supplyId, bookId, quantity, unitPrice);
         createdItems.add(item);
 
         logger.debug("Item created: {} (Book: {}, Quantity: {}, Price: ${})",

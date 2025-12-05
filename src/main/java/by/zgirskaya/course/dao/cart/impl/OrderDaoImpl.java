@@ -17,41 +17,41 @@ public class OrderDaoImpl implements OrderDao {
   private static final Logger logger = LogManager.getLogger();
 
   private static final String INSERT_ORDER = """
-        INSERT INTO orders (id, customer_id, purchase_date, delivery_date, order_price, status)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO orders (id, customer_id, purchase_date, delivery_date, order_price)
+        VALUES (?, ?, ?, ?, ?)
         """;
 
   private static final String SELECT_ORDERS_BY_CUSTOMER_ID = """
-        SELECT id, customer_id, purchase_date, delivery_date, order_price, status
+        SELECT id, customer_id, purchase_date, delivery_date, order_price
         FROM orders
         WHERE customer_id = ?
         ORDER BY purchase_date DESC
         """;
 
   private static final String SELECT_ORDER_BY_ID = """
-        SELECT id, customer_id, purchase_date, delivery_date, order_price, status
+        SELECT id, customer_id, purchase_date, delivery_date, order_price
         FROM orders
         WHERE id = ?
         """;
 
   private static final String SELECT_CURRENT_ORDER_BY_CUSTOMER_ID = """
-        SELECT id, customer_id, purchase_date, delivery_date, order_price, status
+        SELECT id, customer_id, purchase_date, delivery_date, order_price
         FROM orders
-        WHERE customer_id = ? AND (status = 'IN_CART' OR status = 'PENDING')
+        WHERE customer_id = ?
         ORDER BY purchase_date DESC
         LIMIT 1
         """;
 
   private static final String SELECT_ORDERS_BY_CUSTOMER_ID_AND_STATUS = """
-        SELECT id, customer_id, purchase_date, delivery_date, order_price, status
+        SELECT id, customer_id, purchase_date, delivery_date, order_price
         FROM orders
-        WHERE customer_id = ? AND status = ?
+        WHERE customer_id = ?
         ORDER BY purchase_date DESC
         """;
 
   private static final String UPDATE_ORDER = """
         UPDATE orders
-        SET customer_id = ?, purchase_date = ?, delivery_date = ?, order_price = ?, status = ?
+        SET customer_id = ?, purchase_date = ?, delivery_date = ?, order_price = ?
         WHERE id = ?
         """;
 
@@ -86,12 +86,6 @@ public class OrderDaoImpl implements OrderDao {
 
       statement.setDouble(5, order.getOrderPrice());
 
-      if (order.getOrderStatus() != null && !order.getOrderStatus().isEmpty()) {
-        statement.setString(6, order.getOrderStatus());
-      } else {
-        statement.setString(6, "IN_CART");
-      }
-
       int affectedRows = statement.executeUpdate();
       logger.debug("Order creation executed, affected rows: {}", affectedRows);
 
@@ -101,8 +95,8 @@ public class OrderDaoImpl implements OrderDao {
       }
 
       order.setId(orderId);
-      logger.info("Order created successfully: {} (Customer: {}, Status: {}, Price: {})",
-          orderId, order.getCustomerId(), order.getOrderStatus(), order.getOrderPrice());
+      logger.info("Order created successfully: {} (Customer: {}, Price: {})",
+          orderId, order.getCustomerId(), order.getOrderPrice());
 
     } catch (SQLException e) {
       logger.error("Error creating order for customer: {}", order.getCustomerId(), e);
@@ -242,16 +236,15 @@ public class OrderDaoImpl implements OrderDao {
       }
 
       statement.setDouble(4, order.getOrderPrice());
-      statement.setString(5, order.getOrderStatus());
-      statement.setObject(6, order.getId());
+      statement.setObject(5, order.getId());
 
       int affectedRows = statement.executeUpdate();
       logger.debug("Order update executed, affected rows: {}", affectedRows);
 
       boolean updated = affectedRows > 0;
-      logger.info("Order update {}: {} (Customer: {}, Status: {}, Price: {})",
+      logger.info("Order update {}: {} (Customer: {}, Price: {})",
           updated ? "successful" : "failed", order.getId(),
-          order.getCustomerId(), order.getOrderStatus(), order.getOrderPrice());
+          order.getCustomerId(), order.getOrderPrice());
 
       return updated;
 
@@ -294,9 +287,8 @@ public class OrderDaoImpl implements OrderDao {
     Double orderPrice = resultSet.getDouble(TableColumns.Order.ORDER_PRICE);
     String status = resultSet.getString(TableColumns.Order.STATUS);
 
-    Order order = new Order(customerId, purchaseDate, deliveryDate, orderPrice);
-    order.setId(id);
-    order.setOrderStatus(status);
+    Order order = new Order(id, customerId, purchaseDate, orderPrice);
+    order.setDeliveryDate(deliveryDate);
 
     logger.debug("Extracted order: {} (Customer: {}, Status: {}, Date: {}, Price: {})",
         id, customerId, status, purchaseDate, orderPrice);

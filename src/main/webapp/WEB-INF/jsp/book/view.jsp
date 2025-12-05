@@ -179,7 +179,8 @@
 </head>
 <body>
 <div class="container">
-  <a href="/books" class="back-link">← Back to Catalog</a>
+  <!-- ИСПРАВЛЕНА ССЫЛКА -->
+  <a href="${pageContext.request.contextPath}/books" class="back-link">← Back to Catalog</a>
 
   <div class="header">
     <h1>Book Details</h1>
@@ -242,41 +243,33 @@
     </div>
 
     <div class="book-actions">
-      <a href="/books" class="btn btn-back">Back to Catalog</a>
-      <button class="btn btn-add"
-              onclick="addToCart('${book.id}')"
-              <c:if test="${book.quantity == 0}">disabled</c:if>>
-        Add to Cart
-      </button>
+      <a href="${pageContext.request.contextPath}/books" class="btn btn-back">Back to Catalog</a>
+
+      <form method="post" action="${pageContext.request.contextPath}/cart" style="display: inline; flex: 1;">
+        <input type="hidden" name="action" value="addToCart">
+        <input type="hidden" name="bookId" value="${book.id}">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="btn btn-add"
+                <c:if test="${book.quantity == 0}">disabled</c:if>>
+          Add to Cart
+        </button>
+      </form>
     </div>
   </div>
 </div>
 
 <script>
-    function addToCart(bookId) {
-        fetch('/cart/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                bookId: bookId,
-                quantity: 1
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Book added to cart!');
-                } else {
-                    alert('Error: ' + data.message);
+    document.addEventListener('DOMContentLoaded', function() {
+        const addToCartForm = document.querySelector('form[action*="/cart"]');
+        if (addToCartForm) {
+            addToCartForm.addEventListener('submit', function(e) {
+                if (this.querySelector('button[disabled]')) {
+                    e.preventDefault();
+                    alert('This book is out of stock');
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while adding to cart');
             });
-    }
+        }
+    });
 </script>
 </body>
 </html>

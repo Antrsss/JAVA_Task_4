@@ -256,7 +256,7 @@
       Total Books: <span>${books.size()}</span>
     </div>
     <div>
-      <a href="/cart" class="btn btn-view">View Cart</a>
+      <a href="${pageContext.request.contextPath}/cart" class="btn btn-view">View Cart</a>
     </div>
   </div>
 
@@ -300,7 +300,7 @@
               </div>
 
               <div class="book-actions">
-                <a href="/books/view/${book.id}" class="btn btn-view">View Details</a>
+                <a href="${pageContext.request.contextPath}/books/view/${book.id}" class="btn btn-view">View Details</a>
                 <button class="btn btn-add"
                         onclick="addToCart('${book.id}')"
                         <c:if test="${book.quantity == 0}">disabled</c:if>>
@@ -327,7 +327,7 @@
 
 <script>
     function addToCart(bookId) {
-        fetch('/cart/add', {
+        fetch('${pageContext.request.contextPath}/cart/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

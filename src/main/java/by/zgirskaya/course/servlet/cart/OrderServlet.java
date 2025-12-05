@@ -23,35 +23,35 @@ public class OrderServlet extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    try {
+    /*try {
       Command command = CommandFactory.createOrderCommand(request);
       command.execute(request, response);
     } catch (ServiceException | DaoException | ParseException e) {
       logger.error("Error processing GET order request", e);
-    }
+    }*/
   }
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    try {
+    /*try {
       Command command = CommandFactory.createOrderCommand(request);
       command.execute(request, response);
     } catch (ServiceException | DaoException | ParseException e) {
       logger.error("Error processing POST order request", e);
-    }
+    }*/
   }
 
   @Override
   protected void doDelete(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    try {
+    /*try {
       Command command = CommandFactory.createOrderCommand(request);
       command.execute(request, response);
     } catch (ServiceException | DaoException | ParseException e) {
       logger.error("Error processing DELETE order request", e);
-    }
+    }*/
   }
 }
