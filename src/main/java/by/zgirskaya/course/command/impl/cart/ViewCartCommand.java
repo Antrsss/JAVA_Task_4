@@ -72,8 +72,11 @@ public class ViewCartCommand implements Command {
       List<Item> items = itemService.findItemsByCartId(cart.getId());
       logger.debug("Found {} items in cart", items.size());
 
+      double orderTotal = cartService.calculateCartTotal(cart.getId());
+
       request.setAttribute("cart", cart);
       request.setAttribute("items", items);
+      request.setAttribute("totalPrice", orderTotal);
       request.setAttribute(AttributeParameters.PAGE_TITLE, "Shopping Cart");
 
       request.getRequestDispatcher("/WEB-INF/jsp/cart/cart-content.jsp").forward(request, response);
