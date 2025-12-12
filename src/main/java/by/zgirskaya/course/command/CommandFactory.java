@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpServletRequest;
 public class CommandFactory {
   private static final String CREATE_ACTION = "create";
   private static final String NEW_ACTION = "new";
-  private static final String VIEW_ACTION = "view";
   private static final String DETAILS_ACTION = "details";
 
   private static final String ADD_TO_CART_ACTION = "addToCart";
@@ -72,28 +71,13 @@ public class CommandFactory {
 
   public static Command createCartCommand(HttpServletRequest request) {
     String action = request.getParameter(AttributeParameters.ACTION);
-    String method = request.getMethod();
-    String pathInfo = request.getPathInfo();
 
-    if (pathInfo != null && pathInfo.equals("/add") && POST_REQUEST.equalsIgnoreCase(method)) {
+    if (ADD_TO_CART_ACTION.equals(action)) {
       return new AddToCartCommand();
-    }
-
-    if (GET_REQUEST.equalsIgnoreCase(method)) {
-      if (VIEW_ACTION.equals(action)) {
-        return new ViewCartCommand();
-      }
-      return new ViewCartCommand();
-    }
-
-    if (POST_REQUEST.equalsIgnoreCase(method)) {
-      if (ADD_TO_CART_ACTION.equals(action)) {
-        return new AddToCartCommand();
-      } else if (REMOVE_FROM_CART_ACTION.equals(action)) {
-        return new RemoveFromCartCommand();
-      } else if (CHECKOUT_ACTION.equals(action)) {
-        return new CheckoutCommand();
-      }
+    } else if (REMOVE_FROM_CART_ACTION.equals(action)) {
+      return new RemoveFromCartCommand();
+    } else if (CHECKOUT_ACTION.equals(action)) {
+      return new CheckoutCommand();
     }
 
     return new ViewCartCommand();

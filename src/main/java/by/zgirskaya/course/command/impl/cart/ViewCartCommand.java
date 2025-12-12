@@ -50,59 +50,34 @@ public class ViewCartCommand implements Command {
 
     String userRole = (String) session.getAttribute(AttributeParameters.USER_ROLE);
     if (!AuthParameters.Roles.CUSTOMER.equals(userRole)) {
-      logger.warn("User role {} attempted to access cart - forbidden", userRole);
-      request.setAttribute(AttributeParameters.ERROR, "Only customers can access the shopping cart");
-      request.getRequestDispatcher(PageParameters.Jsp.ERROR_CONTENT).forward(request, response);
+      logger.warn("User role {} attempted to remove from cart - forbidden", userRole);
+      request.setAttribute(AttributeParameters.ERROR, "Only customers can view items from the shopping cart");
+      response.sendRedirect(request.getContextPath() + PageParameters.Path.BOOKS_REDIRECT);
       return;
     }
 
-    try {
-      UUID customerId = getCustomerIdFromSession(session, currentUser);
-      if (customerId == null) {
-        logger.error("Customer ID not found in session");
-        response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
-        return;
-      }
-
-      logger.debug("Processing cart for customerId: {}", customerId);
-
-      Cart cart = cartService.findOrCreateCartForCustomer(customerId);
-      logger.debug("Cart retrieved: {}", cart.getId());
-
-      List<Item> items = itemService.findItemsByCartId(cart.getId());
-      logger.debug("Found {} items in cart", items.size());
-
-      double orderTotal = cartService.calculateCartTotal(cart.getId());
-
-      request.setAttribute("cart", cart);
-      request.setAttribute("items", items);
-      request.setAttribute("totalPrice", orderTotal);
-      request.setAttribute(AttributeParameters.PAGE_TITLE, "Shopping Cart");
-
-      request.getRequestDispatcher("/WEB-INF/jsp/cart/cart-content.jsp").forward(request, response);
-
-    } catch (ServiceException e) {
-      logger.error("Error executing ViewCartCommand", e);
-      request.setAttribute(AttributeParameters.ERROR, "Unable to load cart. Please try again later.");
-      request.getRequestDispatcher(PageParameters.Jsp.ERROR_CONTENT).forward(request, response);
-    }
-  }
-
-  private UUID getCustomerIdFromSession(HttpSession session, AbstractUserModel user) {
-    Object customerIdObj = session.getAttribute("customerId");
-
-    if (customerIdObj != null) {
-      if (customerIdObj instanceof UUID) {
-        return (UUID) customerIdObj;
-      } else if (customerIdObj instanceof String) {
-        try {
-          return UUID.fromString((String) customerIdObj);
-        } catch (IllegalArgumentException e) {
-          logger.error("Invalid customerId format in session: {}", customerIdObj, e);
-        }
-      }
+    UUID customerId = getCustomerIdFromSession(session, currentUser);
+    if (customerId == null) {
+      logger.error("Customer ID not found in session");
+      response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
+      return;
     }
 
-    return user.getId();
+    logger.debug("Processing cart for customerId: {}", customerId);
+
+    Cart cart = cartService.findOrCreateCartForCustomer(customerId);
+    logger.debug("Cart retrieved: {}", cart.getId());
+
+    List<Item> items = itemService.findItemsByCartId(cart.getId());
+    logger.debug("Found {} items in cart", items.size());
+
+    double orderTotal = cartService.calculateCartTotal(cart.getId());
+
+    request.setAttribute(AttributeParameters.CART, cart);
+    request.setAttribute(AttributeParameters.ITEMS, items);
+    request.setAttribute(AttributeParameters.TOTAL_PRICE, orderTotal);
+    request.setAttribute(AttributeParameters.PAGE_TITLE, "Shopping Cart");
+
+    request.getRequestDispatcher(PageParameters.Jsp.CART_CONTENT).forward(request, response);
   }
 }

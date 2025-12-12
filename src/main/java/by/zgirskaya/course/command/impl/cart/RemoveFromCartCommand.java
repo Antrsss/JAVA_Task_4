@@ -50,39 +50,24 @@ public class RemoveFromCartCommand implements Command {
       return;
     }
 
-    try {
-      String itemIdStr = request.getParameter("itemId");
+    String itemIdStr = request.getParameter("itemId");
 
-      logger.debug("Removing item from cart - itemId: {}", itemIdStr);
+    logger.debug("Removing item from cart - itemId: {}", itemIdStr);
 
-      if (itemIdStr == null || itemIdStr.isEmpty()) {
-        logger.error("Item ID is required");
-        session.setAttribute(AttributeParameters.ERROR, "Item ID is required");
-        response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
-        return;
-      }
-
-      UUID itemId = UUID.fromString(itemIdStr);
-
-      itemService.removeItemFromCart(itemId);
-      logger.info("Item {} removed from cart by user {}", itemId, currentUser.getId());
-
-      session.setAttribute(AttributeParameters.SUCCESS_MESSAGE, "Item removed from cart successfully!");
-
+    if (itemIdStr == null || itemIdStr.isEmpty()) {
+      logger.error("Item ID is required");
+      session.setAttribute(AttributeParameters.ERROR, "Item ID is required");
       response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
-
-    } catch (IllegalArgumentException e) {
-      logger.error("Invalid UUID format for itemId", e);
-      session.setAttribute(AttributeParameters.ERROR, "Invalid item identifier");
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
-    } catch (ServiceException e) {
-      logger.error("Error removing item from cart", e);
-      session.setAttribute(AttributeParameters.ERROR, "Unable to remove item from cart: " + e.getMessage());
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
-    } catch (Exception e) {
-      logger.error("Unexpected error removing item from cart", e);
-      session.setAttribute(AttributeParameters.ERROR, "An unexpected error occurred while removing item from cart");
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
+      return;
     }
+
+    UUID itemId = UUID.fromString(itemIdStr);
+
+    itemService.removeItemFromCart(itemId);
+    logger.info("Item {} removed from cart by user {}", itemId, currentUser.getId());
+
+    session.setAttribute(AttributeParameters.SUCCESS_MESSAGE, "Item removed from cart successfully!");
+
+    response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
   }
 }

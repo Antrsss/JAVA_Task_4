@@ -24,6 +24,8 @@ public final class PageParameters {
     public static final String ORDERS_CONTENT = "/WEB-INF/jsp/cart/orders-content.jsp";
     public static final String ORDER_DETAILS_CONTENT = "/WEB-INF/jsp/cart/order-details.jsp";
 
+    public static final String CART_CONTENT = "/WEB-INF/jsp/cart/cart-content.jsp";
+
     public static final String BOOK_LIST_CONTENT = "/WEB-INF/jsp/book/list.jsp";
     public static final String BOOK_DETAILS_CONTENT = "/WEB-INF/jsp/book/view.jsp";
 
@@ -42,12 +44,14 @@ public final class PageParameters {
     public static final String SUPPLIES = "/supplies/*";
 
     public static final String BOOKS = "/books/*";
+    public static final String CART = "/cart/*";
 
     public static final String LOGIN_REDIRECT = "/auth/login";
     public static final String SUPPLIES_REDIRECT = "/supplies";
     public static final String BOOKS_REDIRECT = "/books";
     public static final String CART_REDIRECT = "/cart";
     public static final String ORDERS_REDIRECT = "/orders";
+    public static final String ORDER_ID_REDIRECT = "?orderId=";
     public static final String ORDER_CONFIRMATION_REDIRECT = "/order/confirmation";
 
     private Path() {}

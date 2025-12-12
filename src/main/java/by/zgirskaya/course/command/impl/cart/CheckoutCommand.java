@@ -30,7 +30,6 @@ import java.util.UUID;
 
 public class CheckoutCommand implements Command {
   private static final Logger logger = LogManager.getLogger();
-
   private final CartService cartService = new CartServiceImpl();
   private final ItemService itemService = new ItemServiceImpl();
   private final OrderService orderService = new OrderServiceImpl();
@@ -57,109 +56,56 @@ public class CheckoutCommand implements Command {
 
     String userRole = (String) session.getAttribute(AttributeParameters.USER_ROLE);
     if (!AuthParameters.Roles.CUSTOMER.equals(userRole)) {
-      logger.warn("User role {} attempted to checkout - forbidden", userRole);
-      session.setAttribute(AttributeParameters.ERROR, "Only customers can checkout orders");
+      logger.warn("User role {} attempted to remove from cart - forbidden", userRole);
+      request.setAttribute(AttributeParameters.ERROR, "Only customers can checkout shopping cart");
       response.sendRedirect(request.getContextPath() + PageParameters.Path.BOOKS_REDIRECT);
       return;
     }
 
-    try {
-      UUID customerId = getCustomerIdFromSession(session, currentUser);
-      if (customerId == null) {
-        logger.error("Customer ID not found in session");
-        response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
-        return;
-      }
+    UUID customerId = getCustomerIdFromSession(session, currentUser);
+    logger.debug("Processing checkout for customerId: {}", customerId);
 
-      logger.debug("Processing checkout for customerId: {}", customerId);
+    Cart cart = cartService.findOrCreateCartForCustomer(customerId);
+    logger.debug("Cart retrieved: {}", cart.getId());
 
-      Cart cart = cartService.findOrCreateCartForCustomer(customerId);
-      logger.debug("Cart retrieved: {}", cart.getId());
+    List<Item> items = itemService.findItemsByCartId(cart.getId());
+    logger.debug("Found {} items in cart for checkout", items.size());
 
-      List<Item> items = itemService.findItemsByCartId(cart.getId());
-      logger.debug("Found {} items in cart for checkout", items.size());
-
-      if (items.isEmpty()) {
-        logger.warn("Attempted to checkout with empty cart for customer {}", customerId);
-        session.setAttribute(AttributeParameters.ERROR, "Your cart is empty");
-        response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
-        return;
-      }
-
-      String deliveryDateStr = request.getParameter("deliveryDate");
-      if (deliveryDateStr == null || deliveryDateStr.isEmpty()) {
-        logger.warn("Delivery date not provided for checkout");
-        session.setAttribute(AttributeParameters.ERROR, "Please select a delivery date");
-        response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
-        return;
-      }
-
-      Date deliveryDate = parseDeliveryDate(deliveryDateStr);
-      UUID orderId = orderService.createOrderFromCart(cart, items, deliveryDate);
-      logger.info("Order created successfully: {} for customer {}", orderId, customerId);
-
-      List<Item> orderItems = orderService.findOrderItems(orderId);
-      for (var item : orderItems) {
-        logger.debug("NEW_ORDER_ITEM: unit_price {}, total_price {}", item.getUnitPrice(), item.getTotalPrice());
-      }
-      itemService.clearCart(cart.getId());
-      logger.info("Cart cleared after successful checkout: {}", cart.getId());
-
-      session.setAttribute(AttributeParameters.SUCCESS_MESSAGE,
-          String.format("Order #%s created successfully! Delivery scheduled for %s",
-              orderId.toString().substring(0, 8), deliveryDateStr));
-
-      session.removeAttribute("currentCart");
-
-      String redirectUrl = request.getContextPath() + PageParameters.Path.ORDER_CONFIRMATION_REDIRECT +
-          "?orderId=" + orderId;
-      logger.debug("Redirecting to order confirmation: {}", redirectUrl);
-      response.sendRedirect(redirectUrl);
-
-    } catch (ServiceException e) {
-      logger.error("Service error during checkout", e);
-      session.setAttribute(AttributeParameters.ERROR,
-          "Unable to process checkout: " + e.getMessage());
+    if (items.isEmpty()) {
+      logger.warn("Attempted to checkout with empty cart for customer {}", customerId);
+      session.setAttribute(AttributeParameters.ERROR, "Your cart is empty");
       response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
-    } catch (IllegalArgumentException e) {
-      logger.error("Invalid parameter during checkout", e);
-      session.setAttribute(AttributeParameters.ERROR,
-          "Invalid checkout parameters: " + e.getMessage());
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
-    } catch (Exception e) {
-      logger.error("Unexpected error during checkout", e);
-      session.setAttribute(AttributeParameters.ERROR,
-          "An unexpected error occurred during checkout. Please try again.");
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
-    }
-  }
-
-  private UUID getCustomerIdFromSession(HttpSession session, AbstractUserModel user) {
-    Object customerIdObj = session.getAttribute(AttributeParameters.CUSTOMER_ID);
-
-    if (customerIdObj != null) {
-      if (customerIdObj instanceof UUID) {
-        return (UUID) customerIdObj;
-      } else if (customerIdObj instanceof String) {
-        try {
-          return UUID.fromString((String) customerIdObj);
-        } catch (IllegalArgumentException e) {
-          logger.error("Invalid customerId format in session: {}", customerIdObj, e);
-        }
-      }
+      return;
     }
 
-    return user.getId();
+    String deliveryDateStr = request.getParameter("deliveryDate");
+    Date deliveryDate = parseDeliveryDate(deliveryDateStr);
+    UUID orderId = orderService.createOrderFromCart(cart, items, deliveryDate);
+    logger.info("Order created successfully: {} for customer {}", orderId, customerId);
+
+    itemService.clearCart(cart.getId());
+    logger.info("Cart cleared after successful checkout: {}", cart.getId());
+
+    session.setAttribute(AttributeParameters.SUCCESS_MESSAGE,
+        String.format("Order #%s created successfully! Delivery scheduled for %s",
+            orderId.toString().substring(0, 8), deliveryDateStr));
+
+    session.removeAttribute("currentCart");
+
+    String redirectUrl = request.getContextPath() + PageParameters.Path.ORDER_CONFIRMATION_REDIRECT +
+        PageParameters.Path.ORDER_ID_REDIRECT + orderId;
+    logger.debug("Redirecting to order confirmation: {}", redirectUrl);
+    response.sendRedirect(redirectUrl);
   }
 
-  private Date parseDeliveryDate(String deliveryDateStr) throws ParseException {
+  private Date parseDeliveryDate(String deliveryDateStr) {
     try {
       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
       dateFormat.setLenient(false);
       return dateFormat.parse(deliveryDateStr);
     } catch (ParseException e) {
       logger.warn("Failed to parse delivery date with format yyyy-MM-dd, trying other formats");
-      throw new ParseException("Unable to parse delivery date: " + deliveryDateStr, 0);
+      return null;
     }
   }
 }
