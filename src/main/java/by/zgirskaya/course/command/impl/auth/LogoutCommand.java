@@ -1,8 +1,10 @@
-package by.zgirskaya.course.servlet.auth;
+package by.zgirskaya.course.command.impl.auth;
 
+import by.zgirskaya.course.command.Command;
+import by.zgirskaya.course.exception.ServiceException;
+import by.zgirskaya.course.util.AttributeParameters;
 import by.zgirskaya.course.util.PageParameters;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -11,43 +13,38 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-@WebServlet(PageParameters.Path.LOGOUT)
-public class LogoutServlet extends HttpServlet {
+public class LogoutCommand implements Command {
   private static final Logger logger = LogManager.getLogger();
 
   @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
-    processLogout(request, response);
-  }
+  public void execute(HttpServletRequest request, HttpServletResponse response)
+      throws ServiceException, IOException, ServletException {
 
-  @Override
-  protected void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
+    logger.debug("Executing LogoutCommand");
+
     processLogout(request, response);
   }
 
   private void processLogout(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
-    logger.debug("Processing logout request");
 
     HttpSession session = request.getSession(false);
 
     if (session != null) {
-      Object user = session.getAttribute("user");
+      Object user = session.getAttribute(AttributeParameters.USER);
       if (user != null) {
         logger.info("User logout: {}", user);
       }
 
-      session.removeAttribute("user");
-      session.removeAttribute("userRole");
-      session.removeAttribute("customerId");
+      // Очищаем все атрибуты сессии
+      session.removeAttribute(AttributeParameters.USER);
+      session.removeAttribute(AttributeParameters.USER_ROLE);
+      session.removeAttribute(AttributeParameters.CUSTOMER_ID);
       session.removeAttribute("currentCart");
-      session.removeAttribute("successMessage");
-      session.removeAttribute("error");
+      session.removeAttribute(AttributeParameters.SUCCESS_MESSAGE);
+      session.removeAttribute(AttributeParameters.ERROR);
 
       session.invalidate();
-
       logger.info("Session invalidated successfully");
     } else {
       logger.debug("No active session found for logout");

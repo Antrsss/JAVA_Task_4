@@ -1,5 +1,8 @@
 package by.zgirskaya.course.command;
 
+import by.zgirskaya.course.command.impl.auth.LoginCommand;
+import by.zgirskaya.course.command.impl.auth.LogoutCommand;
+import by.zgirskaya.course.command.impl.auth.RegisterCommand;
 import by.zgirskaya.course.command.impl.book.ListBooksCommand;
 import by.zgirskaya.course.command.impl.book.ViewBookCommand;
 import by.zgirskaya.course.command.impl.cart.AddToCartCommand;
@@ -13,6 +16,7 @@ import by.zgirskaya.course.command.impl.supply.DeleteSupplyCommand;
 import by.zgirskaya.course.command.impl.supply.ListSuppliesCommand;
 import by.zgirskaya.course.command.impl.supply.ShowNewSupplyFormCommand;
 import by.zgirskaya.course.util.AttributeParameters;
+import by.zgirskaya.course.util.PageParameters;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class CommandFactory {
@@ -31,6 +35,20 @@ public class CommandFactory {
   private static final String VIEW_PATH = "/view/";
 
   private CommandFactory() {}
+
+  public static Command createAuthCommand(HttpServletRequest request) {
+    String servletPath = request.getServletPath();
+
+    if (PageParameters.Path.LOGIN.equals(servletPath)) {
+      return new LoginCommand();
+    } else if (PageParameters.Path.LOGOUT.equals(servletPath)) {
+      return new LogoutCommand();
+    } else if (PageParameters.Path.REGISTER.equals(servletPath)) {
+      return new RegisterCommand();
+    }
+
+    throw new IllegalArgumentException("Unknown authentication path: " + servletPath);
+  }
 
   public static Command createSupplyCommand(HttpServletRequest request) {
     String pathInfo = request.getPathInfo();
