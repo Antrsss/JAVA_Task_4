@@ -120,42 +120,6 @@
           gap: 8px;
       }
 
-      .stock-indicator {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-      }
-
-      .in-stock {
-          background-color: #48bb78;
-      }
-
-      .low-stock {
-          background-color: #ed8936;
-      }
-
-      .out-of-stock {
-          background-color: #f56565;
-      }
-
-      .stock-text {
-          font-size: 0.9rem;
-          color: #4a5568;
-          font-weight: 500;
-      }
-
-      .quantity-high {
-          color: #38a169;
-      }
-
-      .quantity-medium {
-          color: #d69e2e;
-      }
-
-      .quantity-low {
-          color: #e53e3e;
-      }
-
       .book-actions {
           display: flex;
           gap: 10px;

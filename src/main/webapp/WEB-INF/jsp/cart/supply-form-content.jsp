@@ -30,7 +30,6 @@
             id="supplyForm">
         <input type="hidden" name="action" value="${action}">
 
-        <!-- Основная информация о поставке -->
         <div class="row mb-4">
           <div class="col-md-6 mb-3">
             <label for="publisherId" class="form-label">Publisher ID <span class="text-danger">*</span></label>
@@ -55,7 +54,6 @@
           </div>
         </div>
 
-        <!-- Секция для добавления книг -->
         <div class="card mb-4">
           <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Books in Supply</h5>
@@ -65,7 +63,6 @@
           </div>
           <div class="card-body">
             <div id="booksContainer">
-              <!-- Сюда будут добавляться строки с книгами -->
               <div class="book-row row mb-3">
                 <div class="col-md-4">
                   <label class="form-label">Book ID <span class="text-danger">*</span></label>

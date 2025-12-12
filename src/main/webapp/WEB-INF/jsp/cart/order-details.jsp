@@ -269,12 +269,6 @@
           gap: 12px;
       }
 
-      .alert-success {
-          background: #c6f6d5;
-          color: #22543d;
-          border: 1px solid #9ae6b4;
-      }
-
       .alert-danger {
           background: #fed7d7;
           color: #742a2a;

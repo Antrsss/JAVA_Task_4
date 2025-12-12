@@ -7,7 +7,6 @@
   <meta charset="UTF-8">
   <title>${pageTitle} - Book Store</title>
   <style>
-      /* Стили аналогичные list.jsp, можно вынести в отдельный CSS файл */
       * {
           margin: 0;
           padding: 0;
@@ -117,31 +116,6 @@
           font-weight: 500;
       }
 
-      .stock-status {
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          padding: 10px 20px;
-          border-radius: 20px;
-          font-weight: 500;
-          margin-bottom: 20px;
-      }
-
-      .in-stock {
-          background: #c6f6d5;
-          color: #22543d;
-      }
-
-      .low-stock {
-          background: #feebc8;
-          color: #744210;
-      }
-
-      .out-of-stock {
-          background: #fed7d7;
-          color: #742a2a;
-      }
-
       .book-actions {
           display: flex;
           gap: 15px;
@@ -179,7 +153,6 @@
 </head>
 <body>
 <div class="container">
-  <!-- ИСПРАВЛЕНА ССЫЛКА -->
   <a href="${pageContext.request.contextPath}/books" class="back-link">← Back to Catalog</a>
 
   <div class="header">

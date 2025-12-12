@@ -190,12 +190,6 @@
           font-weight: 600;
       }
 
-      .items-table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 20px;
-      }
-
       .items-table th {
           text-align: left;
           padding: 12px 15px;
@@ -214,28 +208,6 @@
 
       .items-table tr:hover {
           background-color: #fafafa;
-      }
-
-      .book-link {
-          text-decoration: none;
-          color: #667eea;
-          font-weight: 600;
-          transition: color 0.2s ease;
-      }
-
-      .book-link:hover {
-          color: #5a67d8;
-          text-decoration: underline;
-      }
-
-      .price {
-          font-weight: 600;
-          color: #2d3748;
-      }
-
-      .total-row {
-          background-color: #f7fafc;
-          font-weight: bold;
       }
 
       .empty-state {
