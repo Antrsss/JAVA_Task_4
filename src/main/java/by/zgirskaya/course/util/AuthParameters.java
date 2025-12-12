@@ -21,12 +21,5 @@ public final class AuthParameters {
     private Parameters() {}
   }
 
-  public static final class Validation {
-    public static final String PHONE_OR_EMAIL_REQUIRED = "Phone number or email is required";
-    public static final String PASSWORD_REQUIRED = "Password is required";
-
-    private Validation() {}
-  }
-
   private AuthParameters() {}
 }

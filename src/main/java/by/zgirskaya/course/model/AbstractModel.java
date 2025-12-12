@@ -8,7 +8,6 @@ public class AbstractModel implements Serializable {
 
   @Serial
   private static final long serialVersionUID = 1L;
-
   private UUID id;
 
   public UUID getId() { return this.id; }

@@ -58,7 +58,7 @@ public class ViewOrderDetailsCommand implements Command {
       UUID orderId = UUID.fromString(orderIdParam);
 
       // Получаем детали заказа
-      Order order = orderService.getOrderById(orderId);
+      Order order = orderService.findOrderById(orderId);
       if (order == null) {
         throw new ServiceException("Order not found");
       }
@@ -69,7 +69,7 @@ public class ViewOrderDetailsCommand implements Command {
       }
 
       // Получаем товары заказа
-      List<Item> orderItems = orderService.getOrderItems(orderId);
+      List<Item> orderItems = orderService.findOrderItems(orderId);
 
       request.setAttribute("order", order);
       request.setAttribute("orderItems", orderItems);

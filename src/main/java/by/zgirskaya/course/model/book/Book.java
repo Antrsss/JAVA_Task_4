@@ -5,8 +5,8 @@ import by.zgirskaya.course.model.AbstractModel;
 import java.util.UUID;
 
 public class Book extends AbstractModel {
-  private UUID publisherId;
-  private UUID discountId;
+  private final UUID publisherId;
+  private final UUID discountId;
   private String title;
   private Double price;
   private Integer quantity;
@@ -20,8 +20,6 @@ public class Book extends AbstractModel {
     this.quantity = quantity;
   }
 
-  public UUID getPublisherId() { return publisherId; }
-  public UUID getDiscountId() { return discountId; }
   public String getTitle() { return title; }
   public Double getPrice() { return price; }
   public Integer getQuantity() { return quantity; }

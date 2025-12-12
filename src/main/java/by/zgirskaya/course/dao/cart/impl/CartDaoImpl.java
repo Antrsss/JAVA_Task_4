@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
-import java.util.Optional;
 import java.util.UUID;
 
 public class CartDaoImpl implements CartDao {
@@ -18,12 +17,6 @@ public class CartDaoImpl implements CartDao {
         SELECT id, customer_id, created_at, updated_at
         FROM carts
         WHERE customer_id = ?
-        """;
-
-  private static final String SELECT_CART_BY_ID = """
-        SELECT id, customer_id, created_at, updated_at
-        FROM carts
-        WHERE id = ?
         """;
 
   private static final String INSERT_CART = """
@@ -37,16 +30,9 @@ public class CartDaoImpl implements CartDao {
         WHERE id = ?
         """;
 
-  private static final String DELETE_CART = "DELETE FROM carts WHERE id = ?";
-
   @Override
   public Cart findCartByCustomerId(UUID customerId) throws DaoException {
     logger.debug("Finding cart by customer ID: {}", customerId);
-
-    if (customerId == null) {
-      logger.warn("Attempted to find cart with null customer ID");
-      throw new DaoException("Customer ID is required");
-    }
 
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(SELECT_CART_BY_CUSTOMER_ID)) {
@@ -72,47 +58,9 @@ public class CartDaoImpl implements CartDao {
   }
 
   @Override
-  public Optional<Cart> findCartById(UUID cartId) throws DaoException {
-    logger.debug("Finding cart by ID: {}", cartId);
-
-    if (cartId == null) {
-      logger.warn("Attempted to find cart with null ID");
-      return Optional.empty();
-    }
-
-    try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement statement = connection.prepareStatement(SELECT_CART_BY_ID)) {
-
-      statement.setObject(1, cartId);
-      logger.debug("Executing query to find cart by ID: {}", cartId);
-
-      try (ResultSet resultSet = statement.executeQuery()) {
-        if (resultSet.next()) {
-          Cart cart = mapResultSetToCart(resultSet);
-          logger.info("Found cart by ID: {}", cartId);
-          return Optional.of(cart);
-        } else {
-          logger.debug("Cart not found by ID: {}", cartId);
-          return Optional.empty();
-        }
-      }
-
-    } catch (SQLException e) {
-      logger.error("Error finding cart by ID: {}", cartId, e);
-      throw new DaoException("Error finding cart by ID: " + cartId, e);
-    }
-  }
-
-  @Override
   public Cart createCartForCustomer(UUID customerId) throws DaoException {
     logger.debug("Creating cart for customer ID: {}", customerId);
 
-    if (customerId == null) {
-      logger.warn("Attempted to create cart with null customer ID");
-      throw new DaoException("Customer ID is required");
-    }
-
-    // Сначала проверяем, нет ли уже корзины у этого пользователя
     Cart existingCart = findCartByCustomerId(customerId);
     if (existingCart != null) {
       logger.debug("Cart already exists for customer ID: {} (Cart ID: {})",
@@ -125,11 +73,12 @@ public class CartDaoImpl implements CartDao {
 
       UUID cartId = UUID.randomUUID();
       Timestamp now = new Timestamp(System.currentTimeMillis());
+      Cart cart = new Cart(cartId, customerId, now, now);
 
-      statement.setObject(1, cartId);
-      statement.setObject(2, customerId);
-      statement.setTimestamp(3, now);
-      statement.setTimestamp(4, now);
+      statement.setObject(1, cart.getId());
+      statement.setObject(2, cart.getCustomerId());
+      statement.setTimestamp(3, cart.getCreatedAt());
+      statement.setTimestamp(4, cart.getUpdatedAt());
 
       int affectedRows = statement.executeUpdate();
       logger.debug("Cart creation executed, affected rows: {}", affectedRows);
@@ -139,9 +88,7 @@ public class CartDaoImpl implements CartDao {
         throw new DaoException("Creating cart failed, no rows affected.");
       }
 
-      Cart cart = new Cart(cartId, customerId, now, now);
       logger.info("Cart created successfully for customer ID {}: {}", customerId, cartId);
-
       return cart;
 
     } catch (SQLException e) {
@@ -151,13 +98,8 @@ public class CartDaoImpl implements CartDao {
   }
 
   @Override
-  public boolean updateCart(Cart cart) throws DaoException {
+  public void updateCart(Cart cart) throws DaoException {
     logger.debug("Updating cart: {}", cart.getId());
-
-    if (cart.getId() == null) {
-      logger.error("Cannot update cart without ID");
-      throw new DaoException("Cart ID is required for update");
-    }
 
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(UPDATE_CART)) {
@@ -177,43 +119,9 @@ public class CartDaoImpl implements CartDao {
         logger.warn("Cart update failed, cart not found: {}", cart.getId());
       }
 
-      return updated;
-
     } catch (SQLException e) {
       logger.error("Error updating cart: {}", cart.getId(), e);
       throw new DaoException("Error updating cart: " + cart.getId(), e);
-    }
-  }
-
-  @Override
-  public boolean deleteCart(UUID cartId) throws DaoException {
-    logger.debug("Deleting cart: {}", cartId);
-
-    if (cartId == null) {
-      logger.warn("Attempted to delete cart with null ID");
-      throw new DaoException("Cart ID is required");
-    }
-
-    try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement statement = connection.prepareStatement(DELETE_CART)) {
-
-      statement.setObject(1, cartId);
-
-      int affectedRows = statement.executeUpdate();
-      logger.debug("Cart deletion executed, affected rows: {}", affectedRows);
-
-      boolean deleted = affectedRows > 0;
-      if (deleted) {
-        logger.info("Cart deleted successfully: {}", cartId);
-      } else {
-        logger.warn("Cart deletion failed, cart not found: {}", cartId);
-      }
-
-      return deleted;
-
-    } catch (SQLException e) {
-      logger.error("Error deleting cart: {}", cartId, e);
-      throw new DaoException("Error deleting cart: " + cartId, e);
     }
   }
 

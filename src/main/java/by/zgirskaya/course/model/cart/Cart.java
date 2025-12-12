@@ -6,8 +6,8 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 public class Cart extends AbstractModel {
-  private UUID customerId;
-  private Timestamp createdAt;
+  private final UUID customerId;
+  private final Timestamp createdAt;
   private Timestamp updatedAt;
 
   public Cart(UUID id, UUID customerId, Timestamp createdAt, Timestamp updatedAt) {

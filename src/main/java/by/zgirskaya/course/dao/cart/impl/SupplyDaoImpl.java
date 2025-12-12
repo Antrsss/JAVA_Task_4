@@ -23,17 +23,9 @@ public class SupplyDaoImpl implements SupplyDao {
         VALUES (?, ?, ?, ?, ?)
         """;
 
-
-
   private static final String FIND_SUPPLY_BY_ID = """
         SELECT id, employee_id, publisher_id, date, supply_price
         FROM supplies
-        WHERE id = ?
-        """;
-
-  private static final String UPDATE_SUPPLY = """
-        UPDATE supplies
-        SET employee_id = ?, publisher_id = ?, date = ?, supply_price = ?
         WHERE id = ?
         """;
 
@@ -102,37 +94,6 @@ public class SupplyDaoImpl implements SupplyDao {
     } catch (SQLException e) {
       logger.error("Error finding supply by ID: {}", id, e);
       throw new DaoException("Error finding supply with id: " + id, e);
-    }
-  }
-
-  @Override
-  public void updateSupply(Supply supply) throws DaoException {
-    logger.debug("Updating supply: {} (Employee: {}, Publisher: {})",
-        supply.getId(), supply.getEmployeeId(), supply.getPublisherId());
-
-    try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement statement = connection.prepareStatement(UPDATE_SUPPLY)) {
-
-      statement.setObject(1, supply.getEmployeeId());
-      statement.setObject(2, supply.getPublisherId());
-      statement.setDate(3, new Date(supply.getDate().getTime()));
-      statement.setDouble(4, supply.getSupplyPrice());
-      statement.setObject(5, supply.getId());
-
-      int affectedRows = statement.executeUpdate();
-      logger.debug("Supply update executed, affected rows: {}", affectedRows);
-
-      if (affectedRows == 0) {
-        logger.error("Updating supply failed - no rows affected for supply: {}", supply.getId());
-        throw new DaoException("Updating supply failed, no rows affected.");
-      }
-
-      logger.info("Supply updated successfully: {} (Employee: {}, Publisher: {}, Price: {})",
-          supply.getId(), supply.getEmployeeId(), supply.getPublisherId(), supply.getSupplyPrice());
-
-    } catch (SQLException e) {
-      logger.error("Error updating supply: {}", supply.getId(), e);
-      throw new DaoException("Error updating supply with id: " + supply.getId(), e);
     }
   }
 

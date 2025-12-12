@@ -126,7 +126,7 @@ public class AddToCartCommand implements Command {
       logger.debug("Adding to cart - bookId: {}, quantity: {}, unitPrice: {}",
           bookId, quantity, unitPrice);
 
-      Cart cart = cartService.getOrCreateCartForCustomer(customerId);
+      Cart cart = cartService.findOrCreateCartForCustomer(customerId);
       logger.info("Cart found/created: {}", cart.getId());
 
       itemService.addItemToCart(cart.getId(), bookId, quantity, unitPrice);

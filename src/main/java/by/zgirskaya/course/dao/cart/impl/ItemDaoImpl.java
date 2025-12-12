@@ -54,7 +54,6 @@ public class ItemDaoImpl implements ItemDao {
   @Override
   public void create(Item item) throws DaoException {
     logger.debug("Creating item for cart: {}, book: {}", item.getCartId(), item.getBookId());
-    logger.debug("NEW_ITEM: total_price {}, unit_price {}", item.getTotalPrice(), item.getUnitPrice());
 
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(INSERT_ITEM)) {
@@ -90,7 +89,7 @@ public class ItemDaoImpl implements ItemDao {
   }
 
   @Override
-  public boolean update(Item item) throws DaoException {
+  public void update(Item item) throws DaoException {
     logger.debug("Updating item: {}", item.getId());
 
     if (item.getId() == null) {
@@ -115,8 +114,6 @@ public class ItemDaoImpl implements ItemDao {
       logger.info("Item update {}: {} (Cart: {}, Book: {}, Qty: {}, Price: {})",
           updated ? "successful" : "failed", item.getId(),
           item.getCartId(), item.getBookId(), item.getQuantity(), item.getTotalPrice());
-
-      return updated;
 
     } catch (SQLException e) {
       logger.error("Error updating item: {}", item.getId(), e);
@@ -151,11 +148,6 @@ public class ItemDaoImpl implements ItemDao {
   public Item findById(UUID itemId) throws DaoException {
     logger.debug("Finding item by ID: {}", itemId);
 
-    if (itemId == null) {
-      logger.warn("Attempted to find item with null ID");
-      return null;
-    }
-
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(FIND_ITEM_BY_ID)) {
 
@@ -179,10 +171,6 @@ public class ItemDaoImpl implements ItemDao {
   @Override
   public Item findItemByCartAndBook(UUID cartId, UUID bookId) throws DaoException {
     logger.debug("Finding item by cartId={} and bookId={}", cartId, bookId);
-
-    if (cartId == null || bookId == null) {
-      return null;
-    }
 
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(FIND_ITEM_BY_CART_AND_BOOK)) {

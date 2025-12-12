@@ -19,10 +19,6 @@ public class SupplyServiceImpl implements SupplyService {
 
   @Override
   public boolean isSupplyExists(UUID id) throws ServiceException {
-    if (id == null) {
-      return false;
-    }
-
     try {
       Optional<Supply> supply = supplyDao.findSupplyById(id);
       return supply.isPresent();
@@ -55,10 +51,6 @@ public class SupplyServiceImpl implements SupplyService {
   public void deleteSupply(UUID id) throws ServiceException {
     logger.info("Deleting supply: {}", id);
 
-    if (id == null) {
-      throw new ServiceException("Supply ID is required for deletion");
-    }
-
     try {
       if (!isSupplyExists(id)) {
         throw new ServiceException("Supply with ID " + id + " not found");
@@ -74,7 +66,7 @@ public class SupplyServiceImpl implements SupplyService {
   }
 
   @Override
-  public List<Supply> getAllSupplies() throws ServiceException {
+  public List<Supply> findAllSupplies() throws ServiceException {
     logger.debug("Getting all supplies");
 
     try {

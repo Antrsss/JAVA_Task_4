@@ -73,7 +73,7 @@ public class CheckoutCommand implements Command {
 
       logger.debug("Processing checkout for customerId: {}", customerId);
 
-      Cart cart = cartService.getOrCreateCartForCustomer(customerId);
+      Cart cart = cartService.findOrCreateCartForCustomer(customerId);
       logger.debug("Cart retrieved: {}", cart.getId());
 
       List<Item> items = itemService.findItemsByCartId(cart.getId());
@@ -98,7 +98,7 @@ public class CheckoutCommand implements Command {
       UUID orderId = orderService.createOrderFromCart(cart, items, deliveryDate);
       logger.info("Order created successfully: {} for customer {}", orderId, customerId);
 
-      List<Item> orderItems = orderService.getOrderItems(orderId);
+      List<Item> orderItems = orderService.findOrderItems(orderId);
       for (var item : orderItems) {
         logger.debug("NEW_ORDER_ITEM: unit_price {}, total_price {}", item.getUnitPrice(), item.getTotalPrice());
       }

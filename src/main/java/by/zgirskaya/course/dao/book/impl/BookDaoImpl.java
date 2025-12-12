@@ -27,9 +27,6 @@ public class BookDaoImpl implements BookDao {
         WHERE id = ?
         """;
 
-  private static final String SELECT_BOOK_COUNT_BY_ID =
-      "SELECT quantity FROM books WHERE id = ?";
-
   @Override
   public List<Book> getAllBooks() throws DaoException {
     logger.debug("Attempting to retrieve all books");
@@ -81,36 +78,6 @@ public class BookDaoImpl implements BookDao {
     } catch (SQLException e) {
       logger.error("Error finding book by ID: {}", id, e);
       throw new DaoException("Error finding book by ID: " + id, e);
-    }
-  }
-
-  @Override
-  public Integer findBookCountById(UUID id) throws DaoException {
-    logger.debug("Finding book count by ID: {}", id);
-
-    try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement statement = connection.prepareStatement(SELECT_BOOK_COUNT_BY_ID)) {
-
-      statement.setObject(1, id);
-      logger.debug("Executing query to find book count by ID: {}", id);
-
-      try (ResultSet resultSet = statement.executeQuery()) {
-        if (resultSet.next()) {
-          int quantity = resultSet.getInt("quantity");
-          if (resultSet.wasNull()) {
-            quantity = 0;
-          }
-          logger.debug("Found book count for ID {}: {}", id, quantity);
-          return quantity;
-        } else {
-          logger.debug("Book not found by ID: {}, returning 0", id);
-          return 0;
-        }
-      }
-
-    } catch (SQLException e) {
-      logger.error("Error finding book count by ID: {}", id, e);
-      throw new DaoException("Error finding book count by ID: " + id, e);
     }
   }
 

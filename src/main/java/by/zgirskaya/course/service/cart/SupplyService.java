@@ -8,9 +8,7 @@ import java.util.UUID;
 
 public interface SupplyService {
   boolean isSupplyExists(UUID id) throws ServiceException;
-
   Supply createSupply(Supply supply) throws ServiceException;
   void deleteSupply(UUID id) throws ServiceException;
-
-  List<Supply> getAllSupplies() throws ServiceException;
+  List<Supply> findAllSupplies() throws ServiceException;
 }

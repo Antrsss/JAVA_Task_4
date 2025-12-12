@@ -20,7 +20,6 @@ public final class PageParameters {
     public static final String SUPPLIES_CONTENT = "/WEB-INF/jsp/cart/supplies-content.jsp";
     public static final String SUPPLY_FORM_CONTENT = "/WEB-INF/jsp/cart/supply-form-content.jsp";
 
-    public static final String CART_CONTENT = "/WEB-INF/jsp/cart/cart-content.jsp";
     public static final String ORDERS_CONTENT = "/WEB-INF/jsp/cart/orders-content.jsp";
     public static final String ORDER_DETAILS_CONTENT = "/WEB-INF/jsp/cart/order-details.jsp";
 

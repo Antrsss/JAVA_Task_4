@@ -9,5 +9,4 @@ import java.util.UUID;
 public interface BookService {
   List<Book> getAllBooks() throws ServiceException;
   Book findBookById(UUID id) throws ServiceException;
-  Integer getBookQuantity(UUID id) throws ServiceException;
 }

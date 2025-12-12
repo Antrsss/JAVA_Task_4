@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface OrderService {
   List<Order> findOrdersByCustomerId(UUID customerId) throws ServiceException;
-  List<Item> getOrderItems(UUID orderId) throws ServiceException;
-  Order getOrderById(UUID orderId) throws ServiceException;
+  List<Item> findOrderItems(UUID orderId) throws ServiceException;
+  Order findOrderById(UUID orderId) throws ServiceException;
   UUID createOrderFromCart(Cart cart, List<Item> items, Date deliveryDate) throws ServiceException;
 }

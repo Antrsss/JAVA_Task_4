@@ -35,11 +35,6 @@ public class BookServiceImpl implements BookService {
   public Book findBookById(UUID id) throws ServiceException {
     logger.debug("Finding book by ID: {}", id);
 
-    if (id == null) {
-      logger.warn("Attempted to find book with null ID");
-      throw new ServiceException("Book ID is required");
-    }
-
     try {
       Book book = bookDao.findBookById(id);
       logger.info("Found book by ID {}: {}", id, book.getTitle());
@@ -48,26 +43,6 @@ public class BookServiceImpl implements BookService {
     } catch (DaoException e) {
       logger.error("Failed to find book by ID: {}", id, e);
       throw new ServiceException("Failed to find book: " + e.getMessage(), e);
-    }
-  }
-
-  @Override
-  public Integer getBookQuantity(UUID id) throws ServiceException {
-    logger.debug("Getting book quantity for ID: {}", id);
-
-    if (id == null) {
-      logger.warn("Attempted to get book quantity with null ID");
-      throw new ServiceException("Book ID is required");
-    }
-
-    try {
-      Integer quantity = bookDao.findBookCountById(id);
-      logger.debug("Book quantity for ID {}: {}", id, quantity);
-      return quantity;
-
-    } catch (DaoException e) {
-      logger.error("Failed to get book quantity for ID: {}", id, e);
-      throw new ServiceException("Failed to get book quantity: " + e.getMessage(), e);
     }
   }
 }

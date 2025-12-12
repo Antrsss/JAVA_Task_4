@@ -21,13 +21,8 @@ public class CartServiceImpl implements CartService {
   private final ItemDao itemDao = new ItemDaoImpl();
 
   @Override
-  public Cart getOrCreateCartForCustomer(UUID customerId) throws ServiceException {
+  public Cart findOrCreateCartForCustomer(UUID customerId) throws ServiceException {
     logger.debug("Getting or creating cart for customer ID: {}", customerId);
-
-    if (customerId == null) {
-      logger.warn("Attempted to get/create cart with null customer ID");
-      throw new ServiceException("Customer ID is required");
-    }
 
     try {
       Cart cart = cartDao.findCartByCustomerId(customerId);
@@ -51,11 +46,6 @@ public class CartServiceImpl implements CartService {
   @Override
   public double calculateCartTotal(UUID cartId) throws ServiceException {
     logger.debug("Calculating cart total for customer ID: {}", cartId);
-
-    if (cartId == null) {
-      logger.warn("Attempted to calculate cart total with null cartId");
-      throw new ServiceException("Customer ID is required");
-    }
 
     try {
       List<Item> items = itemDao.findItemsByCartId(cartId);

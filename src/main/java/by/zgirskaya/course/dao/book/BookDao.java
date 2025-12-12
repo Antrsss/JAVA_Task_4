@@ -9,5 +9,4 @@ import java.util.UUID;
 public interface BookDao {
   List<Book> getAllBooks() throws DaoException;
   Book findBookById(UUID id) throws DaoException;
-  Integer findBookCountById(UUID id) throws DaoException;
 }

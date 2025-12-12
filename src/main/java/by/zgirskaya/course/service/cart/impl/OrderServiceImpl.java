@@ -23,7 +23,6 @@ import java.util.UUID;
 
 public class OrderServiceImpl implements OrderService {
   private static final Logger logger = LogManager.getLogger();
-
   private final OrderDao orderDao = new OrderDaoImpl();
   private final ItemDao itemDao = new ItemDaoImpl();
   private final BookDao bookDao = new BookDaoImpl();
@@ -45,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public List<Item> getOrderItems(UUID orderId) throws ServiceException {
+  public List<Item> findOrderItems(UUID orderId) throws ServiceException {
     logger.debug("Getting items for order: {}", orderId);
 
     try {
@@ -60,12 +59,8 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public Order getOrderById(UUID orderId) throws ServiceException {
+  public Order findOrderById(UUID orderId) throws ServiceException {
     logger.debug("Getting order by ID: {}", orderId);
-
-    if (orderId == null) {
-      throw new ServiceException("Order ID is required");
-    }
 
     try {
       Order order = orderDao.findOrderById(orderId);
@@ -83,7 +78,6 @@ public class OrderServiceImpl implements OrderService {
     logger.debug("Creating order from cart: {} with {} items", cart.getId(), items.size());
 
     double totalAmount = calculateOrderTotal(items);
-
     UUID orderId;
 
     try {
@@ -93,7 +87,6 @@ public class OrderServiceImpl implements OrderService {
       Order order = new Order(orderId, cart.getCustomerId(), purchaseDate, totalAmount);
       order.setDeliveryDate(deliveryDate);
 
-      logger.debug("ORDER 1: {}", totalAmount);
       orderDao.create(order);
       logger.info("Order created: {} for customer {} with price {}", order.getId(), order.getCustomerId(), order.getOrderPrice());
 
@@ -101,10 +94,8 @@ public class OrderServiceImpl implements OrderService {
       logger.info("Transferred {} items to order {}", items.size(), orderId);
 
       checkBookAvailability(items);
-
       logger.info("Order {} successfully created and processing", orderId);
 
-      logger.debug("ORDER_PRICE: {}", orderDao.findOrderById(orderId).getOrderPrice());
       return orderId;
 
     } catch (DaoException e) {
@@ -132,7 +123,6 @@ public class OrderServiceImpl implements OrderService {
 
     try {
       for (Item item : items) {
-        logger.debug("ITEMS_TO_ORDER: unit_price: {}, total_price: {}", item.getUnitPrice(), item.getTotalPrice());
         item.setOrderId(orderId);
         itemDao.update(item);
         logger.debug("Transferred item {} to order {}", item.getId(), orderId);

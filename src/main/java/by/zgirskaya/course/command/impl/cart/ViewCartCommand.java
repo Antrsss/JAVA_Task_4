@@ -66,7 +66,7 @@ public class ViewCartCommand implements Command {
 
       logger.debug("Processing cart for customerId: {}", customerId);
 
-      Cart cart = cartService.getOrCreateCartForCustomer(customerId);
+      Cart cart = cartService.findOrCreateCartForCustomer(customerId);
       logger.debug("Cart retrieved: {}", cart.getId());
 
       List<Item> items = itemService.findItemsByCartId(cart.getId());

@@ -17,26 +17,6 @@ public class ItemServiceImpl implements ItemService {
   private final ItemDao itemDao = new ItemDaoImpl();
 
   @Override
-  public List<Item> findItemsByOrderId(UUID orderId) throws ServiceException {
-    logger.debug("Getting items for order: {}", orderId);
-
-    if (orderId == null) {
-      logger.warn("Attempted to get items with null order ID");
-      throw new ServiceException("Order ID is required");
-    }
-
-    try {
-      List<Item> items = itemDao.findItemsByOrderId(orderId);
-      logger.debug("Found {} items for order: {}", items.size(), orderId);
-      return items;
-
-    } catch (DaoException e) {
-      logger.error("Failed to get items for order: {}", orderId, e);
-      throw new ServiceException("Failed to get items: " + e.getMessage(), e);
-    }
-  }
-
-  @Override
   public List<Item> findItemsByCartId(UUID cartId) throws ServiceException {
     logger.debug("Getting items for cart: {}", cartId);
 
@@ -86,11 +66,6 @@ public class ItemServiceImpl implements ItemService {
   @Override
   public void removeItemFromCart(UUID itemId) throws ServiceException {
     logger.debug("Removing item from cart: {}", itemId);
-
-    if (itemId == null) {
-      logger.warn("Attempted to remove item with null ID");
-      throw new ServiceException("Item ID is required");
-    }
 
     try {
       Item item = itemDao.findById(itemId);

@@ -10,8 +10,6 @@ import java.util.UUID;
 
 public interface SupplyDao extends BaseDao<Supply> {
   Optional<Supply> findSupplyById(UUID id) throws DaoException;
-  void updateSupply(Supply supply) throws DaoException;
   void deleteSupply(UUID id) throws DaoException;
-
   List<Supply> getAllSupplies() throws DaoException;
 }
