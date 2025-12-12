@@ -34,25 +34,6 @@ public class OrderDaoImpl implements OrderDao {
         WHERE id = ?
         """;
 
-  private static final String SELECT_CURRENT_ORDER_BY_CUSTOMER_ID = """
-        SELECT id, customer_id, purchase_date, delivery_date, order_price
-        FROM orders
-        WHERE customer_id = ?
-        ORDER BY purchase_date DESC
-        LIMIT 1
-        """;
-
-  private static final String UPDATE_ORDER = """
-        UPDATE orders
-        SET customer_id = ?, purchase_date = ?, delivery_date = ?, order_price = ?
-        WHERE id = ?
-        """;
-
-  private static final String DELETE_ORDER_BY_ID = """
-        DELETE FROM orders
-        WHERE id = ?
-        """;
-
   @Override
   public void create(Order order) throws DaoException {
     logger.debug("Creating order for customer: {}", order.getCustomerId());
@@ -77,8 +58,15 @@ public class OrderDaoImpl implements OrderDao {
         statement.setNull(4, Types.DATE);
       }
 
-      statement.setDouble(5, order.getOrderPrice());
+      if (order.getOrderPrice() != null) {
+        statement.setDouble(5, order.getOrderPrice());
+        logger.debug("Setting order price: {}", order.getOrderPrice());
+      } else {
+        statement.setDouble(5, 1000.0);
+        logger.warn("Order price is null, setting to 1000.0");
+      }
 
+      logger.debug("ORDER_PRICE: {}", order.getOrderPrice());
       int affectedRows = statement.executeUpdate();
       logger.debug("Order creation executed, affected rows: {}", affectedRows);
 
@@ -98,7 +86,7 @@ public class OrderDaoImpl implements OrderDao {
   }
 
   @Override
-  public Order findById(UUID id) throws DaoException {
+  public Order findOrderById(UUID id) throws DaoException {
     logger.debug("Finding order by ID: {}", id);
 
     try (Connection connection = DatabaseConnection.getConnection();
@@ -149,69 +137,6 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     return orders;
-  }
-
-  @Override
-  public boolean update(Order order) throws DaoException {
-    logger.debug("Updating order: {}", order.getId());
-
-    try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement statement = connection.prepareStatement(UPDATE_ORDER)) {
-
-      statement.setObject(1, order.getCustomerId());
-
-      if (order.getPurchaseDate() != null) {
-        statement.setTimestamp(2, order.getPurchaseDate());
-      } else {
-        statement.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-      }
-
-      if (order.getDeliveryDate() != null) {
-        statement.setDate(3, new Date(order.getDeliveryDate().getTime()));
-      } else {
-        statement.setNull(3, Types.DATE);
-      }
-
-      statement.setDouble(4, order.getOrderPrice());
-      statement.setObject(5, order.getId());
-
-      int affectedRows = statement.executeUpdate();
-      logger.debug("Order update executed, affected rows: {}", affectedRows);
-
-      boolean updated = affectedRows > 0;
-      logger.info("Order update {}: {} (Customer: {}, Price: {})",
-          updated ? "successful" : "failed", order.getId(),
-          order.getCustomerId(), order.getOrderPrice());
-
-      return updated;
-
-    } catch (SQLException e) {
-      logger.error("Error updating order: {}", order.getId(), e);
-      throw new DaoException("Error updating order with id: " + order.getId(), e);
-    }
-  }
-
-  @Override
-  public boolean delete(UUID id) throws DaoException {
-    logger.debug("Deleting order: {}", id);
-
-    try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement statement = connection.prepareStatement(DELETE_ORDER_BY_ID)) {
-
-      statement.setObject(1, id);
-
-      int affectedRows = statement.executeUpdate();
-      logger.debug("Order deletion executed, affected rows: {}", affectedRows);
-
-      boolean deleted = affectedRows > 0;
-      logger.info("Order deletion {}: {}", deleted ? "successful" : "failed", id);
-
-      return deleted;
-
-    } catch (SQLException e) {
-      logger.error("Error deleting order: {}", id, e);
-      throw new DaoException("Error deleting order with id: " + id, e);
-    }
   }
 
   private Order extractOrderFromResultSet(ResultSet resultSet) throws SQLException {

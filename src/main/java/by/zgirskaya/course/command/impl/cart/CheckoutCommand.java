@@ -30,6 +30,7 @@ import java.util.UUID;
 
 public class CheckoutCommand implements Command {
   private static final Logger logger = LogManager.getLogger();
+
   private final CartService cartService = new CartServiceImpl();
   private final ItemService itemService = new ItemServiceImpl();
   private final OrderService orderService = new OrderServiceImpl();
@@ -63,7 +64,6 @@ public class CheckoutCommand implements Command {
     }
 
     try {
-      // Получаем ID покупателя
       UUID customerId = getCustomerIdFromSession(session, currentUser);
       if (customerId == null) {
         logger.error("Customer ID not found in session");
@@ -79,7 +79,7 @@ public class CheckoutCommand implements Command {
       List<Item> items = itemService.findItemsByCartId(cart.getId());
       logger.debug("Found {} items in cart for checkout", items.size());
 
-      if (items == null || items.isEmpty()) {
+      if (items.isEmpty()) {
         logger.warn("Attempted to checkout with empty cart for customer {}", customerId);
         session.setAttribute(AttributeParameters.ERROR, "Your cart is empty");
         response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
@@ -98,6 +98,10 @@ public class CheckoutCommand implements Command {
       UUID orderId = orderService.createOrderFromCart(cart, items, deliveryDate);
       logger.info("Order created successfully: {} for customer {}", orderId, customerId);
 
+      List<Item> orderItems = orderService.getOrderItems(orderId);
+      for (var item : orderItems) {
+        logger.debug("NEW_ORDER_ITEM: unit_price {}, total_price {}", item.getUnitPrice(), item.getTotalPrice());
+      }
       itemService.clearCart(cart.getId());
       logger.info("Cart cleared after successful checkout: {}", cart.getId());
 
@@ -150,33 +154,11 @@ public class CheckoutCommand implements Command {
 
   private Date parseDeliveryDate(String deliveryDateStr) throws ParseException {
     try {
-      // Пытаемся парсить в формате "yyyy-MM-dd" (стандартный формат input[type="date"])
       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-      dateFormat.setLenient(false); // Строгая проверка даты
+      dateFormat.setLenient(false);
       return dateFormat.parse(deliveryDateStr);
     } catch (ParseException e) {
       logger.warn("Failed to parse delivery date with format yyyy-MM-dd, trying other formats");
-
-      // Попробуем другие возможные форматы
-      String[] possibleFormats = {
-          "dd.MM.yyyy",
-          "dd/MM/yyyy",
-          "MM/dd/yyyy",
-          "yyyy/MM/dd"
-      };
-
-      for (String format : possibleFormats) {
-        try {
-          SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-          dateFormat.setLenient(false);
-          return dateFormat.parse(deliveryDateStr);
-        } catch (ParseException ex) {
-          // Продолжаем пробовать другие форматы
-          continue;
-        }
-      }
-
-      // Если ни один формат не подошел
       throw new ParseException("Unable to parse delivery date: " + deliveryDateStr, 0);
     }
   }

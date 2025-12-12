@@ -40,11 +40,6 @@ public class ItemServiceImpl implements ItemService {
   public List<Item> findItemsByCartId(UUID cartId) throws ServiceException {
     logger.debug("Getting items for cart: {}", cartId);
 
-    if (cartId == null) {
-      logger.warn("Attempted to get items with null cart ID");
-      throw new ServiceException("Cart ID is required");
-    }
-
     try {
       List<Item> items = itemDao.findItemsByCartId(cartId);
       logger.debug("Found {} items for cart: {}", items.size(), cartId);
@@ -60,26 +55,6 @@ public class ItemServiceImpl implements ItemService {
   public Item addItemToCart(UUID cartId, UUID bookId, int quantity, double unitPrice) throws ServiceException {
     logger.debug("Adding item to cart: cartId={}, bookId={}, quantity={}",
         cartId, bookId, quantity);
-
-    if (cartId == null) {
-      logger.warn("Attempted to add item to cart with null cart ID");
-      throw new ServiceException("Cart ID is required");
-    }
-
-    if (bookId == null) {
-      logger.warn("Attempted to add item to cart with null book ID");
-      throw new ServiceException("Book ID is required");
-    }
-
-    if (quantity <= 0) {
-      logger.warn("Attempted to add item with invalid quantity: {}", quantity);
-      throw new ServiceException("Quantity must be positive");
-    }
-
-    if (unitPrice <= 0) {
-      logger.warn("Attempted to add item with invalid unitPrice: {}", quantity);
-      throw new ServiceException("UnitPrice must be positive");
-    }
 
     try {
       Item existingItem = itemDao.findItemByCartAndBook(cartId, bookId);
@@ -139,17 +114,13 @@ public class ItemServiceImpl implements ItemService {
   public void clearCart(UUID cartId) throws ServiceException {
     logger.debug("Clearing cart: {}", cartId);
 
-    if (cartId == null) {
-      logger.warn("Attempted to clear cart with null ID");
-      throw new ServiceException("Cart ID is required");
-    }
-
     try {
       List<Item> items = findItemsByCartId(cartId);
       logger.debug("Found {} items to remove from cart: {}", items.size(), cartId);
 
       for (Item item : items) {
-        itemDao.delete(item.getId());
+        item.setCartId(null);
+        itemDao.update(item);
         logger.debug("Removed item: {} from cart: {}", item.getId(), cartId);
       }
 

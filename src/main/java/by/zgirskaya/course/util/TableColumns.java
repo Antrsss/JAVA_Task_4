@@ -25,6 +25,7 @@ public final class TableColumns {
 
   public static final class Item {
     public static final String ID = "id";
+    public static final String CART_ID = "cart_id";
     public static final String ORDER_ID = "order_id";
     public static final String BOOK_ID = "book_id";
     public static final String QUANTITY = "quantity";
@@ -40,7 +41,6 @@ public final class TableColumns {
     public static final String PURCHASE_DATE = "purchase_date";
     public static final String DELIVERY_DATE = "delivery_date";
     public static final String ORDER_PRICE = "order_price";
-    public static final String STATUS = "status";
 
     private Order() {}
   }

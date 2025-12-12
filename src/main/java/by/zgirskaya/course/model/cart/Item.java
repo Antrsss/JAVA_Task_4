@@ -21,7 +21,12 @@ public class Item extends AbstractModel {
     this.bookId = bookId;
     this.quantity = quantity;
     this.unitPrice = unitPrice;
-    this.totalPrice = unitPrice * quantity;
+    this.totalPrice = calculateTotalPrice();
+  }
+
+  private Double calculateTotalPrice() {
+    if (unitPrice == null) return 0.0;
+    return unitPrice * quantity;
   }
 
   public UUID getCartId() { return cartId; }
@@ -41,4 +46,6 @@ public class Item extends AbstractModel {
   }
 
   public void setOrderId(UUID orderId) { this.orderId = orderId; }
+
+  public void setCartId(UUID cartId) { this.cartId = cartId; }
 }

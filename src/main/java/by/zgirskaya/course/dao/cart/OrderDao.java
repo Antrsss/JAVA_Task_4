@@ -9,7 +9,5 @@ import java.util.UUID;
 
 public interface OrderDao extends BaseDao<Order> {
   List<Order> findOrdersByCustomerId(UUID customerId) throws DaoException;
-  Order findById(UUID id) throws DaoException;
-  boolean update(Order order) throws DaoException;
-  boolean delete(UUID id) throws DaoException;
+  Order findOrderById(UUID id) throws DaoException;
 }

@@ -39,7 +39,7 @@ public class ViewOrdersCommand implements Command {
     }
 
     try {
-      List<Order> completedOrders = orderService.getCompletedOrders(currentUser.getId());
+      List<Order> completedOrders = orderService.findOrdersByCustomerId(currentUser.getId());
       int orderCount = completedOrders.size();
 
       request.setAttribute("orders", completedOrders);

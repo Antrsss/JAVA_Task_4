@@ -16,37 +16,35 @@ import java.util.UUID;
 public class ItemDaoImpl implements ItemDao {
   private static final Logger logger = LogManager.getLogger();
 
-  // ИЗМЕНЕНО: Добавлено cart_id в INSERT
   private static final String INSERT_ITEM = """
-        INSERT INTO items (id, cart_id, order_id, book_id, quantity, total_price, unit_price)
+        INSERT INTO items (id, cart_id, order_id, book_id, quantity, unit_price, total_price)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         """;
 
-  // ИЗМЕНЕНО: Добавлен выбор по cart_id
   private static final String SELECT_ITEMS_BY_CART_ID = """
-        SELECT id, cart_id, order_id, book_id, quantity, total_price, unit_price
+        SELECT id, cart_id, order_id, book_id, quantity, unit_price, total_price
         FROM items WHERE cart_id = ? ORDER BY book_id
         """;
 
   private static final String SELECT_ITEMS_BY_ORDER_ID = """
-        SELECT id, cart_id, order_id, book_id, quantity, total_price, unit_price
+        SELECT id, cart_id, order_id, book_id, quantity, unit_price, total_price
         FROM items WHERE order_id = ? ORDER BY book_id
         """;
 
   private static final String UPDATE_ITEM = """
         UPDATE items
-        SET cart_id = ?, order_id = ?, book_id = ?, quantity = ?, total_price = ?, unit_price = ?
+        SET cart_id = ?, order_id = ?, book_id = ?, quantity = ?, unit_price = ?, total_price = ?
         WHERE id = ?
         """;
 
   private static final String FIND_ITEM_BY_ID = """
-    SELECT id, cart_id, order_id, book_id, quantity, total_price, unit_price
+    SELECT id, cart_id, order_id, book_id, quantity, unit_price, total_price
     FROM items
     WHERE id = ?
     """;
 
   private static final String FIND_ITEM_BY_CART_AND_BOOK = """
-        SELECT id, cart_id, order_id, book_id, quantity, total_price, unit_price
+        SELECT id, cart_id, order_id, book_id, quantity, unit_price, total_price
         FROM items
         WHERE cart_id = ? AND book_id = ?
         """;
@@ -56,6 +54,7 @@ public class ItemDaoImpl implements ItemDao {
   @Override
   public void create(Item item) throws DaoException {
     logger.debug("Creating item for cart: {}, book: {}", item.getCartId(), item.getBookId());
+    logger.debug("NEW_ITEM: total_price {}, unit_price {}", item.getTotalPrice(), item.getUnitPrice());
 
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(INSERT_ITEM)) {
@@ -67,8 +66,8 @@ public class ItemDaoImpl implements ItemDao {
       statement.setObject(3, item.getOrderId());
       statement.setObject(4, item.getBookId());
       statement.setInt(5, item.getQuantity());
-      statement.setDouble(6, item.getTotalPrice() != null ? item.getTotalPrice() : 0.0);
-      statement.setDouble(7, item.getUnitPrice() != null ? item.getUnitPrice() : 0.0);
+      statement.setDouble(6, item.getUnitPrice());
+      statement.setDouble(7, item.getTotalPrice());
 
       int affectedRows = statement.executeUpdate();
       logger.debug("Item creation executed, affected rows: {}", affectedRows);
@@ -85,7 +84,7 @@ public class ItemDaoImpl implements ItemDao {
 
     } catch (SQLException e) {
       logger.error("Error creating item for cart: {}, book: {}",
-          item.getCartId(), item.getBookId(), e);  // ИЗМЕНЕНО
+          item.getCartId(), item.getBookId(), e);
       throw new DaoException("Error creating item", e);
     }
   }
@@ -101,8 +100,8 @@ public class ItemDaoImpl implements ItemDao {
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(UPDATE_ITEM)) {
 
-      statement.setObject(1, item.getCartId());      // cart_id
-      statement.setObject(2, item.getOrderId());     // order_id
+      statement.setObject(1, item.getCartId());
+      statement.setObject(2, item.getOrderId());
       statement.setObject(3, item.getBookId());
       statement.setInt(4, item.getQuantity());
       statement.setDouble(5, item.getUnitPrice());
@@ -267,18 +266,13 @@ public class ItemDaoImpl implements ItemDao {
   private Item extractItemFromResultSet(ResultSet resultSet) throws SQLException {
     logger.debug("Extracting item from ResultSet");
 
-    UUID id = (UUID) resultSet.getObject("id");
-    UUID cartId = (UUID) resultSet.getObject("cart_id");
-    UUID orderId = (UUID) resultSet.getObject("order_id");
-    UUID bookId = (UUID) resultSet.getObject("book_id");
-    int quantity = resultSet.getInt("quantity");
-    Double totalPrice = resultSet.getDouble("total_price");
-    Double unitPrice = resultSet.getDouble("unit_price");
-
-    if (resultSet.wasNull()) {
-      totalPrice = null;
-      unitPrice = null;
-    }
+    UUID id = (UUID) resultSet.getObject(TableColumns.Item.ID);
+    UUID cartId = (UUID) resultSet.getObject(TableColumns.Item.CART_ID);
+    UUID orderId = (UUID) resultSet.getObject(TableColumns.Item.ORDER_ID);
+    UUID bookId = (UUID) resultSet.getObject(TableColumns.Item.BOOK_ID);
+    int quantity = resultSet.getInt(TableColumns.Item.QUANTITY);
+    Double unitPrice = resultSet.getDouble(TableColumns.Item.UNIT_PRICE);
+    Double totalPrice = resultSet.getDouble(TableColumns.Item.TOTAL_PRICE);
 
     Item item = new Item(id, cartId, orderId, bookId, quantity, unitPrice);
 

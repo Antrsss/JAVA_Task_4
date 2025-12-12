@@ -7,10 +7,10 @@ import java.util.Date;
 import java.util.UUID;
 
 public class Order extends AbstractModel {
-  private UUID customerId;
-  private Timestamp purchaseDate;
+  private final UUID customerId;
+  private final Timestamp purchaseDate;
   private Date deliveryDate;
-  private Double orderPrice;
+  private final Double orderPrice;
 
   public Order(UUID id, UUID customerId, Timestamp purchaseDate, Double orderPrice) {
     setId(id);
@@ -26,9 +26,5 @@ public class Order extends AbstractModel {
 
   public void setDeliveryDate(Date deliveryDate) {
     this.deliveryDate = deliveryDate;
-  }
-
-  public void setOrderPrice(Double orderPrice) {
-    this.orderPrice = orderPrice;
   }
 }
