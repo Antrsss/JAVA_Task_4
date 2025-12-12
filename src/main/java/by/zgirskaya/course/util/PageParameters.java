@@ -6,6 +6,7 @@ public final class PageParameters {
     public static final String HOME = "Home";
     public static final String LOGIN = "Login";
     public static final String REGISTER = "Register";
+    public static final String BOOK_CATALOG = "Book Catalog";
 
     private Title() {}
   }
@@ -23,6 +24,9 @@ public final class PageParameters {
     public static final String ORDERS_CONTENT = "/WEB-INF/jsp/cart/orders-content.jsp";
     public static final String ORDER_DETAILS_CONTENT = "/WEB-INF/jsp/cart/order-details.jsp";
 
+    public static final String BOOK_LIST_CONTENT = "/WEB-INF/jsp/book/list.jsp";
+    public static final String BOOK_DETAILS_CONTENT = "/WEB-INF/jsp/book/view.jsp";
+
     public static final String ERROR_CONTENT = "/WEB-INF/jsp/common/error.jsp";
 
     private Jsp() {}
@@ -36,6 +40,8 @@ public final class PageParameters {
     public static final String LOGOUT = "/auth/logout";
 
     public static final String SUPPLIES = "/supplies/*";
+
+    public static final String BOOKS = "/books/*";
 
     public static final String LOGIN_REDIRECT = "/auth/login";
     public static final String SUPPLIES_REDIRECT = "/supplies";

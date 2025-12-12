@@ -27,14 +27,9 @@ public class CommandFactory {
 
   private static final String POST_REQUEST = "POST";
   private static final String GET_REQUEST = "GET";
-  private static final String DELETE_REQUEST = "DELETE";
 
   private static final String DELETE_PATH = "/delete/";
-  private static final String NEW_PATH = "/new";
   private static final String VIEW_PATH = "/view/";
-  private static final String CART_PATH = "/cart";
-  private static final String BOOKS_PATH = "/books";
-  private static final String ORDERS_PATH = "/orders";
 
   private CommandFactory() {}
 
@@ -67,14 +62,9 @@ public class CommandFactory {
 
   public static Command createBookCommand(HttpServletRequest request) {
     String pathInfo = request.getPathInfo();
-    String method = request.getMethod();
 
     if (pathInfo != null && pathInfo.contains(VIEW_PATH)) {
       return new ViewBookCommand();
-    }
-
-    if (GET_REQUEST.equalsIgnoreCase(method)) {
-      return new ListBooksCommand();
     }
 
     return new ListBooksCommand();
@@ -93,7 +83,6 @@ public class CommandFactory {
       if (VIEW_ACTION.equals(action)) {
         return new ViewCartCommand();
       }
-      // По умолчанию для GET запросов показываем корзину
       return new ViewCartCommand();
     }
 

@@ -37,7 +37,7 @@ public class CreateSupplyCommand implements Command {
 
   @Override
   public void execute(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException, ServiceException, ParseException {
+      throws ServletException, IOException, ServiceException {
 
     HttpSession session = request.getSession(false);
     if (session == null) {
@@ -88,7 +88,7 @@ public class CreateSupplyCommand implements Command {
 
       response.sendRedirect(request.getContextPath() + PageParameters.Path.SUPPLIES_REDIRECT);
 
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException | ParseException e) {
       logger.error("Invalid parameter format", e);
       request.setAttribute(AttributeParameters.ERROR, "Invalid parameter format: " + e.getMessage());
       request.getRequestDispatcher(PageParameters.Jsp.SUPPLY_FORM_CONTENT).forward(request, response);

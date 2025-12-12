@@ -10,7 +10,10 @@ public final class AttributeParameters {
   public static final String USER_ROLE = "userRole";
   public static final String ACTION = "action";
   public static final String SUPPLIES = "supplies";
+  public static final String BOOKS = "books";
+  public static final String BOOK = "book";
   public static final String CUSTOMER_ID = "customerId";
+  public static final String ERROR_MESSAGE = "errorMessage";
   public static final String SUCCESS_MESSAGE = "successMessage";
 
   private AttributeParameters() {}

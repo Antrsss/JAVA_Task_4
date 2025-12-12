@@ -5,6 +5,8 @@ import by.zgirskaya.course.exception.ServiceException;
 import by.zgirskaya.course.model.book.Book;
 import by.zgirskaya.course.service.book.BookService;
 import by.zgirskaya.course.service.book.impl.BookServiceImpl;
+import by.zgirskaya.course.util.AttributeParameters;
+import by.zgirskaya.course.util.PageParameters;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,23 +22,16 @@ public class ListBooksCommand implements Command {
 
   @Override
   public void execute(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException, ServiceException {
+      throws ServiceException, IOException, ServletException {
 
     logger.debug("Executing ListBooksCommand");
 
-    try {
-      List<Book> books = bookService.getAllBooks();
-      logger.info("Retrieved {} books for display", books.size());
+    List<Book> books = bookService.getAllBooks();
+    logger.info("Retrieved {} books for display", books.size());
 
-      request.setAttribute("books", books);
-      request.setAttribute("pageTitle", "Book Catalog");
+    request.setAttribute(AttributeParameters.BOOKS, books);
+    request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.BOOK_CATALOG);
 
-      request.getRequestDispatcher("/WEB-INF/jsp/book/list.jsp").forward(request, response);
-
-    } catch (ServiceException e) {
-      logger.error("Error executing ListBooksCommand", e);
-      request.setAttribute("errorMessage", "Unable to load book catalog. Please try again later.");
-      request.getRequestDispatcher("/WEB-INF/jsp/error.jsp").forward(request, response);
-    }
+    request.getRequestDispatcher(PageParameters.Jsp.BOOK_LIST_CONTENT).forward(request, response);
   }
 }

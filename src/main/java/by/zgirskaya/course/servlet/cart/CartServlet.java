@@ -26,7 +26,7 @@ public class CartServlet extends HttpServlet {
     try {
       Command command = CommandFactory.createCartCommand(request);
       command.execute(request, response);
-    } catch (ServiceException | DaoException | ParseException e) {
+    } catch (ServiceException e) {
       logger.error("Error processing GET cart request", e);
     }
   }
@@ -38,7 +38,7 @@ public class CartServlet extends HttpServlet {
     try {
       Command command = CommandFactory.createCartCommand(request);
       command.execute(request, response);
-    } catch (ServiceException | DaoException | ParseException e) {
+    } catch (ServiceException e) {
       logger.error("Error processing POST cart request", e);
     }
   }
@@ -50,7 +50,7 @@ public class CartServlet extends HttpServlet {
     try {
       Command command = CommandFactory.createCartCommand(request);
       command.execute(request, response);
-    } catch (ServiceException | DaoException | ParseException e) {
+    } catch (ServiceException e) {
       logger.error("Error processing DELETE cart request", e);
     }
   }

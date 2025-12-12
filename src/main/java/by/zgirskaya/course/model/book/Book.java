@@ -20,6 +20,8 @@ public class Book extends AbstractModel {
     this.quantity = quantity;
   }
 
+  public UUID getPublisherId() { return publisherId; }
+  public UUID getDiscountId() { return discountId; }
   public String getTitle() { return title; }
   public Double getPrice() { return price; }
   public Integer getQuantity() { return quantity; }

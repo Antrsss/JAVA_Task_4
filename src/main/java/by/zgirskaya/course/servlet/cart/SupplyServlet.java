@@ -27,7 +27,7 @@ public class SupplyServlet extends HttpServlet {
     try {
       Command command = CommandFactory.createSupplyCommand(request);
       command.execute(request, response);
-    } catch (ServiceException | DaoException | ParseException e) {
+    } catch (ServiceException e) {
       logger.error("Error processing GET supply request", e);
     }
   }
@@ -39,7 +39,7 @@ public class SupplyServlet extends HttpServlet {
     try {
       Command command = CommandFactory.createSupplyCommand(request);
       command.execute(request, response);
-    } catch (ServiceException | DaoException | ParseException e) {
+    } catch (ServiceException e) {
       logger.error("Error processing POST supply request", e);
     }
   }

@@ -26,7 +26,7 @@ public class OrderServlet extends HttpServlet {
     try {
       Command command = CommandFactory.createOrderCommand(request);
       command.execute(request, response);
-    } catch (ServiceException | DaoException | ParseException e) {
+    } catch (ServiceException e) {
       logger.error("Error processing GET order request", e);
     }
   }
@@ -38,7 +38,7 @@ public class OrderServlet extends HttpServlet {
     try {
       Command command = CommandFactory.createOrderCommand(request);
       command.execute(request, response);
-    } catch (ServiceException | DaoException | ParseException e) {
+    } catch (ServiceException e) {
       logger.error("Error processing POST order request", e);
     }
   }
