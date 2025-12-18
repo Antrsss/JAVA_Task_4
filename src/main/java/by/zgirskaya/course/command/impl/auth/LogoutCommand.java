@@ -21,22 +21,9 @@ public class LogoutCommand implements Command {
       throws ServiceException, IOException, ServletException {
 
     logger.debug("Executing LogoutCommand");
-
-    processLogout(request, response);
-  }
-
-  private void processLogout(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
-
     HttpSession session = request.getSession(false);
 
     if (session != null) {
-      Object user = session.getAttribute(AttributeParameters.USER);
-      if (user != null) {
-        logger.info("User logout: {}", user);
-      }
-
-      // Очищаем все атрибуты сессии
       session.removeAttribute(AttributeParameters.USER);
       session.removeAttribute(AttributeParameters.USER_ROLE);
       session.removeAttribute(AttributeParameters.CUSTOMER_ID);
@@ -46,10 +33,7 @@ public class LogoutCommand implements Command {
 
       session.invalidate();
       logger.info("Session invalidated successfully");
-    } else {
-      logger.debug("No active session found for logout");
     }
-
     response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN);
   }
 }

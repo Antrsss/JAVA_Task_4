@@ -30,50 +30,37 @@ public class RegisterCommand implements Command {
     String httpMethod = request.getMethod();
 
     if ("GET".equalsIgnoreCase(httpMethod)) {
-      showRegisterPage(request, response);
+      logger.debug("Displaying registration page");
+
+      request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.REGISTER_CONTENT);
+      request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.REGISTER);
+      request.getRequestDispatcher(PageParameters.Jsp.REGISTER_CONTENT).forward(request, response);
     } else if ("POST".equalsIgnoreCase(httpMethod)) {
-      processRegistration(request, response);
+      String name = request.getParameter(AuthParameters.Parameters.NAME);
+      String identifier = request.getParameter(AuthParameters.Parameters.IDENTIFIER);
+      String role = request.getParameter(AuthParameters.Parameters.ROLE);
+      String password = request.getParameter(AuthParameters.Parameters.PASSWORD);
+      String username = request.getParameter(AuthParameters.Parameters.USERNAME);
+      String passportId = request.getParameter(AuthParameters.Parameters.PASSPORT_ID);
+
+      logger.info("Registration attempt - Name: {}, Identifier: {}, Role: {}", name, identifier, role);
+
+      AbstractUserModel user = authService.registerUser(name, identifier, role, password, username, passportId);
+      String userRole = authService.findRoleById(user.getRoleId());
+      logger.info("User successfully registered: {} (ID: {})", identifier, user.getId());
+
+      HttpSession session = request.getSession();
+      session.setAttribute(AttributeParameters.USER, user);
+      session.setAttribute(AttributeParameters.USER_ROLE, userRole);
+
+      if (AuthParameters.Roles.CUSTOMER.equals(userRole)) {
+        session.setAttribute(AttributeParameters.CUSTOMER_ID, user.getId());
+      }
+
+      response.sendRedirect(request.getContextPath() + PageParameters.Path.ROOT);
     } else {
       logger.warn("Unsupported HTTP method: {}", httpMethod);
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
-  }
-
-  private void showRegisterPage(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-
-    logger.debug("Displaying registration page");
-
-    request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.REGISTER_CONTENT);
-    request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.REGISTER);
-    request.getRequestDispatcher(PageParameters.Jsp.REGISTER_CONTENT).forward(request, response);
-  }
-
-  private void processRegistration(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException, ServiceException {
-
-    String name = request.getParameter(AuthParameters.Parameters.NAME);
-    String identifier = request.getParameter(AuthParameters.Parameters.IDENTIFIER);
-    String role = request.getParameter(AuthParameters.Parameters.ROLE);
-    String password = request.getParameter(AuthParameters.Parameters.PASSWORD);
-    String username = request.getParameter(AuthParameters.Parameters.USERNAME);
-    String passportId = request.getParameter(AuthParameters.Parameters.PASSPORT_ID);
-
-    logger.info("Registration attempt - Name: {}, Identifier: {}, Role: {}", name, identifier, role);
-
-    AbstractUserModel user = authService.registerUser(name, identifier, role, password, username, passportId);
-    String userRole = authService.findRoleById(user.getRoleId());
-    logger.info("User successfully registered: {} (ID: {})", identifier, user.getId());
-
-    HttpSession session = request.getSession();
-    session.setAttribute(AttributeParameters.USER, user);
-    session.setAttribute(AttributeParameters.USER_ROLE, userRole);
-
-    // Для покупателей устанавливаем customerId
-    if (AuthParameters.Roles.CUSTOMER.equals(userRole)) {
-      session.setAttribute(AttributeParameters.CUSTOMER_ID, user.getId());
-    }
-
-    response.sendRedirect(request.getContextPath() + PageParameters.Path.ROOT);
   }
 }

@@ -4,6 +4,8 @@ import by.zgirskaya.course.command.Command;
 import by.zgirskaya.course.command.CommandFactory;
 import by.zgirskaya.course.exception.DaoException;
 import by.zgirskaya.course.exception.ServiceException;
+import by.zgirskaya.course.util.AttributeParameters;
+import by.zgirskaya.course.util.PageParameters;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,7 +15,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 @WebServlet(name = "OrderServlet", urlPatterns = {"/orders", "/orders/*", "/order/confirmation"})
 public class OrderServlet extends HttpServlet {
@@ -27,7 +28,9 @@ public class OrderServlet extends HttpServlet {
       Command command = CommandFactory.createOrderCommand(request);
       command.execute(request, response);
     } catch (ServiceException e) {
-      logger.error("Error processing GET order request", e);
+      logger.error("Error loading orders", e);
+      request.setAttribute(AttributeParameters.ERROR, "Failed to load orders: " + e.getMessage());
+      request.getRequestDispatcher(PageParameters.Jsp.ERROR_CONTENT).forward(request, response);
     }
   }
 
@@ -39,7 +42,9 @@ public class OrderServlet extends HttpServlet {
       Command command = CommandFactory.createOrderCommand(request);
       command.execute(request, response);
     } catch (ServiceException e) {
-      logger.error("Error processing POST order request", e);
+      logger.error("Error loading orders", e);
+      request.setAttribute(AttributeParameters.ERROR, "Failed to load orders: " + e.getMessage());
+      request.getRequestDispatcher(PageParameters.Jsp.ERROR_CONTENT).forward(request, response);
     }
   }
 }

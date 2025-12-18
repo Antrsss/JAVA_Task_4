@@ -7,84 +7,57 @@ import by.zgirskaya.course.model.cart.Order;
 import by.zgirskaya.course.model.user.AbstractUserModel;
 import by.zgirskaya.course.service.cart.OrderService;
 import by.zgirskaya.course.service.cart.impl.OrderServiceImpl;
-import by.zgirskaya.course.util.AttributeParameters;
 import by.zgirskaya.course.util.PageParameters;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ViewOrderDetailsCommand implements Command {
   private static final Logger logger = LogManager.getLogger();
   private final OrderService orderService = new OrderServiceImpl();
 
+  private static final String ORDER_ID = "orderId";
+
   @Override
   public void execute(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException, ServiceException {
 
-    HttpSession session = request.getSession(false);
-    if (session == null) {
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
+    logger.debug("Attempting to view order details");
+
+    Optional<AbstractUserModel> userOptional = getUserFromSession(request, response);
+    if (userOptional.isEmpty()) {
+      logger.warn("User not found in session, redirecting to login");
       return;
     }
 
-    AbstractUserModel currentUser = (AbstractUserModel) session.getAttribute(AttributeParameters.USER);
-    if (currentUser == null) {
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
-      return;
+    String orderIdParam = request.getParameter(ORDER_ID);
+    logger.debug("Order ID from parameter: {}", orderIdParam);
+
+    if (orderIdParam == null || orderIdParam.isEmpty()) {
+      String pathInfo = request.getPathInfo();
+      logger.debug("Path info: {}", pathInfo);
+
+      if (pathInfo != null && pathInfo.startsWith(VIEW_PATH)) {
+        orderIdParam = pathInfo.substring(VIEW_PATH.length());
+        logger.debug("Extracted order ID from path: {}", orderIdParam);
+      }
     }
 
-    try {
-      // Получаем ID заказа из параметра запроса или из path
-      String orderIdParam = request.getParameter("orderId");
-      if (orderIdParam == null || orderIdParam.isEmpty()) {
-        // Попробуем получить из path /orders/view/{id}
-        String pathInfo = request.getPathInfo();
-        if (pathInfo != null && pathInfo.startsWith("/view/")) {
-          orderIdParam = pathInfo.substring("/view/".length());
-        }
-      }
+    UUID orderId = UUID.fromString(orderIdParam);
+    Order order = orderService.findOrderById(orderId);
+    List<Item> orderItems = orderService.findOrderItems(orderId);
 
-      if (orderIdParam == null || orderIdParam.isEmpty()) {
-        throw new ServiceException("Order ID is required");
-      }
+    request.setAttribute("order", order);
+    request.setAttribute("orderItems", orderItems);
+    request.setAttribute("itemsCount", orderItems.size());
 
-      UUID orderId = UUID.fromString(orderIdParam);
-
-      // Получаем детали заказа
-      Order order = orderService.findOrderById(orderId);
-      if (order == null) {
-        throw new ServiceException("Order not found");
-      }
-
-      // Проверяем, что заказ принадлежит текущему пользователю
-      if (!order.getCustomerId().equals(currentUser.getId())) {
-        throw new ServiceException("Access denied");
-      }
-
-      // Получаем товары заказа
-      List<Item> orderItems = orderService.findOrderItems(orderId);
-
-      request.setAttribute("order", order);
-      request.setAttribute("orderItems", orderItems);
-      request.setAttribute("itemsCount", orderItems.size());
-
-      request.getRequestDispatcher(PageParameters.Jsp.ORDER_DETAILS_CONTENT).forward(request, response);
-
-    } catch (IllegalArgumentException e) {
-      logger.error("Invalid order ID format", e);
-      request.setAttribute(AttributeParameters.ERROR, "Invalid order ID format");
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.ORDERS_REDIRECT);
-    } catch (ServiceException e) {
-      logger.error("Error loading order details", e);
-      request.setAttribute(AttributeParameters.ERROR, "Failed to load order details: " + e.getMessage());
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.ORDERS_REDIRECT);
-    }
+    request.getRequestDispatcher(PageParameters.Jsp.ORDER_DETAILS_CONTENT).forward(request, response);
   }
 }

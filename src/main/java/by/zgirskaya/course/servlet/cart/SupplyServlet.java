@@ -4,6 +4,7 @@ import by.zgirskaya.course.command.Command;
 import by.zgirskaya.course.command.CommandFactory;
 import by.zgirskaya.course.exception.DaoException;
 import by.zgirskaya.course.exception.ServiceException;
+import by.zgirskaya.course.util.AttributeParameters;
 import by.zgirskaya.course.util.PageParameters;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -28,7 +29,9 @@ public class SupplyServlet extends HttpServlet {
       Command command = CommandFactory.createSupplyCommand(request);
       command.execute(request, response);
     } catch (ServiceException e) {
-      logger.error("Error processing GET supply request", e);
+      logger.error("Invalid parameter format", e);
+      request.setAttribute(AttributeParameters.ERROR, "Invalid parameter format: " + e.getMessage());
+      request.getRequestDispatcher(PageParameters.Jsp.SUPPLY_FORM_CONTENT).forward(request, response);
     }
   }
 
@@ -40,7 +43,9 @@ public class SupplyServlet extends HttpServlet {
       Command command = CommandFactory.createSupplyCommand(request);
       command.execute(request, response);
     } catch (ServiceException e) {
-      logger.error("Error processing POST supply request", e);
+      logger.error("Invalid parameter format", e);
+      request.setAttribute(AttributeParameters.ERROR, "Invalid parameter format: " + e.getMessage());
+      request.getRequestDispatcher(PageParameters.Jsp.SUPPLY_FORM_CONTENT).forward(request, response);
     }
   }
 }

@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ViewCartCommand implements Command {
@@ -34,19 +35,12 @@ public class ViewCartCommand implements Command {
 
     logger.debug("Executing ViewCartCommand");
 
-    HttpSession session = request.getSession(false);
-    if (session == null) {
-      logger.warn("No session found, redirecting to login");
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
+    Optional<AbstractUserModel> userOptional = getUserFromSession(request, response);
+    if (userOptional.isEmpty()) {
       return;
     }
-
-    AbstractUserModel currentUser = (AbstractUserModel) session.getAttribute(AttributeParameters.USER);
-    if (currentUser == null) {
-      logger.warn("User not authenticated, redirecting to login");
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
-      return;
-    }
+    AbstractUserModel currentUser = userOptional.get();
+    HttpSession session = request.getSession();
 
     String userRole = (String) session.getAttribute(AttributeParameters.USER_ROLE);
     if (!AuthParameters.Roles.CUSTOMER.equals(userRole)) {

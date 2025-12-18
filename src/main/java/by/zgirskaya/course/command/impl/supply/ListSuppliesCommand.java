@@ -22,6 +22,7 @@ public class ListSuppliesCommand implements Command {
       throws ServletException, IOException, ServiceException {
 
     List<Supply> supplies = supplyService.findAllSupplies();
+
     request.setAttribute(AttributeParameters.SUPPLIES, supplies);
     request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.SUPPLIES_CONTENT);
     request.setAttribute(AttributeParameters.PAGE_TITLE, "Manage Supplies");

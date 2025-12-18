@@ -22,10 +22,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class CreateSupplyCommand implements Command {
   private static final Logger logger = LogManager.getLogger();
@@ -39,17 +36,12 @@ public class CreateSupplyCommand implements Command {
   public void execute(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException, ServiceException {
 
-    HttpSession session = request.getSession(false);
-    if (session == null) {
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
+    Optional<AbstractUserModel> userOptional = getUserFromSession(request, response);
+    if (userOptional.isEmpty()) {
       return;
     }
-
-    AbstractUserModel currentUser = (AbstractUserModel) session.getAttribute(AttributeParameters.USER);
-    if (currentUser == null) {
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
-      return;
-    }
+    AbstractUserModel currentUser = userOptional.get();
+    HttpSession session = request.getSession();
 
     String userRole = (String) session.getAttribute(AttributeParameters.USER_ROLE);
     if (!AuthParameters.Roles.EMPLOYEE.equals(userRole)) {
@@ -67,11 +59,6 @@ public class CreateSupplyCommand implements Command {
       String[] quantities = request.getParameterValues("quantities[]");
       String[] prices = request.getParameterValues("prices[]");
 
-      if (bookIds == null || quantities == null || prices == null ||
-          bookIds.length != quantities.length || bookIds.length != prices.length) {
-        throw new ServiceException("Invalid book data provided");
-      }
-
       double totalSupplyPrice = calculateTotalSupplyPrice(quantities, prices);
 
       Supply supply = new Supply(employeeId, publisherId, date, totalSupplyPrice);
@@ -83,12 +70,12 @@ public class CreateSupplyCommand implements Command {
 
       logger.info("Created {} items for supply ID: {}", createdItems.size(), createdSupply.getId());
 
-      session.setAttribute("successMessage",
+      session.setAttribute(AttributeParameters.SUCCESS_MESSAGE,
           String.format("Supply created successfully with %d books", createdItems.size()));
 
       response.sendRedirect(request.getContextPath() + PageParameters.Path.SUPPLIES_REDIRECT);
 
-    } catch (IllegalArgumentException | ParseException e) {
+    } catch (ParseException e) {
       logger.error("Invalid parameter format", e);
       request.setAttribute(AttributeParameters.ERROR, "Invalid parameter format: " + e.getMessage());
       request.getRequestDispatcher(PageParameters.Jsp.SUPPLY_FORM_CONTENT).forward(request, response);
@@ -111,28 +98,15 @@ public class CreateSupplyCommand implements Command {
     List<Item> createdItems = new ArrayList<>();
 
     for (int i = 0; i < bookIds.length; i++) {
-      try {
-        UUID bookId = UUID.fromString(bookIds[i]);
-        int quantity = Integer.parseInt(quantities[i]);
-        double unitPrice = Double.parseDouble(prices[i]);
+      UUID bookId = UUID.fromString(bookIds[i]);
+      int quantity = Integer.parseInt(quantities[i]);
+      double unitPrice = Double.parseDouble(prices[i]);
 
-        if (quantity <= 0) {
-          throw new ServiceException("Quantity must be positive for book at position " + (i + 1));
-        }
+      Item item = itemService.addItemToCart(supplyId, bookId, quantity, unitPrice);
+      createdItems.add(item);
 
-        if (unitPrice <= 0) {
-          throw new ServiceException("Price must be positive for book at position " + (i + 1));
-        }
-
-        Item item = itemService.addItemToCart(supplyId, bookId, quantity, unitPrice);
-        createdItems.add(item);
-
-        logger.debug("Item created: {} (Book: {}, Quantity: {}, Price: ${})",
-            item.getId(), bookId, quantity, unitPrice);
-
-      } catch (NumberFormatException e) {
-        throw new ServiceException("Invalid number format for book at position " + (i + 1));
-      }
+      logger.debug("Item created: {} (Book: {}, Quantity: {}, Price: ${})",
+          item.getId(), bookId, quantity, unitPrice);
     }
 
     return createdItems;

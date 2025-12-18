@@ -30,12 +30,6 @@ public class ViewBookCommand implements Command {
     String pathInfo = request.getPathInfo();
     String bookIdStr = extractBookIdFromPath(pathInfo);
 
-    if (bookIdStr == null || bookIdStr.isEmpty()) {
-      logger.error("Book ID not found in path: {}", pathInfo);
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Book ID is required");
-      return;
-    }
-
     UUID bookId = UUID.fromString(bookIdStr);
     Book book = bookService.findBookById(bookId);
 

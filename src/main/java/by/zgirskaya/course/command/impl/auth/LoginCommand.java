@@ -31,27 +31,25 @@ public class LoginCommand implements Command {
     String httpMethod = request.getMethod();
 
     if ("GET".equalsIgnoreCase(httpMethod)) {
-      showLoginPage(request, response);
+      logger.debug("Displaying login page");
+
+      request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.LOGIN_CONTENT);
+      request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.LOGIN);
+      request.getRequestDispatcher(PageParameters.Jsp.LOGIN_CONTENT).forward(request, response);
+
     } else if ("POST".equalsIgnoreCase(httpMethod)) {
       processLogin(request, response);
+      request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.LOGIN_CONTENT);
+      request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.LOGIN);
+      request.getRequestDispatcher(PageParameters.Jsp.LOGIN_CONTENT).forward(request, response);
     } else {
       logger.warn("Unsupported HTTP method: {}", httpMethod);
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
   }
 
-  private void showLoginPage(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-
-    logger.debug("Displaying login page");
-
-    request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.LOGIN_CONTENT);
-    request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.LOGIN);
-    request.getRequestDispatcher(PageParameters.Jsp.LOGIN_CONTENT).forward(request, response);
-  }
-
   private void processLogin(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException, ServiceException {
+      throws IOException, ServiceException {
 
     String identifier = request.getParameter(AuthParameters.Parameters.IDENTIFIER);
     String password = request.getParameter(AuthParameters.Parameters.PASSWORD);
@@ -69,7 +67,6 @@ public class LoginCommand implements Command {
       session.setAttribute(AttributeParameters.USER, user);
       session.setAttribute(AttributeParameters.USER_ROLE, userRole);
 
-      // Для покупателей устанавливаем customerId
       if (AuthParameters.Roles.CUSTOMER.equals(userRole)) {
         session.setAttribute(AttributeParameters.CUSTOMER_ID, user.getId());
       }
@@ -78,7 +75,6 @@ public class LoginCommand implements Command {
     } else {
       logger.warn("Failed login attempt for identifier: {}", identifier);
       request.setAttribute(AttributeParameters.ERROR, "Invalid credentials");
-      showLoginPage(request, response);
     }
   }
 }

@@ -11,12 +11,12 @@ import by.zgirskaya.course.util.PageParameters;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class ViewOrdersCommand implements Command {
   private static final Logger logger = LogManager.getLogger();
@@ -26,31 +26,23 @@ public class ViewOrdersCommand implements Command {
   public void execute(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException, ServiceException {
 
-    HttpSession session = request.getSession(false);
-    if (session == null) {
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
+    logger.debug("Attempting to view orders for user");
+
+    Optional<AbstractUserModel> userOptional = getUserFromSession(request, response);
+    if (userOptional.isEmpty()) {
+      logger.warn("User not found in session, redirecting to login");
       return;
     }
+    AbstractUserModel currentUser = userOptional.get();
 
-    AbstractUserModel currentUser = (AbstractUserModel) session.getAttribute(AttributeParameters.USER);
-    if (currentUser == null) {
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
-      return;
-    }
+    List<Order> completedOrders = orderService.findOrdersByCustomerId(currentUser.getId());
+    int orderCount = completedOrders.size();
 
-    try {
-      List<Order> completedOrders = orderService.findOrdersByCustomerId(currentUser.getId());
-      int orderCount = completedOrders.size();
+    logger.debug("Found {} orders for user ID: {}", orderCount, currentUser.getId());
 
-      request.setAttribute("orders", completedOrders);
-      request.setAttribute("orderCount", orderCount);
+    request.setAttribute(AttributeParameters.ORDERS, completedOrders);
+    request.setAttribute(AttributeParameters.ORDER_COUNT, orderCount);
 
-      request.getRequestDispatcher(PageParameters.Jsp.ORDERS_CONTENT).forward(request, response);
-
-    } catch (ServiceException e) {
-      logger.error("Error loading orders", e);
-      request.setAttribute(AttributeParameters.ERROR, "Failed to load orders: " + e.getMessage());
-      request.getRequestDispatcher(PageParameters.Jsp.ERROR_CONTENT).forward(request, response);
-    }
+    request.getRequestDispatcher(PageParameters.Jsp.ORDERS_CONTENT).forward(request, response);
   }
 }
