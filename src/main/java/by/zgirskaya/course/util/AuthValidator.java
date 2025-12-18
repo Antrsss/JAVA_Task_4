@@ -1,6 +1,8 @@
 package by.zgirskaya.course.util;
 
 public class AuthValidator {
+  private static final String PHONE_NUMBER_REGEX = "^[+]?[0-9\\s\\-()]+$";
+  private static final String EMAIL_SYMBOL = "@";
 
   public static boolean validateRegistrationInput(
       String name,
@@ -28,12 +30,12 @@ public class AuthValidator {
 
   public static boolean isValidEmail(String email) {
     if (email == null) return false;
-    return email.contains("@") && email.length() > 3;
+    return email.contains(EMAIL_SYMBOL) && email.length() > 3;
   }
 
   public static boolean isValidPhoneNumber(String phoneNumber) {
     if (phoneNumber == null) return false;
-    return !phoneNumber.contains("@") && phoneNumber.matches("^[+]?[0-9\\s\\-()]+$");
+    return !phoneNumber.contains(EMAIL_SYMBOL) && phoneNumber.matches(PHONE_NUMBER_REGEX);
   }
 
   private AuthValidator() {}
