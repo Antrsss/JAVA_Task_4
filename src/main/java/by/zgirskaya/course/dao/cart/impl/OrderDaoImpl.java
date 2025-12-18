@@ -4,7 +4,7 @@ import by.zgirskaya.course.connection.DatabaseConnection;
 import by.zgirskaya.course.dao.cart.OrderDao;
 import by.zgirskaya.course.exception.DaoException;
 import by.zgirskaya.course.model.cart.Order;
-import by.zgirskaya.course.util.TableColumns;
+import by.zgirskaya.course.util.TableColumn;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -142,11 +142,11 @@ public class OrderDaoImpl implements OrderDao {
   private Order extractOrderFromResultSet(ResultSet resultSet) throws SQLException {
     logger.debug("Extracting order from ResultSet");
 
-    UUID id = (UUID) resultSet.getObject(TableColumns.Order.ID);
-    UUID customerId = (UUID) resultSet.getObject(TableColumns.Order.CUSTOMER_ID);
-    Timestamp purchaseDate = resultSet.getTimestamp(TableColumns.Order.PURCHASE_DATE);
-    java.util.Date deliveryDate = resultSet.getDate(TableColumns.Order.DELIVERY_DATE);
-    Double orderPrice = resultSet.getDouble(TableColumns.Order.ORDER_PRICE);
+    UUID id = (UUID) resultSet.getObject(TableColumn.Order.ID);
+    UUID customerId = (UUID) resultSet.getObject(TableColumn.Order.CUSTOMER_ID);
+    Timestamp purchaseDate = resultSet.getTimestamp(TableColumn.Order.PURCHASE_DATE);
+    java.util.Date deliveryDate = resultSet.getDate(TableColumn.Order.DELIVERY_DATE);
+    Double orderPrice = resultSet.getDouble(TableColumn.Order.ORDER_PRICE);
 
     Order order = new Order(id, customerId, purchaseDate, orderPrice);
     order.setDeliveryDate(deliveryDate);

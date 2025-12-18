@@ -2,8 +2,8 @@ package by.zgirskaya.course.command.impl.auth;
 
 import by.zgirskaya.course.command.Command;
 import by.zgirskaya.course.exception.ServiceException;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,16 +24,16 @@ public class LogoutCommand implements Command {
     HttpSession session = request.getSession(false);
 
     if (session != null) {
-      session.removeAttribute(AttributeParameters.USER);
-      session.removeAttribute(AttributeParameters.USER_ROLE);
-      session.removeAttribute(AttributeParameters.CUSTOMER_ID);
+      session.removeAttribute(AttributeParameter.USER);
+      session.removeAttribute(AttributeParameter.USER_ROLE);
+      session.removeAttribute(AttributeParameter.CUSTOMER_ID);
       session.removeAttribute("currentCart");
-      session.removeAttribute(AttributeParameters.SUCCESS_MESSAGE);
-      session.removeAttribute(AttributeParameters.ERROR);
+      session.removeAttribute(AttributeParameter.SUCCESS_MESSAGE);
+      session.removeAttribute(AttributeParameter.ERROR);
 
       session.invalidate();
       logger.info("Session invalidated successfully");
     }
-    response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN);
+    response.sendRedirect(request.getContextPath() + PageParameter.Path.LOGIN);
   }
 }

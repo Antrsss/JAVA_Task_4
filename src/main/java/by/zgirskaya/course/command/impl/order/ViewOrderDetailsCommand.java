@@ -7,7 +7,7 @@ import by.zgirskaya.course.model.cart.Order;
 import by.zgirskaya.course.model.user.AbstractUserModel;
 import by.zgirskaya.course.service.cart.OrderService;
 import by.zgirskaya.course.service.cart.impl.OrderServiceImpl;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -58,6 +58,6 @@ public class ViewOrderDetailsCommand implements Command {
     request.setAttribute("orderItems", orderItems);
     request.setAttribute("itemsCount", orderItems.size());
 
-    request.getRequestDispatcher(PageParameters.Jsp.ORDER_DETAILS_CONTENT).forward(request, response);
+    request.getRequestDispatcher(PageParameter.Jsp.ORDER_DETAILS_CONTENT).forward(request, response);
   }
 }

@@ -5,8 +5,8 @@ import by.zgirskaya.course.exception.ServiceException;
 import by.zgirskaya.course.model.book.Book;
 import by.zgirskaya.course.service.book.BookService;
 import by.zgirskaya.course.service.book.impl.BookServiceImpl;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,9 +29,9 @@ public class ListBooksCommand implements Command {
     List<Book> books = bookService.getAllBooks();
     logger.info("Retrieved {} books for display", books.size());
 
-    request.setAttribute(AttributeParameters.BOOKS, books);
-    request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.BOOK_CATALOG);
+    request.setAttribute(AttributeParameter.BOOKS, books);
+    request.setAttribute(AttributeParameter.PAGE_TITLE, PageParameter.Title.BOOK_CATALOG);
 
-    request.getRequestDispatcher(PageParameters.Jsp.BOOK_LIST_CONTENT).forward(request, response);
+    request.getRequestDispatcher(PageParameter.Jsp.BOOK_LIST_CONTENT).forward(request, response);
   }
 }

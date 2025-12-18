@@ -15,8 +15,8 @@ import by.zgirskaya.course.command.impl.supply.CreateSupplyCommand;
 import by.zgirskaya.course.command.impl.supply.DeleteSupplyCommand;
 import by.zgirskaya.course.command.impl.supply.ListSuppliesCommand;
 import by.zgirskaya.course.command.impl.supply.ShowNewSupplyFormCommand;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class CommandFactory {
@@ -39,11 +39,11 @@ public class CommandFactory {
   public static Command createAuthCommand(HttpServletRequest request) {
     String servletPath = request.getServletPath();
 
-    if (PageParameters.Path.LOGIN.equals(servletPath)) {
+    if (PageParameter.Path.LOGIN.equals(servletPath)) {
       return new LoginCommand();
-    } else if (PageParameters.Path.LOGOUT.equals(servletPath)) {
+    } else if (PageParameter.Path.LOGOUT.equals(servletPath)) {
       return new LogoutCommand();
-    } else if (PageParameters.Path.REGISTER.equals(servletPath)) {
+    } else if (PageParameter.Path.REGISTER.equals(servletPath)) {
       return new RegisterCommand();
     }
 
@@ -52,7 +52,7 @@ public class CommandFactory {
 
   public static Command createSupplyCommand(HttpServletRequest request) {
     String pathInfo = request.getPathInfo();
-    String action = request.getParameter(AttributeParameters.ACTION);
+    String action = request.getParameter(AttributeParameter.ACTION);
 
     if (pathInfo != null && pathInfo.contains(DELETE_PATH)) {
       return new DeleteSupplyCommand();
@@ -88,7 +88,7 @@ public class CommandFactory {
   }
 
   public static Command createCartCommand(HttpServletRequest request) {
-    String action = request.getParameter(AttributeParameters.ACTION);
+    String action = request.getParameter(AttributeParameter.ACTION);
 
     if (ADD_TO_CART_ACTION.equals(action)) {
       return new AddToCartCommand();
@@ -103,7 +103,7 @@ public class CommandFactory {
 
   public static Command createOrderCommand(HttpServletRequest request) {
     String pathInfo = request.getPathInfo();
-    String action = request.getParameter(AttributeParameters.ACTION);
+    String action = request.getParameter(AttributeParameter.ACTION);
 
     if (pathInfo != null && pathInfo.startsWith("/view/")) {
       return new ViewOrderDetailsCommand();

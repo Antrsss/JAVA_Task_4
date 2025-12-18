@@ -1,9 +1,9 @@
-package by.zgirskaya.course.servlet.auth;
+package by.zgirskaya.course.controller.auth;
 
 import by.zgirskaya.course.command.Command;
 import by.zgirskaya.course.command.CommandFactory;
 import by.zgirskaya.course.exception.ServiceException;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,9 +15,9 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 
 @WebServlet(urlPatterns = {
-    PageParameters.Path.LOGIN,
-    PageParameters.Path.LOGOUT,
-    PageParameters.Path.REGISTER
+    PageParameter.Path.LOGIN,
+    PageParameter.Path.LOGOUT,
+    PageParameter.Path.REGISTER
 })
 public class AuthServlet extends HttpServlet {
   private static final Logger logger = LogManager.getLogger();

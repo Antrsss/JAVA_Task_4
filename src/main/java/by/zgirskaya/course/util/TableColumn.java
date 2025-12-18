@@ -1,6 +1,6 @@
 package by.zgirskaya.course.util;
 
-public final class TableColumns {
+public final class TableColumn {
 
   public static final class User {
     public static final String ID = "id";
@@ -55,5 +55,5 @@ public final class TableColumns {
     private Supply() {}
   }
 
-  private TableColumns() {}
+  private TableColumn() {}
 }

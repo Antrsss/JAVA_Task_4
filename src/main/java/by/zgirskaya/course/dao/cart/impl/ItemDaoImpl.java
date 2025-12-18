@@ -4,7 +4,7 @@ import by.zgirskaya.course.connection.DatabaseConnection;
 import by.zgirskaya.course.dao.cart.ItemDao;
 import by.zgirskaya.course.exception.DaoException;
 import by.zgirskaya.course.model.cart.Item;
-import by.zgirskaya.course.util.TableColumns;
+import by.zgirskaya.course.util.TableColumn;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -254,13 +254,13 @@ public class ItemDaoImpl implements ItemDao {
   private Item extractItemFromResultSet(ResultSet resultSet) throws SQLException {
     logger.debug("Extracting item from ResultSet");
 
-    UUID id = (UUID) resultSet.getObject(TableColumns.Item.ID);
-    UUID cartId = (UUID) resultSet.getObject(TableColumns.Item.CART_ID);
-    UUID orderId = (UUID) resultSet.getObject(TableColumns.Item.ORDER_ID);
-    UUID bookId = (UUID) resultSet.getObject(TableColumns.Item.BOOK_ID);
-    int quantity = resultSet.getInt(TableColumns.Item.QUANTITY);
-    Double unitPrice = resultSet.getDouble(TableColumns.Item.UNIT_PRICE);
-    Double totalPrice = resultSet.getDouble(TableColumns.Item.TOTAL_PRICE);
+    UUID id = (UUID) resultSet.getObject(TableColumn.Item.ID);
+    UUID cartId = (UUID) resultSet.getObject(TableColumn.Item.CART_ID);
+    UUID orderId = (UUID) resultSet.getObject(TableColumn.Item.ORDER_ID);
+    UUID bookId = (UUID) resultSet.getObject(TableColumn.Item.BOOK_ID);
+    int quantity = resultSet.getInt(TableColumn.Item.QUANTITY);
+    Double unitPrice = resultSet.getDouble(TableColumn.Item.UNIT_PRICE);
+    Double totalPrice = resultSet.getDouble(TableColumn.Item.TOTAL_PRICE);
 
     Item item = new Item(id, cartId, orderId, bookId, quantity, unitPrice);
 

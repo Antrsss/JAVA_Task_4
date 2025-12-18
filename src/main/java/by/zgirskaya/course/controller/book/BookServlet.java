@@ -1,10 +1,10 @@
-package by.zgirskaya.course.servlet.book;
+package by.zgirskaya.course.controller.book;
 
 import by.zgirskaya.course.command.Command;
 import by.zgirskaya.course.command.CommandFactory;
 import by.zgirskaya.course.exception.ServiceException;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-@WebServlet(PageParameters.Path.BOOKS)
+@WebServlet(PageParameter.Path.BOOKS)
 public class BookServlet extends HttpServlet {
   private static final Logger logger = LogManager.getLogger();
 
@@ -27,8 +27,8 @@ public class BookServlet extends HttpServlet {
       command.execute(request, response);
     } catch (ServiceException e) {
       logger.error("Error executing ListBooksCommand", e);
-      request.setAttribute(AttributeParameters.ERROR_MESSAGE, "Unable to load book catalog. Please try again later.");
-      request.getRequestDispatcher(PageParameters.Jsp.ERROR_CONTENT).forward(request, response);
+      request.setAttribute(AttributeParameter.ERROR_MESSAGE, "Unable to load book catalog. Please try again later.");
+      request.getRequestDispatcher(PageParameter.Jsp.ERROR_CONTENT).forward(request, response);
     }
   }
 }

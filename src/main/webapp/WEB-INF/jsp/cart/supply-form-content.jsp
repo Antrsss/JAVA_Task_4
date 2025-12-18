@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
-<%@ page import="by.zgirskaya.course.util.AttributeParameters" %>
+<%@ page import="by.zgirskaya.course.util.AttributeParameter" %>
 
 <div class="supply-form-container">
   <div class="d-flex justify-content-between align-items-center mb-4">

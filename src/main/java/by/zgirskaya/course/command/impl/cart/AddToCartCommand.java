@@ -11,9 +11,9 @@ import by.zgirskaya.course.service.cart.CartService;
 import by.zgirskaya.course.service.cart.ItemService;
 import by.zgirskaya.course.service.cart.impl.CartServiceImpl;
 import by.zgirskaya.course.service.cart.impl.ItemServiceImpl;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.AuthParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.AuthParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -45,10 +45,10 @@ public class AddToCartCommand implements Command {
     AbstractUserModel currentUser = userOptional.get();
     HttpSession session = request.getSession();
 
-    String userRole = (String) session.getAttribute(AttributeParameters.USER_ROLE);
-    if (!AuthParameters.Roles.CUSTOMER.equals(userRole)) {
-      request.setAttribute(AttributeParameters.ERROR, "Only customers can add items to the shopping cart");
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.BOOKS_REDIRECT);
+    String userRole = (String) session.getAttribute(AttributeParameter.USER_ROLE);
+    if (!AuthParameter.Roles.CUSTOMER.equals(userRole)) {
+      request.setAttribute(AttributeParameter.ERROR, "Only customers can add items to the shopping cart");
+      response.sendRedirect(request.getContextPath() + PageParameter.Path.BOOKS_REDIRECT);
       return;
     }
 
@@ -71,9 +71,9 @@ public class AddToCartCommand implements Command {
     itemService.addItemToCart(cart.getId(), bookId, quantity, unitPrice);
     logger.info("Item added to cart successfully - bookId: {}, cartId: {}", bookId, cart.getId());
 
-    session.setAttribute(AttributeParameters.SUCCESS_MESSAGE, "Book added to cart successfully!");
+    session.setAttribute(AttributeParameter.SUCCESS_MESSAGE, "Book added to cart successfully!");
 
-    String redirectUrl = request.getContextPath() + PageParameters.Path.CART_REDIRECT + "?action=view";
+    String redirectUrl = request.getContextPath() + PageParameter.Path.CART_REDIRECT + "?action=view";
     logger.debug("Redirecting to: {}", redirectUrl);
     response.sendRedirect(redirectUrl);
   }

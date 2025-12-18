@@ -8,7 +8,7 @@ import by.zgirskaya.course.model.user.AbstractUserModel;
 import by.zgirskaya.course.model.user.Customer;
 import by.zgirskaya.course.model.user.Employee;
 import by.zgirskaya.course.service.auth.AuthService;
-import by.zgirskaya.course.util.AuthParameters;
+import by.zgirskaya.course.util.AuthParameter;
 import by.zgirskaya.course.util.AuthValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
       UUID roleId;
       AbstractUserModel user;
 
-      if (AuthParameters.Roles.EMPLOYEE.equals(role)) {
+      if (AuthParameter.Roles.EMPLOYEE.equals(role)) {
         logger.debug("Creating employee user");
         roleId = userDao.findEmployeeRoleId();
         user = new Employee(name, phoneNumber, email, password, roleId, passportId);

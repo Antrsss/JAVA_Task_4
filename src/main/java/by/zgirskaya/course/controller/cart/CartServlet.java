@@ -1,10 +1,10 @@
-package by.zgirskaya.course.servlet.cart;
+package by.zgirskaya.course.controller.cart;
 
 import by.zgirskaya.course.command.Command;
 import by.zgirskaya.course.command.CommandFactory;
 import by.zgirskaya.course.exception.ServiceException;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-@WebServlet(PageParameters.Path.CART)
+@WebServlet(PageParameter.Path.CART)
 public class CartServlet extends HttpServlet {
   private static final Logger logger = LogManager.getLogger();
 
@@ -28,8 +28,8 @@ public class CartServlet extends HttpServlet {
       command.execute(request, response);
     } catch (ServiceException e) {
       logger.error("Error getting items in cart", e);
-      request.setAttribute(AttributeParameters.ERROR, "Unable to get items in cart: " + e.getMessage());
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.BOOKS_REDIRECT);
+      request.setAttribute(AttributeParameter.ERROR, "Unable to get items in cart: " + e.getMessage());
+      response.sendRedirect(request.getContextPath() + PageParameter.Path.BOOKS_REDIRECT);
     }
   }
 
@@ -42,8 +42,8 @@ public class CartServlet extends HttpServlet {
       command.execute(request, response);
     } catch (ServiceException e) {
       logger.error("Error adding item to cart", e);
-      request.setAttribute(AttributeParameters.ERROR, "Unable to add item to cart: " + e.getMessage());
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.BOOKS_REDIRECT);
+      request.setAttribute(AttributeParameter.ERROR, "Unable to add item to cart: " + e.getMessage());
+      response.sendRedirect(request.getContextPath() + PageParameter.Path.BOOKS_REDIRECT);
     }
   }
 
@@ -56,8 +56,8 @@ public class CartServlet extends HttpServlet {
       command.execute(request, response);
     } catch (ServiceException e) {
       logger.error("Invalid item deletion in cart", e);
-      request.setAttribute(AttributeParameters.ERROR, "Invalid item deletion in cart");
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
+      request.setAttribute(AttributeParameter.ERROR, "Invalid item deletion in cart");
+      response.sendRedirect(request.getContextPath() + PageParameter.Path.CART_REDIRECT);
     }
   }
 }

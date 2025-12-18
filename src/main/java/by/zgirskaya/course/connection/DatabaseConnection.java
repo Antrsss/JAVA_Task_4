@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -21,7 +22,7 @@ public class DatabaseConnection {
       Context initContext = new InitialContext();
       Context envContext = (Context) initContext.lookup(JNDI_ENVIRONMENT_CONTEXT);
       dataSource = (DataSource) envContext.lookup(JNDI_DATASOURCE_NAME);
-    } catch (Exception e) {
+    } catch (NamingException e) {
       logger.fatal("Error while initializing DataSource", e);
       throw new ExceptionInInitializerError("Failed to initialize DataSource: " + e.getMessage());
     }

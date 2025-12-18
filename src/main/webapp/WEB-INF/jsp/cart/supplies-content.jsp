@@ -1,11 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
-<%@ page import="by.zgirskaya.course.util.AttributeParameters" %>
-<%@ page import="by.zgirskaya.course.util.AuthParameters" %>
+<%@ page import="by.zgirskaya.course.util.AttributeParameter" %>
+<%@ page import="by.zgirskaya.course.util.AuthParameter" %>
 
 <%
-  String userRole = (String) session.getAttribute(AttributeParameters.USER_ROLE);
-  boolean isEmployee = AuthParameters.Roles.EMPLOYEE.equals(userRole);
+  String userRole = (String) session.getAttribute(AttributeParameter.USER_ROLE);
+  boolean isEmployee = AuthParameter.Roles.EMPLOYEE.equals(userRole);
   request.setAttribute("isEmployee", isEmployee);
 %>
 

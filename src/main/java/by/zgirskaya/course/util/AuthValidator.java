@@ -15,7 +15,7 @@ public class AuthValidator {
         validateNotEmpty(password) &&
         validateNotEmpty(role);
 
-    if (AuthParameters.Roles.EMPLOYEE.equals(role)) {
+    if (AuthParameter.Roles.EMPLOYEE.equals(role)) {
       return isValid && validateNotEmpty(passportId);
     } else {
       return isValid && validateNotEmpty(username);

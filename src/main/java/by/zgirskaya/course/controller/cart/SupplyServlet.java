@@ -1,11 +1,10 @@
-package by.zgirskaya.course.servlet.cart;
+package by.zgirskaya.course.controller.cart;
 
 import by.zgirskaya.course.command.Command;
 import by.zgirskaya.course.command.CommandFactory;
-import by.zgirskaya.course.exception.DaoException;
 import by.zgirskaya.course.exception.ServiceException;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,8 +15,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-@WebServlet(name = "OrderServlet", urlPatterns = {"/orders", "/orders/*", "/order/confirmation"})
-public class OrderServlet extends HttpServlet {
+@WebServlet(PageParameter.Path.SUPPLIES)
+public class SupplyServlet extends HttpServlet {
   private static final Logger logger = LogManager.getLogger();
 
   @Override
@@ -25,12 +24,12 @@ public class OrderServlet extends HttpServlet {
       throws ServletException, IOException {
 
     try {
-      Command command = CommandFactory.createOrderCommand(request);
+      Command command = CommandFactory.createSupplyCommand(request);
       command.execute(request, response);
     } catch (ServiceException e) {
-      logger.error("Error loading orders", e);
-      request.setAttribute(AttributeParameters.ERROR, "Failed to load orders: " + e.getMessage());
-      request.getRequestDispatcher(PageParameters.Jsp.ERROR_CONTENT).forward(request, response);
+      logger.error("Invalid parameter format", e);
+      request.setAttribute(AttributeParameter.ERROR, "Invalid parameter format: " + e.getMessage());
+      request.getRequestDispatcher(PageParameter.Jsp.SUPPLY_FORM_CONTENT).forward(request, response);
     }
   }
 
@@ -39,12 +38,12 @@ public class OrderServlet extends HttpServlet {
       throws ServletException, IOException {
 
     try {
-      Command command = CommandFactory.createOrderCommand(request);
+      Command command = CommandFactory.createSupplyCommand(request);
       command.execute(request, response);
     } catch (ServiceException e) {
-      logger.error("Error loading orders", e);
-      request.setAttribute(AttributeParameters.ERROR, "Failed to load orders: " + e.getMessage());
-      request.getRequestDispatcher(PageParameters.Jsp.ERROR_CONTENT).forward(request, response);
+      logger.error("Invalid parameter format", e);
+      request.setAttribute(AttributeParameter.ERROR, "Invalid parameter format: " + e.getMessage());
+      request.getRequestDispatcher(PageParameter.Jsp.SUPPLY_FORM_CONTENT).forward(request, response);
     }
   }
 }

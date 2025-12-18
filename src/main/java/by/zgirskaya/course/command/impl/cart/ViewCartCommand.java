@@ -9,9 +9,9 @@ import by.zgirskaya.course.service.cart.CartService;
 import by.zgirskaya.course.service.cart.ItemService;
 import by.zgirskaya.course.service.cart.impl.CartServiceImpl;
 import by.zgirskaya.course.service.cart.impl.ItemServiceImpl;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.AuthParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.AuthParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,18 +42,18 @@ public class ViewCartCommand implements Command {
     AbstractUserModel currentUser = userOptional.get();
     HttpSession session = request.getSession();
 
-    String userRole = (String) session.getAttribute(AttributeParameters.USER_ROLE);
-    if (!AuthParameters.Roles.CUSTOMER.equals(userRole)) {
+    String userRole = (String) session.getAttribute(AttributeParameter.USER_ROLE);
+    if (!AuthParameter.Roles.CUSTOMER.equals(userRole)) {
       logger.warn("User role {} attempted to remove from cart - forbidden", userRole);
-      request.setAttribute(AttributeParameters.ERROR, "Only customers can view items from the shopping cart");
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.BOOKS_REDIRECT);
+      request.setAttribute(AttributeParameter.ERROR, "Only customers can view items from the shopping cart");
+      response.sendRedirect(request.getContextPath() + PageParameter.Path.BOOKS_REDIRECT);
       return;
     }
 
     UUID customerId = getCustomerIdFromSession(session, currentUser);
     if (customerId == null) {
       logger.error("Customer ID not found in session");
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.LOGIN_REDIRECT);
+      response.sendRedirect(request.getContextPath() + PageParameter.Path.LOGIN_REDIRECT);
       return;
     }
 
@@ -67,11 +67,11 @@ public class ViewCartCommand implements Command {
 
     double orderTotal = cartService.calculateCartTotal(cart.getId());
 
-    request.setAttribute(AttributeParameters.CART, cart);
-    request.setAttribute(AttributeParameters.ITEMS, items);
-    request.setAttribute(AttributeParameters.TOTAL_PRICE, orderTotal);
-    request.setAttribute(AttributeParameters.PAGE_TITLE, "Shopping Cart");
+    request.setAttribute(AttributeParameter.CART, cart);
+    request.setAttribute(AttributeParameter.ITEMS, items);
+    request.setAttribute(AttributeParameter.TOTAL_PRICE, orderTotal);
+    request.setAttribute(AttributeParameter.PAGE_TITLE, "Shopping Cart");
 
-    request.getRequestDispatcher(PageParameters.Jsp.CART_CONTENT).forward(request, response);
+    request.getRequestDispatcher(PageParameter.Jsp.CART_CONTENT).forward(request, response);
   }
 }

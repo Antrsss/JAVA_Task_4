@@ -5,8 +5,8 @@ import by.zgirskaya.course.exception.ServiceException;
 import by.zgirskaya.course.model.book.Book;
 import by.zgirskaya.course.service.book.BookService;
 import by.zgirskaya.course.service.book.impl.BookServiceImpl;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,10 +39,10 @@ public class ViewBookCommand implements Command {
       return;
     }
 
-    request.setAttribute(AttributeParameters.BOOK, book);
-    request.setAttribute(AttributeParameters.PAGE_TITLE, book.getTitle());
+    request.setAttribute(AttributeParameter.BOOK, book);
+    request.setAttribute(AttributeParameter.PAGE_TITLE, book.getTitle());
 
-    request.getRequestDispatcher(PageParameters.Jsp.BOOK_DETAILS_CONTENT).forward(request, response);
+    request.getRequestDispatcher(PageParameter.Jsp.BOOK_DETAILS_CONTENT).forward(request, response);
   }
 
   private String extractBookIdFromPath(String pathInfo) {

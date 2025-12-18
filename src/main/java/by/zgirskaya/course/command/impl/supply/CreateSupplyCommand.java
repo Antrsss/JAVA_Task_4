@@ -9,9 +9,9 @@ import by.zgirskaya.course.service.cart.ItemService;
 import by.zgirskaya.course.service.cart.SupplyService;
 import by.zgirskaya.course.service.cart.impl.ItemServiceImpl;
 import by.zgirskaya.course.service.cart.impl.SupplyServiceImpl;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.AuthParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.AuthParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,10 +43,10 @@ public class CreateSupplyCommand implements Command {
     AbstractUserModel currentUser = userOptional.get();
     HttpSession session = request.getSession();
 
-    String userRole = (String) session.getAttribute(AttributeParameters.USER_ROLE);
-    if (!AuthParameters.Roles.EMPLOYEE.equals(userRole)) {
-      request.setAttribute(AttributeParameters.ERROR, "Only employees can create supplies");
-      request.getRequestDispatcher(PageParameters.Jsp.ERROR_CONTENT).forward(request, response);
+    String userRole = (String) session.getAttribute(AttributeParameter.USER_ROLE);
+    if (!AuthParameter.Roles.EMPLOYEE.equals(userRole)) {
+      request.setAttribute(AttributeParameter.ERROR, "Only employees can create supplies");
+      request.getRequestDispatcher(PageParameter.Jsp.ERROR_CONTENT).forward(request, response);
       return;
     }
 
@@ -70,15 +70,15 @@ public class CreateSupplyCommand implements Command {
 
       logger.info("Created {} items for supply ID: {}", createdItems.size(), createdSupply.getId());
 
-      session.setAttribute(AttributeParameters.SUCCESS_MESSAGE,
+      session.setAttribute(AttributeParameter.SUCCESS_MESSAGE,
           String.format("Supply created successfully with %d books", createdItems.size()));
 
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.SUPPLIES_REDIRECT);
+      response.sendRedirect(request.getContextPath() + PageParameter.Path.SUPPLIES_REDIRECT);
 
     } catch (ParseException e) {
       logger.error("Invalid parameter format", e);
-      request.setAttribute(AttributeParameters.ERROR, "Invalid parameter format: " + e.getMessage());
-      request.getRequestDispatcher(PageParameters.Jsp.SUPPLY_FORM_CONTENT).forward(request, response);
+      request.setAttribute(AttributeParameter.ERROR, "Invalid parameter format: " + e.getMessage());
+      request.getRequestDispatcher(PageParameter.Jsp.SUPPLY_FORM_CONTENT).forward(request, response);
     }
   }
 

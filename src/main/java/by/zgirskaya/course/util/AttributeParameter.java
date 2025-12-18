@@ -1,6 +1,6 @@
 package by.zgirskaya.course.util;
 
-public final class AttributeParameters {
+public final class AttributeParameter {
 
   public static final String TITLE = "title";
   public static final String PAGE_TITLE = "pageTitle";
@@ -21,5 +21,5 @@ public final class AttributeParameters {
   public static final String ERROR_MESSAGE = "errorMessage";
   public static final String SUCCESS_MESSAGE = "successMessage";
 
-  private AttributeParameters() {}
+  private AttributeParameter() {}
 }

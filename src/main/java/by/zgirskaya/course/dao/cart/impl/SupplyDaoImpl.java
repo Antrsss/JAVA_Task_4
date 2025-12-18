@@ -4,7 +4,7 @@ import by.zgirskaya.course.connection.DatabaseConnection;
 import by.zgirskaya.course.dao.cart.SupplyDao;
 import by.zgirskaya.course.exception.DaoException;
 import by.zgirskaya.course.model.cart.Supply;
-import by.zgirskaya.course.util.TableColumns;
+import by.zgirskaya.course.util.TableColumn;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -151,11 +151,11 @@ public class SupplyDaoImpl implements SupplyDao {
   private Supply extractSupplyFromResultSet(ResultSet resultSet) throws SQLException {
     logger.debug("Extracting supply from ResultSet");
 
-    UUID id = (UUID) resultSet.getObject(TableColumns.Supply.ID);
-    UUID employeeId = (UUID) resultSet.getObject(TableColumns.Supply.EMPLOYEE_ID);
-    UUID publisherId = (UUID) resultSet.getObject(TableColumns.Supply.PUBLISHER_ID);
-    Date date = resultSet.getDate(TableColumns.Supply.DATE);
-    Double supplyPrice = resultSet.getDouble(TableColumns.Supply.SUPPLY_PRICE);
+    UUID id = (UUID) resultSet.getObject(TableColumn.Supply.ID);
+    UUID employeeId = (UUID) resultSet.getObject(TableColumn.Supply.EMPLOYEE_ID);
+    UUID publisherId = (UUID) resultSet.getObject(TableColumn.Supply.PUBLISHER_ID);
+    Date date = resultSet.getDate(TableColumn.Supply.DATE);
+    Double supplyPrice = resultSet.getDouble(TableColumn.Supply.SUPPLY_PRICE);
 
     Supply supply = new Supply(employeeId, publisherId, date, supplyPrice);
     supply.setId(id);

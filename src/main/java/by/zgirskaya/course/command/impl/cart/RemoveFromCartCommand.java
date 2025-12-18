@@ -5,9 +5,9 @@ import by.zgirskaya.course.exception.ServiceException;
 import by.zgirskaya.course.model.user.AbstractUserModel;
 import by.zgirskaya.course.service.cart.ItemService;
 import by.zgirskaya.course.service.cart.impl.ItemServiceImpl;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.AuthParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.AuthParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,11 +36,11 @@ public class RemoveFromCartCommand implements Command {
     AbstractUserModel currentUser = userOptional.get();
     HttpSession session = request.getSession();
 
-    String userRole = (String) session.getAttribute(AttributeParameters.USER_ROLE);
-    if (!AuthParameters.Roles.CUSTOMER.equals(userRole)) {
+    String userRole = (String) session.getAttribute(AttributeParameter.USER_ROLE);
+    if (!AuthParameter.Roles.CUSTOMER.equals(userRole)) {
       logger.warn("User role {} attempted to remove from cart - forbidden", userRole);
-      request.setAttribute(AttributeParameters.ERROR, "Only customers can remove items from the shopping cart");
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.BOOKS_REDIRECT);
+      request.setAttribute(AttributeParameter.ERROR, "Only customers can remove items from the shopping cart");
+      response.sendRedirect(request.getContextPath() + PageParameter.Path.BOOKS_REDIRECT);
       return;
     }
 
@@ -50,8 +50,8 @@ public class RemoveFromCartCommand implements Command {
 
     if (itemIdStr == null || itemIdStr.isEmpty()) {
       logger.error("Item ID is required");
-      session.setAttribute(AttributeParameters.ERROR, "Item ID is required");
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
+      session.setAttribute(AttributeParameter.ERROR, "Item ID is required");
+      response.sendRedirect(request.getContextPath() + PageParameter.Path.CART_REDIRECT);
       return;
     }
 
@@ -60,7 +60,7 @@ public class RemoveFromCartCommand implements Command {
     itemService.removeItemFromCart(itemId);
     logger.info("Item {} removed from cart by user {}", itemId, currentUser.getId());
 
-    session.setAttribute(AttributeParameters.SUCCESS_MESSAGE, "Item removed from cart successfully!");
-    response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
+    session.setAttribute(AttributeParameter.SUCCESS_MESSAGE, "Item removed from cart successfully!");
+    response.sendRedirect(request.getContextPath() + PageParameter.Path.CART_REDIRECT);
   }
 }

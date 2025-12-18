@@ -4,7 +4,7 @@ import by.zgirskaya.course.command.Command;
 import by.zgirskaya.course.exception.ServiceException;
 import by.zgirskaya.course.service.cart.SupplyService;
 import by.zgirskaya.course.service.cart.impl.SupplyServiceImpl;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -24,6 +24,6 @@ public class DeleteSupplyCommand implements Command {
     UUID supplyId = UUID.fromString(supplyIdStr);
     supplyService.deleteSupply(supplyId);
 
-    response.sendRedirect(request.getContextPath() + PageParameters.Path.SUPPLIES_REDIRECT);
+    response.sendRedirect(request.getContextPath() + PageParameter.Path.SUPPLIES_REDIRECT);
   }
 }

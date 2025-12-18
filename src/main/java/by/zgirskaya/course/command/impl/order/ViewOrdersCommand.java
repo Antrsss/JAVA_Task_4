@@ -6,8 +6,8 @@ import by.zgirskaya.course.model.cart.Order;
 import by.zgirskaya.course.model.user.AbstractUserModel;
 import by.zgirskaya.course.service.cart.OrderService;
 import by.zgirskaya.course.service.cart.impl.OrderServiceImpl;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,9 +40,9 @@ public class ViewOrdersCommand implements Command {
 
     logger.debug("Found {} orders for user ID: {}", orderCount, currentUser.getId());
 
-    request.setAttribute(AttributeParameters.ORDERS, completedOrders);
-    request.setAttribute(AttributeParameters.ORDER_COUNT, orderCount);
+    request.setAttribute(AttributeParameter.ORDERS, completedOrders);
+    request.setAttribute(AttributeParameter.ORDER_COUNT, orderCount);
 
-    request.getRequestDispatcher(PageParameters.Jsp.ORDERS_CONTENT).forward(request, response);
+    request.getRequestDispatcher(PageParameter.Jsp.ORDERS_CONTENT).forward(request, response);
   }
 }

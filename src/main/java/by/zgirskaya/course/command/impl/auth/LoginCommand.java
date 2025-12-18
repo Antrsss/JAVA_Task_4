@@ -5,9 +5,9 @@ import by.zgirskaya.course.exception.ServiceException;
 import by.zgirskaya.course.model.user.AbstractUserModel;
 import by.zgirskaya.course.service.auth.AuthService;
 import by.zgirskaya.course.service.auth.impl.AuthServiceImpl;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.AuthParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.AuthParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,15 +33,15 @@ public class LoginCommand implements Command {
     if ("GET".equalsIgnoreCase(httpMethod)) {
       logger.debug("Displaying login page");
 
-      request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.LOGIN_CONTENT);
-      request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.LOGIN);
-      request.getRequestDispatcher(PageParameters.Jsp.LOGIN_CONTENT).forward(request, response);
+      request.setAttribute(AttributeParameter.CONTENT_PAGE, PageParameter.Jsp.LOGIN_CONTENT);
+      request.setAttribute(AttributeParameter.PAGE_TITLE, PageParameter.Title.LOGIN);
+      request.getRequestDispatcher(PageParameter.Jsp.LOGIN_CONTENT).forward(request, response);
 
     } else if ("POST".equalsIgnoreCase(httpMethod)) {
       processLogin(request, response);
-      request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.LOGIN_CONTENT);
-      request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.LOGIN);
-      request.getRequestDispatcher(PageParameters.Jsp.LOGIN_CONTENT).forward(request, response);
+      request.setAttribute(AttributeParameter.CONTENT_PAGE, PageParameter.Jsp.LOGIN_CONTENT);
+      request.setAttribute(AttributeParameter.PAGE_TITLE, PageParameter.Title.LOGIN);
+      request.getRequestDispatcher(PageParameter.Jsp.LOGIN_CONTENT).forward(request, response);
     } else {
       logger.warn("Unsupported HTTP method: {}", httpMethod);
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -51,8 +51,8 @@ public class LoginCommand implements Command {
   private void processLogin(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServiceException {
 
-    String identifier = request.getParameter(AuthParameters.Parameters.IDENTIFIER);
-    String password = request.getParameter(AuthParameters.Parameters.PASSWORD);
+    String identifier = request.getParameter(AuthParameter.Parameters.IDENTIFIER);
+    String password = request.getParameter(AuthParameter.Parameters.PASSWORD);
 
     logger.info("Login attempt - Identifier: {}", identifier);
 
@@ -64,17 +64,17 @@ public class LoginCommand implements Command {
       logger.info("Successful login for user: {} (ID: {})", identifier, user.getId());
 
       HttpSession session = request.getSession();
-      session.setAttribute(AttributeParameters.USER, user);
-      session.setAttribute(AttributeParameters.USER_ROLE, userRole);
+      session.setAttribute(AttributeParameter.USER, user);
+      session.setAttribute(AttributeParameter.USER_ROLE, userRole);
 
-      if (AuthParameters.Roles.CUSTOMER.equals(userRole)) {
-        session.setAttribute(AttributeParameters.CUSTOMER_ID, user.getId());
+      if (AuthParameter.Roles.CUSTOMER.equals(userRole)) {
+        session.setAttribute(AttributeParameter.CUSTOMER_ID, user.getId());
       }
 
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.ROOT);
+      response.sendRedirect(request.getContextPath() + PageParameter.Path.ROOT);
     } else {
       logger.warn("Failed login attempt for identifier: {}", identifier);
-      request.setAttribute(AttributeParameters.ERROR, "Invalid credentials");
+      request.setAttribute(AttributeParameter.ERROR, "Invalid credentials");
     }
   }
 }

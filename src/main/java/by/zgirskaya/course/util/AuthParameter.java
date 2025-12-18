@@ -1,6 +1,6 @@
 package by.zgirskaya.course.util;
 
-public final class AuthParameters {
+public final class AuthParameter {
 
   public static final class Roles {
     public static final String EMPLOYEE = "employee";
@@ -21,5 +21,5 @@ public final class AuthParameters {
     private Parameters() {}
   }
 
-  private AuthParameters() {}
+  private AuthParameter() {}
 }

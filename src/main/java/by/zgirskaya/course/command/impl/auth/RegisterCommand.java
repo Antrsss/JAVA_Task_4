@@ -5,9 +5,9 @@ import by.zgirskaya.course.exception.ServiceException;
 import by.zgirskaya.course.model.user.AbstractUserModel;
 import by.zgirskaya.course.service.auth.AuthService;
 import by.zgirskaya.course.service.auth.impl.AuthServiceImpl;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.AuthParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.AuthParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,16 +32,16 @@ public class RegisterCommand implements Command {
     if ("GET".equalsIgnoreCase(httpMethod)) {
       logger.debug("Displaying registration page");
 
-      request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.REGISTER_CONTENT);
-      request.setAttribute(AttributeParameters.PAGE_TITLE, PageParameters.Title.REGISTER);
-      request.getRequestDispatcher(PageParameters.Jsp.REGISTER_CONTENT).forward(request, response);
+      request.setAttribute(AttributeParameter.CONTENT_PAGE, PageParameter.Jsp.REGISTER_CONTENT);
+      request.setAttribute(AttributeParameter.PAGE_TITLE, PageParameter.Title.REGISTER);
+      request.getRequestDispatcher(PageParameter.Jsp.REGISTER_CONTENT).forward(request, response);
     } else if ("POST".equalsIgnoreCase(httpMethod)) {
-      String name = request.getParameter(AuthParameters.Parameters.NAME);
-      String identifier = request.getParameter(AuthParameters.Parameters.IDENTIFIER);
-      String role = request.getParameter(AuthParameters.Parameters.ROLE);
-      String password = request.getParameter(AuthParameters.Parameters.PASSWORD);
-      String username = request.getParameter(AuthParameters.Parameters.USERNAME);
-      String passportId = request.getParameter(AuthParameters.Parameters.PASSPORT_ID);
+      String name = request.getParameter(AuthParameter.Parameters.NAME);
+      String identifier = request.getParameter(AuthParameter.Parameters.IDENTIFIER);
+      String role = request.getParameter(AuthParameter.Parameters.ROLE);
+      String password = request.getParameter(AuthParameter.Parameters.PASSWORD);
+      String username = request.getParameter(AuthParameter.Parameters.USERNAME);
+      String passportId = request.getParameter(AuthParameter.Parameters.PASSPORT_ID);
 
       logger.info("Registration attempt - Name: {}, Identifier: {}, Role: {}", name, identifier, role);
 
@@ -50,14 +50,14 @@ public class RegisterCommand implements Command {
       logger.info("User successfully registered: {} (ID: {})", identifier, user.getId());
 
       HttpSession session = request.getSession();
-      session.setAttribute(AttributeParameters.USER, user);
-      session.setAttribute(AttributeParameters.USER_ROLE, userRole);
+      session.setAttribute(AttributeParameter.USER, user);
+      session.setAttribute(AttributeParameter.USER_ROLE, userRole);
 
-      if (AuthParameters.Roles.CUSTOMER.equals(userRole)) {
-        session.setAttribute(AttributeParameters.CUSTOMER_ID, user.getId());
+      if (AuthParameter.Roles.CUSTOMER.equals(userRole)) {
+        session.setAttribute(AttributeParameter.CUSTOMER_ID, user.getId());
       }
 
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.ROOT);
+      response.sendRedirect(request.getContextPath() + PageParameter.Path.ROOT);
     } else {
       logger.warn("Unsupported HTTP method: {}", httpMethod);
       response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);

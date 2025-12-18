@@ -11,9 +11,9 @@ import by.zgirskaya.course.service.cart.OrderService;
 import by.zgirskaya.course.service.cart.impl.CartServiceImpl;
 import by.zgirskaya.course.service.cart.impl.ItemServiceImpl;
 import by.zgirskaya.course.service.cart.impl.OrderServiceImpl;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.AuthParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.AuthParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,11 +49,11 @@ public class CheckoutCommand implements Command {
     AbstractUserModel currentUser = userOptional.get();
     HttpSession session = request.getSession();
 
-    String userRole = (String) session.getAttribute(AttributeParameters.USER_ROLE);
-    if (!AuthParameters.Roles.CUSTOMER.equals(userRole)) {
+    String userRole = (String) session.getAttribute(AttributeParameter.USER_ROLE);
+    if (!AuthParameter.Roles.CUSTOMER.equals(userRole)) {
       logger.warn("User role {} attempted to remove from cart - forbidden", userRole);
-      request.setAttribute(AttributeParameters.ERROR, "Only customers can checkout shopping cart");
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.BOOKS_REDIRECT);
+      request.setAttribute(AttributeParameter.ERROR, "Only customers can checkout shopping cart");
+      response.sendRedirect(request.getContextPath() + PageParameter.Path.BOOKS_REDIRECT);
       return;
     }
 
@@ -68,8 +68,8 @@ public class CheckoutCommand implements Command {
 
     if (items.isEmpty()) {
       logger.warn("Attempted to checkout with empty cart for customer {}", customerId);
-      session.setAttribute(AttributeParameters.ERROR, "Your cart is empty");
-      response.sendRedirect(request.getContextPath() + PageParameters.Path.CART_REDIRECT);
+      session.setAttribute(AttributeParameter.ERROR, "Your cart is empty");
+      response.sendRedirect(request.getContextPath() + PageParameter.Path.CART_REDIRECT);
       return;
     }
 
@@ -81,14 +81,14 @@ public class CheckoutCommand implements Command {
     itemService.clearCart(cart.getId());
     logger.info("Cart cleared after successful checkout: {}", cart.getId());
 
-    session.setAttribute(AttributeParameters.SUCCESS_MESSAGE,
+    session.setAttribute(AttributeParameter.SUCCESS_MESSAGE,
         String.format("Order #%s created successfully! Delivery scheduled for %s",
             orderId.toString().substring(0, 8), deliveryDateStr));
 
     session.removeAttribute("currentCart");
 
-    String redirectUrl = request.getContextPath() + PageParameters.Path.ORDER_CONFIRMATION_REDIRECT +
-        PageParameters.Path.ORDER_ID_REDIRECT + orderId;
+    String redirectUrl = request.getContextPath() + PageParameter.Path.ORDER_CONFIRMATION_REDIRECT +
+        PageParameter.Path.ORDER_ID_REDIRECT + orderId;
     logger.debug("Redirecting to order confirmation: {}", redirectUrl);
     response.sendRedirect(redirectUrl);
   }

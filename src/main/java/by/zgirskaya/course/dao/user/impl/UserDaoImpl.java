@@ -6,8 +6,8 @@ import by.zgirskaya.course.exception.DaoException;
 import by.zgirskaya.course.model.user.AbstractUserModel;
 import by.zgirskaya.course.model.user.Customer;
 import by.zgirskaya.course.model.user.Employee;
-import by.zgirskaya.course.util.AuthParameters;
-import by.zgirskaya.course.util.TableColumns;
+import by.zgirskaya.course.util.AuthParameter;
+import by.zgirskaya.course.util.TableColumn;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -95,13 +95,13 @@ public class UserDaoImpl implements UserDao {
   @Override
   public UUID findCustomerRoleId() throws DaoException {
     logger.debug("Finding customer role ID");
-    return findRoleIdByName(AuthParameters.Roles.CUSTOMER);
+    return findRoleIdByName(AuthParameter.Roles.CUSTOMER);
   }
 
   @Override
   public UUID findEmployeeRoleId() throws DaoException {
     logger.debug("Finding employee role ID");
-    return findRoleIdByName(AuthParameters.Roles.EMPLOYEE);
+    return findRoleIdByName(AuthParameter.Roles.EMPLOYEE);
   }
 
   @Override
@@ -114,7 +114,7 @@ public class UserDaoImpl implements UserDao {
       statement.setObject(1, roleId);
       try (ResultSet resultSet = statement.executeQuery()) {
         if (resultSet.next()) {
-          String roleName = resultSet.getString(TableColumns.Role.ROLE_NAME);
+          String roleName = resultSet.getString(TableColumn.Role.ROLE_NAME);
           logger.debug("Found role name: {} for ID: {}", roleName, roleId);
           return roleName;
         } else {
@@ -184,7 +184,7 @@ public class UserDaoImpl implements UserDao {
       statement.setString(1, roleName);
       try (ResultSet resultSet = statement.executeQuery()) {
         if (resultSet.next()) {
-          UUID roleId = (UUID) resultSet.getObject(TableColumns.Role.ID);
+          UUID roleId = (UUID) resultSet.getObject(TableColumn.Role.ID);
           logger.debug("Found role ID for {}: {}", roleName, roleId);
           return roleId;
         }
@@ -235,15 +235,15 @@ public class UserDaoImpl implements UserDao {
   private AbstractUserModel mapResultSetToUser(ResultSet resultSet) throws SQLException {
     logger.debug("Mapping ResultSet to User object");
 
-    UUID id = (UUID) resultSet.getObject(TableColumns.User.ID);
-    String name = resultSet.getString(TableColumns.User.NAME);
-    String phoneNumber = resultSet.getString(TableColumns.User.PHONE_NUMBER);
-    String email = resultSet.getString(TableColumns.User.EMAIL);
-    String password = resultSet.getString(TableColumns.User.PASSWORD);
-    UUID roleId = (UUID) resultSet.getObject(TableColumns.User.ROLE_ID);
+    UUID id = (UUID) resultSet.getObject(TableColumn.User.ID);
+    String name = resultSet.getString(TableColumn.User.NAME);
+    String phoneNumber = resultSet.getString(TableColumn.User.PHONE_NUMBER);
+    String email = resultSet.getString(TableColumn.User.EMAIL);
+    String password = resultSet.getString(TableColumn.User.PASSWORD);
+    UUID roleId = (UUID) resultSet.getObject(TableColumn.User.ROLE_ID);
 
-    String username = resultSet.getString(TableColumns.User.USERNAME);
-    String passportId = resultSet.getString(TableColumns.User.PASSPORT_ID);
+    String username = resultSet.getString(TableColumn.User.USERNAME);
+    String passportId = resultSet.getString(TableColumn.User.PASSPORT_ID);
 
     AbstractUserModel user;
 

@@ -5,8 +5,8 @@ import by.zgirskaya.course.exception.ServiceException;
 import by.zgirskaya.course.model.cart.Supply;
 import by.zgirskaya.course.service.cart.SupplyService;
 import by.zgirskaya.course.service.cart.impl.SupplyServiceImpl;
-import by.zgirskaya.course.util.AttributeParameters;
-import by.zgirskaya.course.util.PageParameters;
+import by.zgirskaya.course.util.AttributeParameter;
+import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,9 +23,9 @@ public class ListSuppliesCommand implements Command {
 
     List<Supply> supplies = supplyService.findAllSupplies();
 
-    request.setAttribute(AttributeParameters.SUPPLIES, supplies);
-    request.setAttribute(AttributeParameters.CONTENT_PAGE, PageParameters.Jsp.SUPPLIES_CONTENT);
-    request.setAttribute(AttributeParameters.PAGE_TITLE, "Manage Supplies");
-    request.getRequestDispatcher(PageParameters.Jsp.TEMPLATE_CONTENT).forward(request, response);
+    request.setAttribute(AttributeParameter.SUPPLIES, supplies);
+    request.setAttribute(AttributeParameter.CONTENT_PAGE, PageParameter.Jsp.SUPPLIES_CONTENT);
+    request.setAttribute(AttributeParameter.PAGE_TITLE, "Manage Supplies");
+    request.getRequestDispatcher(PageParameter.Jsp.TEMPLATE_CONTENT).forward(request, response);
   }
 }

@@ -1,6 +1,6 @@
 package by.zgirskaya.course.util;
 
-public final class PageParameters {
+public final class PageParameter {
 
   public static final class Title {
     public static final String HOME = "Home";
@@ -57,5 +57,5 @@ public final class PageParameters {
     private Path() {}
   }
 
-  private PageParameters() {}
+  private PageParameter() {}
 }
