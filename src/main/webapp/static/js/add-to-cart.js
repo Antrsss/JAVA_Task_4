@@ -9,7 +9,3 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
-function formatPrice(price) {
-    return '$' + parseFloat(price).toFixed(2);
-}

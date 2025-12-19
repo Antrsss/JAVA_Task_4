@@ -35,24 +35,28 @@ public final class PageParameter {
   }
 
   public static final class Path {
-    public static final String HOME = "";
-    public static final String ROOT = "/";
-    public static final String LOGIN = "/auth/login";
-    public static final String REGISTER = "/auth/register";
-    public static final String LOGOUT = "/auth/logout";
+    public static final String HOME = "/controller/home";
+    public static final String ROOT = "/controller";
+    public static final String LOGIN = "/controller/auth/login";
+    public static final String REGISTER = "/controller/auth/register";
+    public static final String LOGOUT = "/controller/auth/logout";
 
-    public static final String SUPPLIES = "/supplies/*";
+    public static final String SUPPLIES = "/controller/supplies/";
+    public static final String SUPPLIES_DELETE = "/controller/supplies/delete/";
 
-    public static final String BOOKS = "/books/*";
-    public static final String CART = "/cart/*";
+    public static final String BOOKS = "/controller/books/";
+    public static final String BOOKS_VIEW = "/controller/books/view";
+    public static final String CART = "/controller/cart/";
 
-    public static final String LOGIN_REDIRECT = "/auth/login";
-    public static final String SUPPLIES_REDIRECT = "/supplies";
-    public static final String BOOKS_REDIRECT = "/books";
-    public static final String CART_REDIRECT = "/cart";
-    public static final String ORDERS_REDIRECT = "/orders";
+    public static final String LOGIN_REDIRECT = "/controller/auth/login";
+    public static final String SUPPLIES_REDIRECT = "/controller/supplies";
+    public static final String BOOKS_REDIRECT = "/controller/books";
+    public static final String CART_REDIRECT = "/controller/cart";
+    public static final String ORDERS = "/controller/orders";
+    public static final String ORDERS_VIEW = "/controller/orders/view";
     public static final String ORDER_ID_REDIRECT = "?orderId=";
-    public static final String ORDER_CONFIRMATION_REDIRECT = "/order/confirmation";
+    public static final String ORDER_CONFIRMATION_REDIRECT = "/controller/order/confirmation";
+    public static final String ORDER_CONFIRMATION = "/controller/order/confirmation";
 
     private Path() {}
   }

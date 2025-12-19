@@ -153,7 +153,7 @@
 </head>
 <body>
 <div class="container">
-  <a href="${pageContext.request.contextPath}/books" class="back-link">← Back to Catalog</a>
+  <a href="${pageContext.request.contextPath}/controller/books" class="back-link">← Back to Catalog</a>
 
   <div class="header">
     <h1>Book Details</h1>
@@ -216,9 +216,9 @@
     </div>
 
     <div class="book-actions">
-      <a href="${pageContext.request.contextPath}/books" class="btn btn-back">Back to Catalog</a>
+      <a href="${pageContext.request.contextPath}/controller/books" class="btn btn-back">Back to Catalog</a>
 
-      <form method="post" action="${pageContext.request.contextPath}/cart" style="display: inline; flex: 1;">
+      <form method="post" action="${pageContext.request.contextPath}/controller/cart" style="display: inline; flex: 1;">
         <input type="hidden" name="action" value="addToCart">
         <input type="hidden" name="bookId" value="${book.id}">
         <input type="hidden" name="quantity" value="1">

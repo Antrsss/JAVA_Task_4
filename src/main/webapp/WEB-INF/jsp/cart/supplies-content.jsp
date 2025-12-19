@@ -13,7 +13,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Manage Supplies</h1>
     <c:if test="${isEmployee}">
-      <a href="${pageContext.request.contextPath}/supplies?action=new" class="btn btn-primary">
+      <a href="${pageContext.request.contextPath}/controller/supplies?action=new" class="btn btn-primary">
         <i class="bi bi-plus-circle"></i> Add New Supply
       </a>
     </c:if>
@@ -53,7 +53,7 @@
               <td>
                 <div class="btn-group btn-group-sm" role="group">
                   <c:if test="${isEmployee and sessionScope[AttributeParameters.USER].id == supply.employeeId}">
-                    <a href="${pageContext.request.contextPath}/supplies/delete/${supply.id}"
+                    <a href="${pageContext.request.contextPath}/controller/supplies/delete/${supply.id}"
                        class="btn btn-danger"
                        onclick="return confirm('Are you sure you want to delete this supply?')">
                       <i class="bi bi-trash"></i> Delete
@@ -76,7 +76,7 @@
         <h3 class="text-muted mt-3">No supplies found</h3>
         <p class="text-muted">There are no supplies in the system yet.</p>
         <c:if test="${isEmployee}">
-          <a href="${pageContext.request.contextPath}/supplies?action=new" class="btn btn-primary mt-3">
+          <a href="${pageContext.request.contextPath}/controller/supplies?action=new" class="btn btn-primary mt-3">
             <i class="bi bi-plus-circle"></i> Create First Supply
           </a>
         </c:if>

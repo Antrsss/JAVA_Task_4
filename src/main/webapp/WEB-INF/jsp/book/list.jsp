@@ -220,7 +220,7 @@
       Total Books: <span>${books.size()}</span>
     </div>
     <div>
-      <a href="${pageContext.request.contextPath}/cart" class="btn btn-view">View Cart</a>
+      <a href="${pageContext.request.contextPath}/controller/cart" class="btn btn-view">View Cart</a>
     </div>
   </div>
 
@@ -264,9 +264,9 @@
               </div>
 
               <div class="book-actions">
-                <a href="${pageContext.request.contextPath}/books/view/${book.id}" class="btn btn-view">View Details</a>
+                <a href="${pageContext.request.contextPath}/controller/books/view/${book.id}" class="btn btn-view">View Details</a>
 
-                <form method="post" action="${pageContext.request.contextPath}/cart" style="display: inline; flex: 1;">
+                <form method="post" action="${pageContext.request.contextPath}/controller/cart" style="display: inline; flex: 1;">
                   <input type="hidden" name="action" value="addToCart">
                   <input type="hidden" name="bookId" value="${book.id}">
                   <input type="hidden" name="quantity" value="1">

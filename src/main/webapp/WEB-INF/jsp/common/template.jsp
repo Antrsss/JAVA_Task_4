@@ -18,11 +18,11 @@
               Hello, ${sessionScope.user.name}
               (${sessionScope.user.getClass().simpleName})
             </span>
-            <a class="nav-link" href="${pageContext.request.contextPath}/auth/logout">Logout</a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/controller/auth/logout">Logout</a>
           </c:when>
           <c:otherwise>
-            <a class="nav-link" href="${pageContext.request.contextPath}/auth/login">Login</a>
-            <a class="nav-link" href="${pageContext.request.contextPath}/auth/register">Register</a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/controller/auth/login">Login</a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/controller/auth/register">Register</a>
           </c:otherwise>
         </c:choose>
       </div>

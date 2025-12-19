@@ -1,7 +1,7 @@
 package by.zgirskaya.course.command;
 
 import by.zgirskaya.course.exception.ServiceException;
-import by.zgirskaya.course.model.user.AbstractUserModel;
+import by.zgirskaya.course.model.AbstractUserModel;
 import by.zgirskaya.course.util.AttributeParameter;
 import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.ServletException;

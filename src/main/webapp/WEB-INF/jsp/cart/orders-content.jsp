@@ -271,7 +271,7 @@
       Total Orders: <span>${orderCount}</span>
     </div>
     <div>
-      <a href="${pageContext.request.contextPath}/books" class="btn btn-outline">
+      <a href="${pageContext.request.contextPath}/controller/books" class="btn btn-outline">
         ← Continue Shopping
       </a>
     </div>
@@ -295,7 +295,7 @@
         <div class="empty-state">
           <h2>No orders yet</h2>
           <p>You haven't placed any orders yet.</p>
-          <a href="${pageContext.request.contextPath}/books" class="btn btn-primary" style="margin-top: 20px;">
+          <a href="${pageContext.request.contextPath}/controller/books" class="btn btn-primary" style="margin-top: 20px;">
             📚 Browse Books
           </a>
         </div>
@@ -345,7 +345,7 @@
             </div>
 
             <div class="actions">
-              <a href="${pageContext.request.contextPath}/orders/view/${order.id}"
+              <a href="${pageContext.request.contextPath}/controller/orders/view/${order.id}"
                  class="btn btn-primary btn-sm">
                 👁️ View Full Details
               </a>
@@ -368,7 +368,6 @@
 
         details.classList.toggle('expanded');
 
-        // Закрыть другие открытые заказы
         document.querySelectorAll('.order-body.expanded').forEach(expanded => {
             if (expanded.id !== 'details-' + orderId) {
                 expanded.classList.remove('expanded');
@@ -376,7 +375,6 @@
         });
     }
 
-    // Открыть первый заказ по умолчанию
     document.addEventListener('DOMContentLoaded', function() {
         const firstOrder = document.querySelector('.order-card');
         if (firstOrder) {

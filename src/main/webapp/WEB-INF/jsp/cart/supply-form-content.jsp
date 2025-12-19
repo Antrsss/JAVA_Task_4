@@ -1,11 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
-<%@ page import="by.zgirskaya.course.util.AttributeParameter" %>
 
 <div class="supply-form-container">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>${title}</h1>
-    <a href="${pageContext.request.contextPath}/supplies" class="btn btn-outline-secondary">
+    <a href="${pageContext.request.contextPath}/controller/supplies" class="btn btn-outline-secondary">
       <i class="bi bi-arrow-left"></i> Back to Supplies
     </a>
   </div>
@@ -26,7 +25,7 @@
 
   <div class="card">
     <div class="card-body">
-      <form method="post" action="${pageContext.request.contextPath}/supplies" class="needs-validation" novalidate
+      <form method="post" action="${pageContext.request.contextPath}/controller/supplies" class="needs-validation" novalidate
             id="supplyForm">
         <input type="hidden" name="action" value="${action}">
 
@@ -101,7 +100,7 @@
             <i class="bi bi-check-circle"></i>
             ${action == 'create' ? 'Create Supply' : 'Update Supply'}
           </button>
-          <a href="${pageContext.request.contextPath}/supplies" class="btn btn-secondary">
+          <a href="${pageContext.request.contextPath}/controller/supplies" class="btn btn-secondary">
             <i class="bi bi-x-circle"></i> Cancel
           </a>
         </div>

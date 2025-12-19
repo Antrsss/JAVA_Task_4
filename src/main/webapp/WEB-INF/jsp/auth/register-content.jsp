@@ -13,7 +13,7 @@
           <div class="alert alert-danger">${error}</div>
         </c:if>
 
-        <form action="${pageContext.request.contextPath}/auth/register" method="post">
+        <form action="${pageContext.request.contextPath}/controller/auth/register" method="post">
           <div class="mb-3">
             <label for="name" class="form-label">Full Name *</label>
             <input type="text" class="form-control" id="name" name="name"
@@ -67,7 +67,7 @@
 
         <div class="text-center mt-3">
           <p>Already have an account?
-            <a href="${pageContext.request.contextPath}/auth/login">Login here</a>
+            <a href="${pageContext.request.contextPath}/controller/auth/login">Login here</a>
           </p>
         </div>
       </div>

@@ -30,18 +30,18 @@
                 <h6>Shopping Management:</h6>
                 <ul class="list-group">
                   <li class="list-group-item">
-                    <a href="${pageContext.request.contextPath}/books" class="text-decoration-none">
+                    <a href="${pageContext.request.contextPath}/controller/books" class="text-decoration-none">
                       <i class="fas fa-book me-2"></i>Browse Books Catalog
                     </a>
                   </li>
                   <li class="list-group-item">
-                    <a href="${pageContext.request.contextPath}/cart" class="text-decoration-none">
+                    <a href="${pageContext.request.contextPath}/controller/cart" class="text-decoration-none">
                       <i class="fas fa-shopping-cart me-2"></i>View Shopping Cart
                       <span class="badge bg-primary float-end">0 items</span>
                     </a>
                   </li>
                   <li class="list-group-item">
-                    <a href="${pageContext.request.contextPath}/orders" class="text-decoration-none">
+                    <a href="${pageContext.request.contextPath}/controller/orders" class="text-decoration-none">
                       <i class="fas fa-list-alt me-2"></i>My Orders History
                     </a>
                   </li>
@@ -81,12 +81,12 @@
                 <h6>Management Tools:</h6>
                 <ul class="list-group">
                   <li class="list-group-item">
-                    <a href="${pageContext.request.contextPath}/supplies?action=new" class="text-decoration-none">
+                    <a href="${pageContext.request.contextPath}/controller/supplies?action=new" class="text-decoration-none">
                       <i class="fas fa-boxes me-2"></i>Create New Supply Order
                     </a>
                   </li>
                   <li class="list-group-item">
-                    <a href="${pageContext.request.contextPath}/supplies" class="text-decoration-none">
+                    <a href="${pageContext.request.contextPath}/controller/supplies" class="text-decoration-none">
                       <i class="fas fa-clipboard-list me-2"></i>View Supply Orders
                     </a>
                   </li>
@@ -139,9 +139,9 @@
               <div class="col-md-6">
                 <h6>Quick Links:</h6>
                 <div class="d-grid gap-2">
-                  <a href="${pageContext.request.contextPath}/profile" class="btn btn-outline-primary btn-sm">Edit Profile</a>
-                  <a href="${pageContext.request.contextPath}/books" class="btn btn-outline-success btn-sm">Browse Books</a>
-                  <a href="${pageContext.request.contextPath}/auth/logout" class="btn btn-outline-danger btn-sm">Logout</a>
+                  <a href="${pageContext.request.contextPath}/controller/profile" class="btn btn-outline-primary btn-sm">Edit Profile</a>
+                  <a href="${pageContext.request.contextPath}/controller/books" class="btn btn-outline-success btn-sm">Browse Books</a>
+                  <a href="${pageContext.request.contextPath}/controller/auth/logout" class="btn btn-outline-danger btn-sm">Logout</a>
                 </div>
               </div>
             </div>

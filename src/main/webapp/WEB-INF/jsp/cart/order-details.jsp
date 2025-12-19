@@ -314,7 +314,7 @@
   </div>
 
   <div class="breadcrumb">
-    <a href="${pageContext.request.contextPath}/orders">← Back to Orders</a>
+    <a href="${pageContext.request.contextPath}/controller/orders">← Back to Orders</a>
     <span>/</span>
     <span>Order Details</span>
   </div>
@@ -330,7 +330,7 @@
       <div class="empty-state">
         <h3>Order not found</h3>
         <p>The requested order could not be found.</p>
-        <a href="${pageContext.request.contextPath}/orders" class="btn btn-primary" style="margin-top: 20px;">
+        <a href="${pageContext.request.contextPath}/controller/orders" class="btn btn-primary" style="margin-top: 20px;">
           ← Back to Orders
         </a>
       </div>
@@ -394,7 +394,7 @@
                 <tr>
                   <td>
                     <div style="display: flex; flex-direction: column;">
-                      <a href="${pageContext.request.contextPath}/books/view/${item.bookId}"
+                      <a href="${pageContext.request.contextPath}/controller/books/view/${item.bookId}"
                          class="book-link">
                         📖 View Book Details
                       </a>
@@ -445,10 +445,10 @@
         </div>
 
         <div class="actions-bar">
-          <a href="${pageContext.request.contextPath}/orders" class="btn btn-outline">
+          <a href="${pageContext.request.contextPath}/controller/orders" class="btn btn-outline">
             ← Back to Orders
           </a>
-          <a href="${pageContext.request.contextPath}/books" class="btn btn-primary">
+          <a href="${pageContext.request.contextPath}/controller/books" class="btn btn-primary">
             📚 Continue Shopping
           </a>
         </div>

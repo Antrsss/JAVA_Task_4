@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
-<%@ page import="by.zgirskaya.course.util.AttributeParameter" %>
 
 <!DOCTYPE html>
 <html lang="en">

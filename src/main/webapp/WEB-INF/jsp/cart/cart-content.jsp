@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="java.util.Date" %>
 
 <style>
     * {
@@ -438,7 +437,7 @@
       Items in cart: <span>${items.size()}</span>
     </div>
     <div>
-      <a href="${pageContext.request.contextPath}/orders" class="btn btn-outline-secondary">
+      <a href="${pageContext.request.contextPath}/controller/orders" class="btn btn-outline-secondary">
         📋 View Order History
       </a>
     </div>
@@ -465,7 +464,7 @@
           <div class="empty-state">
             <h2>Your cart is empty</h2>
             <p>You haven't added any books to your cart yet.</p>
-            <a href="${pageContext.request.contextPath}/books" class="btn btn-view" style="margin-top: 20px;">
+            <a href="${pageContext.request.contextPath}/controller/books" class="btn btn-view" style="margin-top: 20px;">
               📚 Browse Books
             </a>
           </div>
@@ -495,7 +494,7 @@
               <tr>
                 <td>
                   <div class="d-flex flex-column">
-                    <a href="${pageContext.request.contextPath}/books/view/${item.bookId}"
+                    <a href="${pageContext.request.contextPath}/controller/books/view/${item.bookId}"
                        class="book-link">
                       📖 View Book Details
                     </a>
@@ -506,7 +505,7 @@
                 </td>
                 <td>
                   <div class="quantity-control">
-                    <form method="post" action="${pageContext.request.contextPath}/cart"
+                    <form method="post" action="${pageContext.request.contextPath}/controller/cart"
                           class="d-inline" style="display: flex; align-items: center;">
                       <input type="hidden" name="action" value="updateQuantity">
                       <input type="hidden" name="itemId" value="${item.id}">
@@ -536,7 +535,7 @@
                 </td>
                 <td>
                   <div class="actions-group">
-                    <form method="post" action="${pageContext.request.contextPath}/cart"
+                    <form method="post" action="${pageContext.request.contextPath}/controller/cart"
                           class="d-inline" onsubmit="return confirm('Remove this book from cart?')">
                       <input type="hidden" name="action" value="removeFromCart">
                       <input type="hidden" name="itemId" value="${item.id}">
@@ -545,7 +544,7 @@
                       </button>
                     </form>
 
-                    <a href="${pageContext.request.contextPath}/books/view/${item.bookId}"
+                    <a href="${pageContext.request.contextPath}/controller/books/view/${item.bookId}"
                        class="btn btn-info btn-sm" title="View book details">
                       👁️
                     </a>
@@ -568,14 +567,13 @@
 
           <div class="cart-actions">
             <div class="left-actions">
-              <!-- УБРАН Clear Cart -->
-              <a href="${pageContext.request.contextPath}/books" class="btn btn-outline-secondary">
+              <a href="${pageContext.request.contextPath}/controller/books" class="btn btn-outline-secondary">
                 ← Continue Shopping
               </a>
             </div>
 
             <div class="checkout-form">
-              <form id="checkoutForm" method="post" action="${pageContext.request.contextPath}/cart"
+              <form id="checkoutForm" method="post" action="${pageContext.request.contextPath}/controller/cart"
                     style="width: 100%; display: block;">
                 <div class="input-group">
                   <input type="date"
@@ -605,7 +603,6 @@
 </div>
 
 <script>
-    // Устанавливаем минимальную дату доставки на завтра и значение по умолчанию
     document.addEventListener('DOMContentLoaded', function() {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
@@ -616,7 +613,6 @@
             dateInput.min = formattedDate;
             dateInput.value = formattedDate;
 
-            // Добавляем обработчик изменения даты
             dateInput.addEventListener('change', function() {
                 const selectedDate = new Date(this.value);
                 const minDate = new Date(this.min);
@@ -628,7 +624,6 @@
             });
         }
 
-        // Обработчик для формы checkout
         const checkoutForm = document.getElementById('checkoutForm');
         if (checkoutForm) {
             checkoutForm.addEventListener('submit', function(e) {
@@ -655,10 +650,8 @@
             });
         }
 
-        // Добавляем обработчики для кнопок изменения количества
         const quantityForms = document.querySelectorAll('form[action*="/cart"]');
         quantityForms.forEach(form => {
-            // Пропускаем форму checkout
             if (form.id === 'checkoutForm') return;
 
             const buttons = form.querySelectorAll('button[name="quantityChange"]');
@@ -668,7 +661,6 @@
                     const quantitySpan = form.querySelector('.quantity-value');
                     let currentQuantity = parseInt(quantitySpan.textContent);
 
-                    // Валидация минимального количества
                     if (change === -1 && currentQuantity <= 1) {
                         e.preventDefault();
                         return;

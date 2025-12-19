@@ -13,7 +13,7 @@
           <div class="alert alert-danger">${error}</div>
         </c:if>
 
-        <form action="${pageContext.request.contextPath}/auth/login" method="post">
+        <form action="${pageContext.request.contextPath}/controller/auth/login" method="post">
           <div class="mb-3">
             <label for="identifier" class="form-label">Phone Number or Email *</label>
             <input type="text" class="form-control" id="identifier" name="identifier"
@@ -33,7 +33,7 @@
 
         <div class="text-center mt-3">
           <p>Don't have an account?
-            <a href="${pageContext.request.contextPath}/auth/register">Register here</a>
+            <a href="${pageContext.request.contextPath}/controller/auth/register">Register here</a>
           </p>
         </div>
       </div>
