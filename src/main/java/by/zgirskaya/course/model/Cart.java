@@ -16,9 +16,7 @@ public class Cart extends AbstractModel {
   }
 
   public UUID getCustomerId() { return customerId; }
-
   public Timestamp getCreatedAt() { return createdAt; }
-
   public Timestamp getUpdatedAt() { return updatedAt; }
 
   public void setUpdatedAt(Timestamp updatedAt) {

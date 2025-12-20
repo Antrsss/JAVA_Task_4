@@ -27,11 +27,9 @@ public class Book extends AbstractModel {
   public void setTitle(String title) {
     this.title = title;
   }
-
   public void setPrice(Double price) {
     this.price = price;
   }
-
   public void setQuantity(Integer quantity) {
     this.quantity = quantity;
   }

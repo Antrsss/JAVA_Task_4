@@ -35,15 +35,12 @@ public class Item extends AbstractModel {
   public Double getUnitPrice() { return unitPrice; }
 
   public void setBookId(UUID bookId) { this.bookId = bookId; }
-
   public void setQuantity(int quantity) {
     this.quantity = quantity;
     if (this.unitPrice != null) {
       this.totalPrice = this.unitPrice * quantity;
     }
   }
-
   public void setOrderId(UUID orderId) { this.orderId = orderId; }
-
   public void setCartId(UUID cartId) { this.cartId = cartId; }
 }
