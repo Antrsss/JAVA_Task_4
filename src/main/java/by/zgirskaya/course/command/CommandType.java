@@ -3,8 +3,6 @@ package by.zgirskaya.course.command;
 import by.zgirskaya.course.command.impl.*;
 import by.zgirskaya.course.util.PageParameter;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +47,6 @@ public enum CommandType {
   }
 
   public static Command createCommand(HttpServletRequest request, String path) {
-    // Убираем trailing slash если есть
     if (path.endsWith("/") && path.length() > 1) {
       path = path.substring(0, path.length() - 1);
     }
@@ -95,11 +92,9 @@ public enum CommandType {
     }
 
     if (path.startsWith(PageParameter.Path.LOGIN)) {
-      System.out.println("Handling login path");
       return new LoginCommand();
     }
 
-    System.out.println("No command found, defaulting to HomeCommand");
     return new HomeCommand();
   }
 }

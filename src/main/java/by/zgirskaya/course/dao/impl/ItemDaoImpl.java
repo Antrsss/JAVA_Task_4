@@ -38,10 +38,10 @@ public class ItemDaoImpl implements ItemDao {
         """;
 
   private static final String FIND_ITEM_BY_ID = """
-    SELECT id, cart_id, order_id, book_id, quantity, unit_price, total_price
-    FROM items
-    WHERE id = ?
-    """;
+        SELECT id, cart_id, order_id, book_id, quantity, unit_price, total_price
+        FROM items
+        WHERE id = ?
+        """;
 
   private static final String FIND_ITEM_BY_CART_AND_BOOK = """
         SELECT id, cart_id, order_id, book_id, quantity, unit_price, total_price
@@ -92,10 +92,6 @@ public class ItemDaoImpl implements ItemDao {
   public void update(Item item) throws DaoException {
     logger.debug("Updating item: {}", item.getId());
 
-    if (item.getId() == null) {
-      throw new DaoException("Cannot update item without ID");
-    }
-
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(UPDATE_ITEM)) {
 
@@ -122,7 +118,7 @@ public class ItemDaoImpl implements ItemDao {
   }
 
   @Override
-  public boolean delete(UUID id) throws DaoException {
+  public void delete(UUID id) throws DaoException {
     logger.debug("Deleting item by ID: {}", id);
 
     try (Connection connection = DatabaseConnection.getConnection();
@@ -135,8 +131,6 @@ public class ItemDaoImpl implements ItemDao {
 
       boolean deleted = affectedRows > 0;
       logger.info("Item deletion {}: {}", deleted ? "successful" : "failed", id);
-
-      return deleted;
 
     } catch (SQLException e) {
       logger.error("Error deleting item: {}", id, e);

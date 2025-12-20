@@ -22,7 +22,6 @@ public interface UserDao extends BaseDao<AbstractUserModel> {
     if (user.isPresent()) {
       return user;
     }
-
     return findByEmail(identifier);
   }
 }

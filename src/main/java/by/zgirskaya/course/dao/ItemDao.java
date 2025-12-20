@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface ItemDao extends BaseDao<Item> {
   void update(Item item) throws DaoException;
-  boolean delete(UUID id) throws DaoException;
+  void delete(UUID id) throws DaoException;
 
   Item findById(UUID itemId) throws DaoException;
   Item findItemByCartAndBook(UUID cartId, UUID bookId) throws DaoException;

@@ -4,6 +4,7 @@ import by.zgirskaya.course.connection.DatabaseConnection;
 import by.zgirskaya.course.dao.BookDao;
 import by.zgirskaya.course.exception.DaoException;
 import by.zgirskaya.course.model.Book;
+import by.zgirskaya.course.util.TableColumn;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -84,15 +85,12 @@ public class BookDaoImpl implements BookDao {
   private Book mapResultSetToBook(ResultSet resultSet) throws SQLException {
     logger.debug("Mapping ResultSet to Book object");
 
-    UUID id = (UUID) resultSet.getObject("id");
-    String title = resultSet.getString("title");
-    Double price = resultSet.getDouble("price");
-    UUID publisherId = (UUID) resultSet.getObject("publisher_id");
-    UUID discountId = (UUID) resultSet.getObject("discount_id");
-    int quantity = resultSet.getInt("quantity");
-    if (resultSet.wasNull()) {
-      quantity = 0;
-    }
+    UUID id = (UUID) resultSet.getObject(TableColumn.Book.ID);
+    String title = resultSet.getString(TableColumn.Book.TITLE);
+    Double price = resultSet.getDouble(TableColumn.Book.PRICE);
+    UUID publisherId = (UUID) resultSet.getObject(TableColumn.Book.PUBLISHER_ID);
+    UUID discountId = (UUID) resultSet.getObject(TableColumn.Book.DISCOUNT_ID);
+    int quantity = resultSet.getInt(TableColumn.Book.QUANTITY);
 
     Book book = new Book(id, publisherId, discountId, title, price, quantity);
 

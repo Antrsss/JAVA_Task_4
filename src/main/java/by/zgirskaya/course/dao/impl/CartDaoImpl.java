@@ -4,6 +4,7 @@ import by.zgirskaya.course.connection.DatabaseConnection;
 import by.zgirskaya.course.dao.CartDao;
 import by.zgirskaya.course.exception.DaoException;
 import by.zgirskaya.course.model.Cart;
+import by.zgirskaya.course.util.TableColumn;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -128,10 +129,10 @@ public class CartDaoImpl implements CartDao {
   private Cart mapResultSetToCart(ResultSet resultSet) throws SQLException {
     logger.debug("Mapping ResultSet to Cart object");
 
-    UUID id = (UUID) resultSet.getObject("id");
-    UUID customerId = (UUID) resultSet.getObject("customer_id");
-    Timestamp createdAt = resultSet.getTimestamp("created_at");
-    Timestamp updatedAt = resultSet.getTimestamp("updated_at");
+    UUID id = (UUID) resultSet.getObject(TableColumn.Cart.ID);
+    UUID customerId = (UUID) resultSet.getObject(TableColumn.Cart.CUSTOMER_ID);
+    Timestamp createdAt = resultSet.getTimestamp(TableColumn.Cart.CREATED_AT);
+    Timestamp updatedAt = resultSet.getTimestamp(TableColumn.Cart.UPDATED_AT);
 
     Cart cart = new Cart(id, customerId, createdAt, updatedAt);
 

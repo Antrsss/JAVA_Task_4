@@ -55,5 +55,21 @@ public final class TableColumn {
     private Supply() {}
   }
 
+  public static final class Book {
+    public static final String ID = "id";
+    public static final String TITLE = "title";
+    public static final String PRICE = "price";
+    public static final String PUBLISHER_ID = "publisher_id";
+    public static final String DISCOUNT_ID = "discount_id";
+    public static final String QUANTITY = "quantity";
+  }
+
+  public static final class Cart {
+    public static final String ID = "id";
+    public static final String CUSTOMER_ID = "customer_id";
+    public static final String CREATED_AT = "created_at";
+    public static final String UPDATED_AT = "updated_at";
+  }
+
   private TableColumn() {}
 }

@@ -41,32 +41,12 @@ public class OrderDaoImpl implements OrderDao {
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(INSERT_ORDER)) {
 
-      UUID orderId = (order.getId() != null) ? order.getId() : UUID.randomUUID();
-
-      statement.setObject(1, orderId);
+      statement.setObject(1, order.getId());
       statement.setObject(2, order.getCustomerId());
+      statement.setTimestamp(3, order.getPurchaseDate());
+      statement.setDate(4, new Date(order.getDeliveryDate().getTime()));
+      statement.setDouble(5, order.getOrderPrice());
 
-      if (order.getPurchaseDate() != null) {
-        statement.setTimestamp(3, order.getPurchaseDate());
-      } else {
-        statement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-      }
-
-      if (order.getDeliveryDate() != null) {
-        statement.setDate(4, new Date(order.getDeliveryDate().getTime()));
-      } else {
-        statement.setNull(4, Types.DATE);
-      }
-
-      if (order.getOrderPrice() != null) {
-        statement.setDouble(5, order.getOrderPrice());
-        logger.debug("Setting order price: {}", order.getOrderPrice());
-      } else {
-        statement.setDouble(5, 1000.0);
-        logger.warn("Order price is null, setting to 1000.0");
-      }
-
-      logger.debug("ORDER_PRICE: {}", order.getOrderPrice());
       int affectedRows = statement.executeUpdate();
       logger.debug("Order creation executed, affected rows: {}", affectedRows);
 
@@ -75,9 +55,8 @@ public class OrderDaoImpl implements OrderDao {
         throw new DaoException("Creating order failed, no rows affected.");
       }
 
-      order.setId(orderId);
       logger.info("Order created successfully: {} (Customer: {}, Price: {})",
-          orderId, order.getCustomerId(), order.getOrderPrice());
+          order.getId(), order.getCustomerId(), order.getOrderPrice());
 
     } catch (SQLException e) {
       logger.error("Error creating order for customer: {}", order.getCustomerId(), e);

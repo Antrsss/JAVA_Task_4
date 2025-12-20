@@ -21,11 +21,8 @@ public class FrontControllerServlet extends HttpServlet {
   protected void service(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    // Используем requestURI для получения полного пути
     String requestURI = request.getRequestURI();
     String contextPath = request.getContextPath();
-
-    // Убираем contextPath из requestURI
     String path = requestURI.substring(contextPath.length());
 
     logger.debug("FrontController processing request: {}, path: {}", requestURI, path);

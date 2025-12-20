@@ -19,24 +19,24 @@ public class UserDaoImpl implements UserDao {
   private static final Logger logger = LogManager.getLogger();
 
   private static final String INSERT_USER = """
-    INSERT INTO users (name, phone_number, email, password, role_id)
-    VALUES (?, ?, ?, ?, ?)
-    """;
+       INSERT INTO users (name, phone_number, email, password, role_id)
+       VALUES (?, ?, ?, ?, ?)
+       """;
 
   private static final String INSERT_CUSTOMER =
-      "INSERT INTO customers (user_id, username) VALUES (?, ?)";
+       "INSERT INTO customers (user_id, username) VALUES (?, ?)";
 
   private static final String INSERT_EMPLOYEE =
-      "INSERT INTO employees (user_id, passport_id) VALUES (?, ?)";
+       "INSERT INTO employees (user_id, passport_id) VALUES (?, ?)";
 
   private static final String SELECT_BY_PHONE_NUMBER = """
-    SELECT u.*, c.username, e.passport_id, r.role_name
-    FROM users u
-    LEFT JOIN customers c ON u.id = c.user_id
-    LEFT JOIN employees e ON u.id = e.user_id
-    LEFT JOIN roles r ON u.role_id = r.id
-    WHERE u.phone_number = ?
-    """;
+       SELECT u.*, c.username, e.passport_id, r.role_name
+       FROM users u
+       LEFT JOIN customers c ON u.id = c.user_id
+       LEFT JOIN employees e ON u.id = e.user_id
+       LEFT JOIN roles r ON u.role_id = r.id
+       WHERE u.phone_number = ?
+       """;
 
   private static final String SELECT_BY_EMAIL = """
       SELECT u.*, c.username, e.passport_id, r.role_name
@@ -64,8 +64,6 @@ public class UserDaoImpl implements UserDao {
 
       setUserParameters(statement, user);
       int affectedRows = statement.executeUpdate();
-
-      logger.debug("INSERT executed, affected rows: {}", affectedRows);
 
       if (affectedRows == 0) {
         logger.error("Creating user failed - no rows affected for email: {}", user.getEmail());
