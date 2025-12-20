@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface UserDao extends BaseDao<AbstractUserModel> {
   UUID findCustomerRoleId() throws DaoException;
   UUID findEmployeeRoleId() throws DaoException;
-  String getRoleNameById(UUID roleId) throws DaoException;
+  String findRoleNameById(UUID roleId) throws DaoException;
 
   boolean existsByPhoneNumber(String phoneNumber) throws DaoException;
   boolean existsByEmail(String email) throws DaoException;

@@ -103,7 +103,7 @@ public class UserDaoImpl implements UserDao {
   }
 
   @Override
-  public String getRoleNameById(UUID roleId) throws DaoException {
+  public String findRoleNameById(UUID roleId) throws DaoException {
     logger.debug("Getting role name by ID: {}", roleId);
 
     try (Connection connection = DatabaseConnection.getConnection();

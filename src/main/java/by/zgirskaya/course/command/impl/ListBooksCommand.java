@@ -26,7 +26,7 @@ public class ListBooksCommand implements Command {
 
     logger.debug("Executing ListBooksCommand");
 
-    List<Book> books = bookService.getAllBooks();
+    List<Book> books = bookService.findAllBooks();
     logger.info("Retrieved {} books for display", books.size());
 
     request.setAttribute(AttributeParameter.BOOKS, books);

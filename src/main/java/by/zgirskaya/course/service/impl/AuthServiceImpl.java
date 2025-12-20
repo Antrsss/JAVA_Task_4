@@ -91,7 +91,7 @@ public class AuthServiceImpl implements AuthService {
     logger.debug("Finding role name by ID: {}", roleId);
 
     try {
-      String roleName = userDao.getRoleNameById(roleId);
+      String roleName = userDao.findRoleNameById(roleId);
       logger.debug("Found role name: {} for ID: {}", roleName, roleId);
       return roleName;
     } catch (DaoException e) {

@@ -29,7 +29,7 @@ public class BookDaoImpl implements BookDao {
         """;
 
   @Override
-  public List<Book> getAllBooks() throws DaoException {
+  public List<Book> findAllBooks() throws DaoException {
     logger.debug("Attempting to retrieve all books");
 
     List<Book> books = new ArrayList<>();

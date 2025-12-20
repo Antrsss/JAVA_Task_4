@@ -17,11 +17,11 @@ public class BookServiceImpl implements BookService {
   private final BookDao bookDao = new BookDaoImpl();
 
   @Override
-  public List<Book> getAllBooks() throws ServiceException {
+  public List<Book> findAllBooks() throws ServiceException {
     logger.debug("Getting all books");
 
     try {
-      List<Book> books = bookDao.getAllBooks();
+      List<Book> books = bookDao.findAllBooks();
       logger.info("Successfully retrieved {} books", books.size());
       return books;
 

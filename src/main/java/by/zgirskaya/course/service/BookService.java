@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BookService {
-  List<Book> getAllBooks() throws ServiceException;
+  List<Book> findAllBooks() throws ServiceException;
   Book findBookById(UUID id) throws ServiceException;
 }

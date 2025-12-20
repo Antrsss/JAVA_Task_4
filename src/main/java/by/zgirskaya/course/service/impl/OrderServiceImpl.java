@@ -109,11 +109,9 @@ public class OrderServiceImpl implements OrderService {
 
   private double calculateOrderTotal(List<Item> items) {
     double total = 0.0;
-
     for (Item item : items) {
       total += item.getTotalPrice();
     }
-
     logger.debug("Calculated order total: {}", total);
     return total;
   }
