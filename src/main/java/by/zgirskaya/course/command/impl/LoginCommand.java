@@ -56,7 +56,7 @@ public class LoginCommand implements Command {
           session.setAttribute(AttributeParameter.CUSTOMER_ID, user.getId());
         }
 
-        response.sendRedirect(request.getContextPath() + "/controller/home");
+        response.sendRedirect(request.getContextPath() + PageParameter.Path.HOME);
       } else {
         logger.warn("Failed login attempt for identifier: {}", identifier);
         request.setAttribute(AttributeParameter.ERROR, "Invalid credentials");

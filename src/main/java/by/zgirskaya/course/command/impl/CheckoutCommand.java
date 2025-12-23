@@ -31,6 +31,8 @@ import java.util.UUID;
 
 public class CheckoutCommand implements Command {
   private static final Logger logger = LogManager.getLogger();
+  private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd";
+
   private final CartService cartService = new CartServiceImpl();
   private final ItemService itemService = new ItemServiceImpl();
   private final OrderService orderService = new OrderServiceImpl();
@@ -95,7 +97,7 @@ public class CheckoutCommand implements Command {
 
   private Date parseDeliveryDate(String deliveryDateStr) {
     try {
-      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+      SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
       dateFormat.setLenient(false);
       return dateFormat.parse(deliveryDateStr);
     } catch (ParseException e) {
